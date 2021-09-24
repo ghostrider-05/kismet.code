@@ -1,0 +1,26 @@
+{
+  "name": "kismet.ts",
+  "version": "0.1.0-alpha.1",
+  "description": "Make kismet from code",
+  "main": "./node/dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "lint": "npx eslint . --ext .cjs,.ts,.tsx",
+    "lint:fix": "npx eslint . --ext .cjs,.ts,.tsx --fix"
+  },
+  "keywords": [
+    "udk",
+    "kismet"
+  ],
+  "author": "ghostrider-05",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.9.6",
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "typescript": "^4.4.3"
+  }
+}

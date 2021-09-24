@@ -1,0 +1,8 @@
+### Node.js
+
+# Default node files / directories
+node_modules
+
+# Output files
+node/dist/
+node/items/
