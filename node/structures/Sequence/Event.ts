@@ -9,9 +9,6 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
     public clientSideOnly: boolean;
     public enabled: boolean;
 
-    private connectedItems: { name: string, items: SequenceAction[]}[]
-    private connections: { out: string[]; variables: string[]; };
-
     constructor (options: KismetEventOptions<T> & KismetItemConfigOptions) {
         super(options)
 
@@ -25,21 +22,13 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
         this.playerOnly = options?.playerOnly ?? false
         this.clientSideOnly = options?.clientSideOnly ?? false
 
-        this.connectedItems = []
-        
-        this.connections = {
-            out: ['out'],
-            variables: []
-        }
     }
 
     on<T = SequenceAction | unknown> ({ name, item }: { name: E, item: T }): this {
-        if (this.connections.out.some(x => x === name)) {
-            if (!this.connectedItems.some(x => x.name === name)) {
-                this.connectedItems.push({ name: name, items: []})
-            }
+        const connection = this.getConnection('output', name)
 
-            this.connectedItems.find(x => x.name === name)?.items.push(item as unknown as SequenceAction)
+        if (connection) {
+            connection.addLink((item as unknown as SequenceAction).linkId, this.connections.output.indexOf(connection))
         }
 
         return this

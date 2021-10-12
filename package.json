@@ -1,13 +1,14 @@
 {
   "name": "kismet.ts",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Make kismet from code",
   "main": "./node/dist/index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node .",
+    "start": "node . —experimental-json-modules",
     "lint": "npx eslint . --ext .cjs,.ts,.tsx",
     "lint:fix": "npx eslint . --ext .cjs,.ts,.tsx --fix"
   },

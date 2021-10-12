@@ -1,27 +1,29 @@
 import { KismetItemConfigOptions, SequenceNode } from './Item.js'
 
 import type { KismetActionRequiredOptions } from '../../types/index.js'
-import { SequenceEvent } from './Event.js'
 
-export class SequenceAction<C extends string = 'out', V extends string = ''> extends SequenceNode<V> {
-    private connectedItems: { items: (SequenceAction | SequenceEvent)[], name: string }[]
+export class SequenceAction extends SequenceNode {
 
     constructor (options: KismetActionRequiredOptions & KismetItemConfigOptions) {
         super(options)
-
-        this.connectedItems = []
     } 
 
-    addConnection (item: SequenceAction, name?: C): this {
-        const tag = name ?? 'out'
-
-        if (this.connectionNames.out.includes(tag)) {
-            if (!this.connectedItems.some(x => x.name === tag)) {
-                this.connectedItems.push({ name: tag, items: []})
-            }
-
-            this.connectedItems.find(x => x.name === tag)?.items.push(item)
+    public addConnection (item: SequenceAction, outputName: string, inputName: string): this {
+        const connection = this.getConnection('output', outputName);
+        const itemConnection = item.getConnection('input', inputName);
+        
+        if (connection && itemConnection) {
+            console.log('Added connection')
+            connection.addLink(item.linkId, item.connections.input.indexOf(itemConnection))
         }
+
+        return this
+    }
+
+    public setTargets (objects: string[]): this {
+        objects.forEach((object, i) => {
+            this.setVariable(`Targets(${i})`, object)
+        })
 
         return this
     }
