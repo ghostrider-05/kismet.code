@@ -38,7 +38,7 @@ export class Sequence {
 }
 
 export * from './Action.js'
-export * from './Item.js'
+export * from './Item/index.js'
 // export * from './Condition.js'
 export * from './Event.js'
 export * from './Variable.js'

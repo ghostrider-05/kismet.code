@@ -31,6 +31,8 @@ export interface BaseKismetActionOptions {
     next?: SequenceAction
 }
 
+export type KismetVariablesType = string | number | null | undefined
+
 export type KismetEventOptions<T extends {} = {}> = T & BaseKismetEventOptions
 
 export type KismetVariableOptions<T  extends {} = {}> = T & BaseKismetVariableOptions

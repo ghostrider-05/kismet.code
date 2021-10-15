@@ -1,4 +1,4 @@
-import { BaseSequenceItem, KismetItemConfigOptions } from './Item.js'
+import { BaseSequenceItem, KismetItemConfigOptions } from './Item/base.js'
 
 import type { KismetVariableOptions } from '../../types/index.js'
 

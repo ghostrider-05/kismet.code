@@ -1,3 +1,7 @@
+import {
+    parseVar
+} from '../../../shared/index.js'
+
 import type {
     BaseKismetConnectionLink,
     BaseKismetVariableLink,
@@ -5,7 +9,7 @@ import type {
     KismetVariableLink,
     KismetInputLink,
     KismetOutputLink
-} from '../../types/index.js'
+} from '../../../types/index.js'
 
 export class KismetConnection implements BaseKismetVariableLink {
     private type: KismetConnectionType;
@@ -99,6 +103,30 @@ export class KismetConnection implements BaseKismetVariableLink {
         }
     }
 
+    private formatConnection (): string {
+        const base = [
+            `OverrideDelta=${this.OverrideDelta}`
+        ]
+        
+        if (this.isVariableLink()) {
+            return base.concat([
+                `DrawX=${this.DrawX}`,
+            ]).join(',')
+
+        } else if (this.isLinkType()) {
+            return base.concat([
+                `DrawY=${this.DrawY}`
+            ].concat(this.isOutputLink() && this.links.length > 0 ? [
+                `Links=(${this.links.join(',')})`
+            ] : [])).join(',')
+            
+        } else return '' // Types
+    }
+
+    private getCollectionName () : string {
+        return (this.type[0] + this.type.slice(1)) + 'Links'
+    }
+
     private getPropsFromInput (input: string): Record<string, string | number | boolean> {
         return input.slice(1, -1).split(',').map(prop => {
             return {
@@ -140,19 +168,7 @@ export class KismetConnection implements BaseKismetVariableLink {
         return this
     }
 
-    public toKismet(): string {
-        const base = [
-            `OverrideDelta=${this.OverrideDelta}`
-        ]
-        
-        if (this.isVariableLink()) {
-            return base.concat([
-                `DrawX=${this.DrawX}`,
-            ]).join(',')
-        } else if (this.isInputLink() || this.isOutputLink()) {
-            return base.concat([
-                `DrawY=${this.DrawY}`
-            ].concat(this.isOutputLink() && this.links.length > 0 ? [`Links=(${this.links.join(',')})`] : [])).join(',')
-        } else return '' // Types
+    public toKismet (index: number): string {
+        return parseVar(`${this.getCollectionName()}(${index})`, `(${this.formatConnection()})`)
     }
 }

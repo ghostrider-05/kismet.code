@@ -1,4 +1,4 @@
-import { KismetItemConfigOptions, SequenceNode } from "./Item.js";
+import { SequenceNode, KismetItemConfigOptions } from './Item/index.js'
 
 import type { KismetEventOptions } from '../../types/index.js'
 import { SequenceAction } from "./Action.js";
