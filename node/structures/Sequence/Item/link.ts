@@ -1,10 +1,11 @@
 import {
-    parseVar
+    parseVar,
+    t
 } from '../../../shared/index.js'
 
 import type {
-    BaseKismetConnectionLink,
     BaseKismetVariableLink,
+    KismetConnectionLink,
     KismetConnectionType,
     KismetVariableLink,
     KismetInputLink,
@@ -24,7 +25,6 @@ export class KismetConnection implements BaseKismetVariableLink {
     constructor (input: string, type: KismetConnectionType) {
         this.type = type
 
-        const t = <T>(input: unknown) => (input as T)
         const properties = this.getPropsFromInput(input)
 
         const { 
@@ -92,6 +92,12 @@ export class KismetConnection implements BaseKismetVariableLink {
             this.LinkedOp = t(LinkedOp) ?? null;
             this.DrawY = t(DrawY) ?? 0;
 
+            this.setActivateDelay = (duration: number): KismetConnectionLink => {
+                t<KismetConnectionLink>(this).ActivateDelay = duration;
+
+                return t<KismetConnectionLink>(this)
+            }
+
             if (this.isInputLink()) {
                 this.QueuedActivations = t(properties.QueuedActivations) ?? 0;
             } else if (this.isOutputLink()) {
@@ -136,7 +142,7 @@ export class KismetConnection implements BaseKismetVariableLink {
         }).reduce((z, a) => ({...z, [a.name]: a.value}), {})
     }
 
-    private isLinkType (): this is BaseKismetConnectionLink {
+    private isLinkType (): this is KismetConnectionLink {
         return this.isInputLink() || this.isOutputLink()
     }
 
@@ -160,10 +166,8 @@ export class KismetConnection implements BaseKismetVariableLink {
         return this
     }
 
-    public setActivateDelay (duration: number): this {
-        if (this.isLinkType()) {
-            this.ActivateDelay = duration
-        }
+    public toggleHidden (): this {
+        this.bHidden = !this.bHidden
 
         return this
     }

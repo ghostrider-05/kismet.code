@@ -25,6 +25,10 @@ export function mapObjectKeys<T, C>(object: Record<string, T[]>, fn: (obj: T, i:
     })
 }
 
+export function t<T>(input: unknown): T {
+    return (input as T)
+}
+
 export function addVariable (node: string, variable: [string, string][]): string {
 
     return node.split('\n').flatMap((line, index) => {

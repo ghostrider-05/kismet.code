@@ -24,11 +24,47 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
 
     }
 
-    on<T = SequenceAction | unknown> ({ name, item }: { name: E, item: T }): this {
+    public on<T = SequenceAction | unknown> ({ name, item }: { name: E, item: T }): this {
         const connection = this.getConnection('output', name)
 
         if (connection) {
             connection.addLink((item as unknown as SequenceAction).linkId, this.connections.output.indexOf(connection))
+        }
+
+        return this
+    }
+
+    public setDisabled (): this {
+        this.enabled = false
+
+        return this
+    }
+
+    public setDisplay ({ player, client }: {
+        player?: boolean,
+        client?: boolean
+    }): this {
+        if (player != null) {
+            this.playerOnly = player
+        }
+
+        if (client != null) {
+            this.clientSideOnly = client
+        }
+
+        return this
+    }
+
+    public setTrigger ({ max, delay } : {
+        max?: number,
+        delay?: number
+    }): this {
+        if (max != null) {
+            this.trigger.maxCount = max
+        }
+
+        if (delay != null) {
+            this.trigger.delay = delay
         }
 
         return this

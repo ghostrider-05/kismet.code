@@ -13,7 +13,6 @@ export class SequenceAction extends SequenceNode {
         const itemConnection = item.getConnection('input', inputName);
         
         if (connection && itemConnection) {
-            console.log('Added connection')
             connection.addLink(item.linkId, item.connections.input.indexOf(itemConnection))
         }
 

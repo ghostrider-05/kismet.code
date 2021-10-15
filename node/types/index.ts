@@ -64,6 +64,11 @@ export interface BaseKismetConnectionLink extends BaseKismetVariableLink {
     LinkedOp: null;
     DrawY: number;
 }
+
+export interface KismetConnectionLink extends BaseKismetConnectionLink {
+    setActivateDelay (duration: number): KismetConnectionLink
+}
+
 export interface KismetVariableLink extends BaseKismetVariableLink {
     expectedType: string;
     PropertyName: string;
@@ -78,11 +83,11 @@ export interface KismetVariableLink extends BaseKismetVariableLink {
     links: KismetVariableLinkConnection[];
 }
 
-export interface KismetInputLink extends BaseKismetConnectionLink {
+export interface KismetInputLink extends KismetConnectionLink {
     QueuedActivations: number;
 }
 
-export interface KismetOutputLink extends BaseKismetConnectionLink {
+export interface KismetOutputLink extends KismetConnectionLink {
     bIsActivated: boolean;
     PIEActivationTime: number;
     links: KismetVariableLinkConnection[];
