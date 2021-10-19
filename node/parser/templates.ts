@@ -1,8 +1,10 @@
 export const actions = (node: {
     name: string,
     archetype: string,
-    links: Record<string, string[]>
-}): string => `
+    links: Record<string, string[]>,
+    staticProperties?: string
+    // TODO: change when node types are added
+} | Record<string, unknown>): string => `
 import { SequenceAction } from "../../structures/Sequence/index.js";
 import { BaseKismetActionRequiredOptions } from "../../types/index.js";
 
@@ -21,5 +23,6 @@ export class ${node.name} extends SequenceAction {
             }
         })
     }
+${node.staticProperties ?? ''}
 }
                 `
