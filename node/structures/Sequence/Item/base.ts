@@ -7,30 +7,11 @@ import {
     parseVar
 } from '../../../shared/index.js'
 
-import type { KismetConnectionType } from '../../../types/index.js'
-
-export interface KismetItemConfigOptions {
-    ObjInstanceVersion: number
-    ParentSequence: string
-    ObjectArchetype: string
-    inputs: {
-        input?: string[],
-        output?: string[],
-        variable?: string[]
-    }
-    Draw: {
-        width: number
-        maxWidth?: number
-        height?: number,
-        inputOffset: number
-    }
-}
-
-type KismetConnections = {
-    input: KismetConnection[],
-    output: KismetConnection[],
-    variable: KismetConnection[]
-}
+import type { 
+    BaseKismetItemOptions,
+    KismetConnectionType,
+    KismetConnections
+} from '../../../types/index.js'
 
 export class BaseSequenceItem {
     public comment: string | null;
@@ -53,7 +34,7 @@ export class BaseSequenceItem {
         }
     };
 
-    constructor (options: KismetItemConfigOptions) {
+    constructor (options: BaseKismetItemOptions) {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null

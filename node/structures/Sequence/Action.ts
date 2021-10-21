@@ -1,10 +1,13 @@
-import { SequenceNode, KismetItemConfigOptions } from './Item/index.js'
+import { SequenceNode } from './Item/index.js'
 
-import type { KismetActionRequiredOptions } from '../../types/index.js'
+import type { 
+    BaseKismetItemOptions,
+    KismetActionRequiredOptions 
+} from '../../types/index.js'
 
 export class SequenceAction extends SequenceNode {
 
-    constructor (options: KismetActionRequiredOptions & KismetItemConfigOptions) {
+    constructor (options: KismetActionRequiredOptions & BaseKismetItemOptions) {
         super(options)
     } 
 

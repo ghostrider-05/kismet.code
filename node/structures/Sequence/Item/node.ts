@@ -1,4 +1,4 @@
-import { BaseSequenceItem, KismetItemConfigOptions } from './base.js'
+import { BaseSequenceItem } from './base.js'
 import { SequenceVariable } from "../Variable";
 
 import {
@@ -6,11 +6,15 @@ import {
     boolToKismet
 } from '../../../shared/index.js'
 
+import type {   
+    BaseKismetItemOptions
+} from '../../../types/index.js'
+
 export class SequenceNode extends BaseSequenceItem {
     public hasBreakpoint: boolean;
     private variables: { name: string, value: string }[]
 
-    constructor (options: KismetItemConfigOptions) {
+    constructor (options: BaseKismetItemOptions) {
         super(options)
 
         this.hasBreakpoint = false

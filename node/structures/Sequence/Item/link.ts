@@ -160,7 +160,8 @@ export class KismetConnection implements BaseKismetVariableLink {
 
     public addLink (linkId: string, index?: number): this {
         if (this.isOutputLink() || this.isVariableLink()) {
-            this.links.push(`(LinkedOp=${linkId}${typeof index === 'number' ? `,InputLinkIdx=${index}` : ''})`)
+            const linkIndex = typeof index === 'number' && (index ?? 0) > 0 ? `,InputLinkIdx=${index}` : ''
+            this.links.push(`(LinkedOp=${linkId}${linkIndex})`)
         }
 
         return this

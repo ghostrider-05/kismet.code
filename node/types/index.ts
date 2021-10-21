@@ -1,4 +1,8 @@
-import { SequenceAction } from '../structures/Sequence/index.js'
+import { 
+    KismetConnection,
+    SequenceAction,
+    SequenceVariable
+} from '../structures/Sequence/index.js'
 
 export interface UDKoptions {
     projectName: string
@@ -6,6 +10,23 @@ export interface UDKoptions {
         startX?: number
         startY?: number
         spaceBetween?: number
+    }
+}
+
+export interface BaseKismetItemOptions {
+    ObjInstanceVersion: number
+    ParentSequence: string
+    ObjectArchetype: string
+    inputs: {
+        input?: string[],
+        output?: string[],
+        variable?: string[]
+    }
+    Draw: {
+        width: number
+        maxWidth?: number
+        height?: number,
+        inputOffset: number
     }
 }
 
@@ -31,6 +52,8 @@ export interface BaseKismetActionOptions {
     next?: SequenceAction
 }
 
+export type SequenceItemType = SequenceAction | SequenceVariable
+
 export type KismetVariablesType = string | number | null | undefined
 
 export type KismetEventOptions<T extends {} = {}> = T & BaseKismetEventOptions
@@ -46,6 +69,13 @@ export type KismetActionRequiredOptions<T extends {} = {}> = BaseKismetActionReq
 type KismetVariableLinkConnection = string
 
 export type KismetConnectionType = 'input' | 'variable' | 'output'
+
+// Cannot convert to interface
+export type KismetConnections = {
+    input: KismetConnection[],
+    output: KismetConnection[],
+    variable: KismetConnection[]
+}
 
 export interface BaseKismetVariableLink {
     name: string

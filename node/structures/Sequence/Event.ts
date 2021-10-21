@@ -1,6 +1,6 @@
-import { SequenceNode, KismetItemConfigOptions } from './Item/index.js'
+import { SequenceNode } from './Item/index.js'
 
-import type { KismetEventOptions } from '../../types/index.js'
+import type { BaseKismetItemOptions, KismetEventOptions } from '../../types/index.js'
 import { SequenceAction } from "./Action.js";
 
 export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends SequenceNode {
@@ -9,7 +9,7 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
     public clientSideOnly: boolean;
     public enabled: boolean;
 
-    constructor (options: KismetEventOptions<T> & KismetItemConfigOptions) {
+    constructor (options: KismetEventOptions<T> & BaseKismetItemOptions) {
         super(options)
 
         this.trigger = {
