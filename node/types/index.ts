@@ -30,6 +30,21 @@ export interface BaseKismetItemOptions {
     }
 }
 
+export interface BaseKismetItemDrawOptions { 
+    x: number; 
+    y: number; 
+    class: string; 
+    ObjectArchetype: string; 
+    ParentSequence: string; 
+    ObjInstanceVersion: number;
+    Name: string;
+    DrawConfig: {
+        width: number
+        maxWidth?: number | null
+        height?: number | null
+    }
+}
+
 export interface KismetObjectCommentOptions {
     comment?: string,
     outputCommentToScreen?: boolean,

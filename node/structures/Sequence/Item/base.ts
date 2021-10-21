@@ -1,3 +1,4 @@
+import { Sequence } from '../base.js';
 import { KismetConnection } from './link.js';
 import {
     KISMET_NODE_LINES,
@@ -10,29 +11,19 @@ import {
 import type { 
     BaseKismetItemOptions,
     KismetConnectionType,
-    KismetConnections
+    KismetConnections,
+    BaseKismetItemDrawOptions
 } from '../../../types/index.js'
 
 export class BaseSequenceItem {
     public comment: string | null;
     public supressAutoComment: boolean | null;
     public outputCommentToScreen: boolean | null;
-    public connections: KismetConnections;
 
-    private kismet: { 
-        x: number; 
-        y: number; 
-        class: string; 
-        ObjectArchetype: string; 
-        ParentSequence: string; 
-        ObjInstanceVersion: number;
-        Name: string;
-        DrawConfig: {
-            width: number
-            maxWidth?: number | null
-            height?: number | null
-        }
-    };
+    public connections: KismetConnections;
+    public sequence: string | Sequence;
+
+    private kismet: BaseKismetItemDrawOptions;
 
     constructor (options: BaseKismetItemOptions) {
         this.comment = null
@@ -64,6 +55,8 @@ export class BaseSequenceItem {
                 maxWidth: options.Draw.maxWidth ?? null
             }
         }
+
+        this.sequence = options.ParentSequence
 
         // if (!this.kismet.DrawConfig.height && !this.kismet.DrawConfig.maxWidth) throw new Error()
     }
@@ -98,8 +91,13 @@ export class BaseSequenceItem {
         return this
     }  
 
-    public setSequence (sequenceName: string): this {
-        this.kismet.ParentSequence = `Sequence'${sequenceName}'`
+    public setSequence (sequence: string | Sequence): this {
+        if (typeof sequence !== 'string') {
+            this.sequence = sequence
+            this.kismet.ParentSequence = sequence.name
+        } else {
+            this.kismet.ParentSequence = `Sequence'${sequence}'`
+        }
 
         return this
     }
@@ -111,14 +109,16 @@ export class BaseSequenceItem {
             ObjectArchetype,
             ObjInstanceVersion, 
             ParentSequence, 
-            Name 
+            Name,
+            x,
+            y
         } = this.kismet
 
         const variables = [
             ['ObjInstanceVersion', ObjInstanceVersion],
             ['ParentSequence', ParentSequence],
-            ['ObjPosX', '0'],
-            ['ObjPosY', '0'],
+            ['ObjPosX', x],
+            ['ObjPosY', y],
             ['DrawWidth', DrawConfig.width],
             ['MaxWidth', DrawConfig.maxWidth],
             ['DrawHeight', DrawConfig.height],
