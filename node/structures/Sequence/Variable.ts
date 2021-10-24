@@ -1,5 +1,7 @@
 import { BaseSequenceItem } from './Item/base.js'
 
+import { addVariable } from '../../shared/kismet.js';
+
 import type { 
     BaseKismetItemOptions, 
     KismetVariableOptions 
@@ -14,9 +16,15 @@ export class SequenceVariable<T extends {} = {}> extends BaseSequenceItem {
         this.name = options?.name ?? null
     }
 
-    setName (name: string): this {
+    public setName (name: string): this {
         this.name = name
 
         return this
+    }
+
+    public override toKismet (): string {
+        const kismet = super.toKismet()
+
+        return this.name ? addVariable(kismet, [['VarName', this.name]]) : kismet
     }
 }

@@ -1,7 +1,16 @@
 import { SequenceNode } from './Item/index.js'
-
-import type { BaseKismetItemOptions, KismetEventOptions } from '../../types/index.js'
 import { SequenceAction } from "./Action.js";
+
+import { 
+    addVariable, 
+    boolToKismet ,
+    t
+} from '../../shared/index.js';
+
+import type { 
+    BaseKismetItemOptions, 
+    KismetEventOptions 
+} from '../../types/index.js'
 
 export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends SequenceNode {
     public trigger: { maxCount: number; delay: number; };
@@ -28,7 +37,7 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
         const connection = this.getConnection('output', name)
 
         if (connection) {
-            connection.addLink((item as unknown as SequenceAction).linkId, this.connections.output.indexOf(connection))
+            connection.addLink(t<SequenceAction>(item).linkId, this.connections.output.indexOf(connection))
         }
 
         return this
@@ -68,5 +77,19 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
         }
 
         return this
+    }
+
+    public override toKismet(): string {
+        const kismet = super.toKismet()
+
+        const variables: [string, string | number][] = [
+            ['MaxTriggerCount', this.trigger.maxCount],
+            ['ReTriggerDelay', this.trigger.delay],
+            ['bEnabled', boolToKismet(this.enabled)],
+            ['bPlayerOnly', boolToKismet(this.playerOnly)],
+            ['bClientSideOnly', boolToKismet(this.clientSideOnly)]
+        ]
+
+        return addVariable(kismet, variables)
     }
 }

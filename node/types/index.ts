@@ -69,6 +69,10 @@ export interface BaseKismetActionOptions {
 
 export type SequenceItemType = SequenceAction | SequenceVariable
 
+export type KismetVariableInternalType = string | number
+
+export type KismetVariableInternalTypeList = [string, KismetVariableInternalType][]
+
 export type KismetVariablesType = string | number | null | undefined
 
 export type KismetEventOptions<T extends {} = {}> = T & BaseKismetEventOptions

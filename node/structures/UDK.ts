@@ -6,7 +6,7 @@ import { Sequence } from "./Sequence/index.js";
 import type { UDKoptions } from '../types/index.js'
 
 const itemPath = resolve(import.meta.url, '../items/index.js')
-const Items = fs.existsSync(itemPath) ? await import('file:///'+ itemPath) : null
+const Items = fs.existsSync(itemPath) ? await import('file:///'+ itemPath) : { Actions: null, Events: null}
 
 if (!Items) throw new Error('No items are available for import')
 
@@ -36,4 +36,8 @@ export class UDK {
 
     static actions = Items.Actions
     static events = Items.Events
+
+    public toKismet (): string {
+        return this.mainSequence.toKismet()
+    }
 }

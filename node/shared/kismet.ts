@@ -1,4 +1,7 @@
-import type { KismetVariablesType } from '../types/index.js'
+import type { 
+    KismetVariableInternalTypeList, 
+    KismetVariablesType 
+} from '../types/index.js'
 
 export const KISMET_CONNECTION_SPACE = 21
 export const KISMET_VARIABLE_OFFSET = 50
@@ -24,7 +27,7 @@ export const KISMET_NODE_LINES = {
     end: 'End Object'
 }
 
-export function addVariable (node: string, variable: [string, string][]): string {
+export function addVariable (node: string, variable: KismetVariableInternalTypeList): string {
 
     return node.split('\n').flatMap((line, index) => {
         return index === 0 ? [
