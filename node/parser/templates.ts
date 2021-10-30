@@ -1,10 +1,6 @@
-export const actions = (node: {
-    name: string,
-    archetype: string,
-    links: Record<string, string[]>,
-    staticProperties?: string
-    // TODO: change when node types are added
-} | Record<string, unknown>): string => `
+import type { UnrealJsonReadFile } from "../types";
+
+export const actions = (node: UnrealJsonReadFile): string => `
 import { SequenceAction } from "../../structures/Sequence/index.js";
 import { BaseKismetActionRequiredOptions } from "../../types/index.js";
 
