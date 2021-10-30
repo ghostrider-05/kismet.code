@@ -1,14 +1,12 @@
 import { 
     BaseSequenceItem as BaseItem,
     SequenceNode as Item,
-    KismetColor as Color,
-    Comment,
-    CommentFrame,
+    KismetColor,
     Sequence,
     SequenceAction,
     SequenceEvent,
     SequenceVariable,
-    UDK
+    KismetFile
 } from './structures/index.js'
 
 const Structures = {
@@ -20,18 +18,12 @@ const Structures = {
     SequenceVariable
 }
 
-const baseItems = {
-    Comment,
-    CommentFrame
-}
-
 const Util = new class Util {
-    Color = Color
+    Color = KismetColor
 }
 
 export {
-    UDK,
-    baseItems,
+    KismetFile,
     Structures,
     Util
 }

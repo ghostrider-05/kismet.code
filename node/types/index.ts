@@ -1,64 +1,12 @@
 import { 
-    KismetConnection,
     SequenceAction,
     SequenceVariable
 } from '../structures/Sequence/index.js'
 
-export interface RawUnrealJsonConstant {
-    name: string
-    value: string
-}
+export * from './connectionLink.js'
+export * from './parser.js'
 
-export type RawUnrealJsonDefaultVariables = RawUnrealJsonConstant
-
-export interface RawUnrealJsonEnum { 
-    [name: string]: string[]
-}
-
-export interface RawUnrealJsonStructure { 
-    name: string, 
-    properties: RawUnrealJsonVariable[] 
-} 
-
-export interface RawUnrealJsonVariable {
-    flags: string
-    name: string
-    type: string
-    replicated: KismetBoolean.True | KismetBoolean.False
-}
-
-export interface RawUnrealJsonFile {
-    name: string
-    extends: string
-    extendswithin: string | 'Object'
-    constants: RawUnrealJsonConstant[]
-    structs: { 
-        name: string, 
-        properties: RawUnrealJsonVariable[] 
-    }[]
-    enums: RawUnrealJsonEnum
-    variables: RawUnrealJsonVariable[]
-    defaultproperties: RawUnrealJsonDefaultVariables[]
-    defaultobjects?: {
-        name: string
-        class: string
-        properties: RawUnrealJsonDefaultVariables[]
-    }
-}
-
-export interface UnrealJsonReadFile {
-    archetype: string
-    Class: string
-    defaultproperties: RawUnrealJsonConstant[]
-    links: Record<KismetConnectionType, string[]>
-    name: string
-    Package: string
-    staticProperties: string
-    type: string
-    variables: RawUnrealJsonVariable[]
-}
-
-export interface UDKoptions {
+export interface projectOptions {
     projectName: string
     layout?: {
         startX?: number
@@ -68,15 +16,14 @@ export interface UDKoptions {
 }
 
 export interface BaseKismetItemOptions {
-    ObjInstanceVersion: number
-    ParentSequence: string
+    ObjInstanceVersion?: number
     ObjectArchetype: string
     inputs: {
         input?: string[],
         output?: string[],
         variable?: string[]
     }
-    Draw: {
+    Draw?: {
         width: number
         maxWidth?: number
         height?: number,
@@ -121,11 +68,6 @@ export interface BaseKismetActionOptions {
     next?: SequenceAction
 }
 
-export enum KismetBoolean {
-    True = 'True',
-    False = 'False'
-}
-
 export type SequenceItemType = SequenceAction | SequenceVariable
 
 export type KismetVariableInternalType = string | number
@@ -141,62 +83,3 @@ export type KismetVariableOptions<T  extends {} = {}> = T & BaseKismetVariableOp
 export type BaseKismetActionRequiredOptions<T extends {} = {}> = T & BaseKismetActionOptions
 
 export type KismetActionRequiredOptions<T extends {} = {}> = BaseKismetActionRequiredOptions<T> & KismetObjectCommentOptions
-
-// Kismet connection links
-
-type KismetVariableLinkConnection = string
-
-export type KismetConnectionType = 'input' | 'variable' | 'output'
-
-// Cannot convert to interface
-export type KismetConnections = {
-    input: KismetConnection[],
-    output: KismetConnection[],
-    variable: KismetConnection[]
-}
-
-export interface BaseKismetVariableLink {
-    name: string
-    OverrideDelta: number;
-    bClampedMin: boolean;
-    bClampedMax: boolean;
-    bMoving: boolean;
-    bHidden: boolean;
-}
-
-export interface BaseKismetConnectionLink extends BaseKismetVariableLink {
-    bHasImpulse: boolean;
-    bDisabled: boolean;
-    bDisabledPIE: boolean;
-    ActivateDelay: number;
-    LinkedOp: null;
-    DrawY: number;
-}
-
-export interface KismetConnectionLink extends BaseKismetConnectionLink {
-    setActivateDelay (duration: number): KismetConnectionLink
-}
-
-export interface KismetVariableLink extends BaseKismetVariableLink {
-    expectedType: string;
-    PropertyName: string;
-    bAllowAnyType: boolean;
-    CachedProperty: null;
-    MinVars: number;
-    MaxVars: number;
-    DrawX: number;
-    bWriteable: boolean;
-    bSequenceNeverReadsOnlyWritesToThisVar: boolean;
-    bModifiesLinkedObject: boolean;
-    links: KismetVariableLinkConnection[];
-}
-
-export interface KismetInputLink extends KismetConnectionLink {
-    QueuedActivations: number;
-}
-
-export interface KismetOutputLink extends KismetConnectionLink {
-    bIsActivated: boolean;
-    PIEActivationTime: number;
-    links: KismetVariableLinkConnection[];
-}

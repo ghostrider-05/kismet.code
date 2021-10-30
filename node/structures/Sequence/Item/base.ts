@@ -1,5 +1,6 @@
 import { Sequence } from '../base.js';
 import { KismetConnection } from './link.js';
+
 import {
     KISMET_NODE_LINES,
     boolToKismet,
@@ -14,6 +15,8 @@ import type {
     KismetConnections,
     BaseKismetItemDrawOptions
 } from '../../../types/index.js'
+
+const DEFAULT_PARENT_SEQUENCE = "Sequence'Main_Sequence'"
 
 export class BaseSequenceItem {
     public comment: string | null;
@@ -46,17 +49,17 @@ export class BaseSequenceItem {
             y: 0,
             class: options.ObjectArchetype.split("'")[0],
             ObjectArchetype: options.ObjectArchetype,
-            ParentSequence: options.ParentSequence,
-            ObjInstanceVersion: options.ObjInstanceVersion,
+            ParentSequence: DEFAULT_PARENT_SEQUENCE,
+            ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
             Name: `"${options.ObjectArchetype.split("'")[0].concat('_0')}"`,
             DrawConfig: {
-                width: options.Draw.width,
-                height: options.Draw.height ?? null,
-                maxWidth: options.Draw.maxWidth ?? null
+                width: options.Draw?.width ?? 0,
+                height: options.Draw?.height ?? null,
+                maxWidth: options.Draw?.maxWidth ?? null
             }
         }
 
-        this.sequence = options.ParentSequence
+        this.sequence = DEFAULT_PARENT_SEQUENCE
 
         // if (!this.kismet.DrawConfig.height && !this.kismet.DrawConfig.maxWidth) throw new Error()
     }

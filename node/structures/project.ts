@@ -1,16 +1,16 @@
-import * as fs from 'fs'
-import { resolve } from 'path'
+import clipboard from 'clipboardy'
 
-import { Sequence } from "./Sequence/index.js";
+import { 
+    Comment,
+    CommentFrame,
+    Sequence 
+} from "./Sequence/index.js";
 
-import type { UDKoptions } from '../types/index.js'
+import type { 
+    projectOptions
+} from '../types/index.js'
 
-const itemPath = resolve(import.meta.url, '../items/index.js')
-const Items = fs.existsSync(itemPath) ? await import('file:///'+ itemPath) : { Actions: null, Events: null}
-
-if (!Items) throw new Error('No items are available for import')
-
-export class UDK {
+export class KismetFile {
     public mainSequence: Sequence;
     public projectName: string;
     public layoutOptions: { 
@@ -18,7 +18,7 @@ export class UDK {
         space: number; 
     };
 
-    constructor (options: UDKoptions) {
+    constructor (options: projectOptions) {
         const { projectName } = options
 
         this.projectName = projectName
@@ -34,8 +34,20 @@ export class UDK {
         this.mainSequence = new Sequence('Main_Sequence')
     }
 
-    static actions = Items.Actions
-    static events = Items.Events
+    static Items = {
+        Action: null,
+        Matinee: null,
+        Condition: null,
+        Variable: null,
+        Event: null,
+
+        Comment,
+        CommentFrame
+    }
+
+    public async copyKismet (): Promise<void> {
+        return await clipboard.write(this.toKismet())
+    }
 
     public toKismet (): string {
         return this.mainSequence.toKismet()

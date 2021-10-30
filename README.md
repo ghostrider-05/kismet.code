@@ -8,18 +8,18 @@ To test this repo, clone this repo and make a new file in `/node/`:
 ```ts
 // udk.ts
 
-import { UDK } from './index.js'
+import { KismetFile } from './index.js'
 
-const delayAction = new UDK.actions.Delay()
+const delayAction = new KismetFile.actions.Delay()
     .setVariable('duration', 1000)
 
-const levelLoadedEvent = new UDK.events.levelLoaded()
+const levelLoadedEvent = new KismetFile.events.levelLoaded()
     .on({
         name: 'loaded',
         item: delayAction
     })
 
-const kismet = new UDK({
+const kismet = new KismetFile({
     projectName: 'Untitled_0'
 }).mainSequence
     .addItems([levelLoadedEvent, delayAction])

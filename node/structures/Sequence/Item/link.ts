@@ -130,7 +130,7 @@ export class KismetConnection implements BaseKismetVariableLink {
     }
 
     private getCollectionName () : string {
-        return (this.type[0] + this.type.slice(1)) + 'Links'
+        return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
     }
 
     private getPropsFromInput (input: string): Record<string, string | number | boolean> {
@@ -167,8 +167,8 @@ export class KismetConnection implements BaseKismetVariableLink {
         return this
     }
 
-    public toggleHidden (): this {
-        this.bHidden = !this.bHidden
+    public setHidden (hidden: boolean): this {
+        this.bHidden = hidden
 
         return this
     }

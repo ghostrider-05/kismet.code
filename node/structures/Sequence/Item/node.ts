@@ -33,15 +33,15 @@ export class SequenceNode extends BaseSequenceItem {
         return this
     }
 
-    public setVariable (variableName: string, item: SequenceVariable | string): this {
+    public setVariable (variableName: string, value: SequenceVariable | string): this {
         const connection = this.getConnection('variable', variableName)
 
-        if (connection && typeof item !== 'string') {
-            connection.addLink(item.linkId, this.connections.variable.indexOf(connection))
+        if (connection && typeof value !== 'string') {
+            connection.addLink(value.linkId, this.connections.variable.indexOf(connection))
         } else {
             this.variables.push({
                 name: variableName,
-                value: String(item)
+                value: String(value)
             })
         }
 
