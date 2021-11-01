@@ -38,13 +38,13 @@ function getStaticProperties (variables: RawUnrealJsonVariable[]) {
     return staticProperties
 }
 
-export function readNodeFile (json: RawUnrealJsonFile): UnrealJsonReadFile {
+export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJsonReadFile {
     const { name: Class, variables, defaultproperties } = json
 
     const defaultProperties = new propertiesUtil(defaultproperties)
 
     const name = stringFirstCharUppercase(defaultProperties.get(KISMET_PROPERTY_NAMES.NAME))
-    const Package = defaultProperties.get(KISMET_PROPERTY_NAMES.CLASS)
+    const category = defaultProperties.get(KISMET_PROPERTY_NAMES.CLASS)
 
     const staticProperties = getStaticProperties(variables)
 
@@ -52,7 +52,7 @@ export function readNodeFile (json: RawUnrealJsonFile): UnrealJsonReadFile {
         name: name.replaceAll('"', ''),
         Class,
         variables,
-        Package,
+        category,
         defaultproperties,
         type: KISMET_NODE_TYPES.get(Class as string) ?? '',
         archetype: `"${Class}'${Package}.Default__${Class}'"`,

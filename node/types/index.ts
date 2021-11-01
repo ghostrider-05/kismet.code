@@ -1,5 +1,6 @@
 import { 
     SequenceAction,
+    SequenceEvent,
     SequenceVariable
 } from '../structures/Sequence/index.js'
 
@@ -68,7 +69,9 @@ export interface BaseKismetActionOptions {
     next?: SequenceAction
 }
 
-export type SequenceItemType = SequenceAction | SequenceVariable
+export type SequenceItemType = SequenceAction | SequenceVariable | SequenceEvent
+
+export type SequenceItemTypeName = 'actions' | 'events'
 
 export type KismetVariableInternalType = string | number
 

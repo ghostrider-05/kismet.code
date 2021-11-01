@@ -47,7 +47,7 @@ export interface UnrealJsonReadFile {
     defaultproperties: RawUnrealJsonConstant[]
     links: Record<KismetConnectionType, string[]>
     name: string
-    Package: string
+    category: string
     staticProperties: string
     type: string
     variables: RawUnrealJsonVariable[]
