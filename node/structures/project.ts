@@ -6,12 +6,15 @@ import {
     Sequence 
 } from "./Sequence/index.js";
 
+import { CustomNodesManager } from './parser.js';
+
 import type { 
     projectOptions
 } from '../types/index.js'
 
 export class KismetFile {
     public mainSequence: Sequence;
+    public parser: CustomNodesManager;
     public projectName: string;
     public layoutOptions: { 
         startPosition: { x: number; y?: number; }; 
@@ -32,6 +35,8 @@ export class KismetFile {
         }
 
         this.mainSequence = new Sequence('Main_Sequence')
+
+        this.parser = new CustomNodesManager('./node/test/')
     }
 
     static Items = {
