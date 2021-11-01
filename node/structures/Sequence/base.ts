@@ -54,14 +54,16 @@ export class Sequence {
         return `Sequence'${this.name}'`
     }
 
-    public addItem (item: SequenceItemType): this {
+    public addItem (item: SequenceItemType): this {      
+        item.setSequence(this)
+
         this.items.push(item)
 
         return this
     }
 
     public addItems (items: SequenceItemType[]): this {
-        this.items = this.items.concat(items)
+        items.forEach(item => this.addItem(item))
 
         return this
     }
@@ -72,6 +74,8 @@ export class Sequence {
 
         this.subSequences.push(subSequence)
         this.items.push(subSequence)
+
+        subSequence.parentSequence = this.linkId
 
         return subSequence
     }

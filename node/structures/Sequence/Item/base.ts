@@ -74,6 +74,12 @@ export class BaseSequenceItem {
         return filterEmptyLines(kismet)
     }
 
+    protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {
+        this.kismet[type] = value as T as never
+
+        return this
+    }
+
     public get linkId (): string {
         return `${this.kismet.class}'${this.kismet.Name}'`
     }
@@ -97,7 +103,7 @@ export class BaseSequenceItem {
     public setSequence (sequence: string | Sequence): this {
         if (typeof sequence !== 'string') {
             this.sequence = sequence
-            this.kismet.ParentSequence = sequence.name
+            this.kismet.ParentSequence = sequence.linkId
         } else {
             this.kismet.ParentSequence = `Sequence'${sequence}'`
         }
