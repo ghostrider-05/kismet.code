@@ -6,6 +6,10 @@ import {
     Sequence 
 } from "./Sequence/index.js";
 
+import {
+    Variables 
+} from '../items/index.js'
+
 import { CustomNodesManager } from './parser.js';
 
 import type { 
@@ -43,7 +47,7 @@ export class KismetFile {
         Action: null,
         Matinee: null,
         Condition: null,
-        Variable: null,
+        Variables,
         Event: null,
 
         Comment,
