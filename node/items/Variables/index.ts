@@ -3,7 +3,14 @@ import {
     RandomFloatVariable as RandomFloat
 } from './Float.js'
 
+import {
+    IntegerVariable as Integer,
+    RandomIntegerVariable as RandomInteger
+} from './Integer.js'
+
 export {
     Float,
-    RandomFloat
+    Integer,
+    RandomFloat,
+    RandomInteger
 }

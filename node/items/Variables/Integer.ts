@@ -1,20 +1,20 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js";
+import { SequenceVariable } from "../../structures/Sequence/Variable.js"
 
 import { 
     addVariable 
-} from "../../shared/kismet.js";
+} from "../../shared/kismet.js"
 
 import type { 
     KismetVariableOptions 
-} from "../../types/index.js";
+} from "../../types/index.js"
 
-export class FloatVariable extends SequenceVariable {
+export class IntegerVariable extends SequenceVariable {
     public value: number;
 
     constructor (options?: KismetVariableOptions) {
         super({
             ...options,
-            ObjectArchetype: `SeqVar_Float'Engine.Default__SeqVar_Float'`,
+            ObjectArchetype: `SeqVar_Int'Engine.Default__SeqVar_Int'`,
             inputs: {}
         })
 
@@ -22,30 +22,27 @@ export class FloatVariable extends SequenceVariable {
     }
 
     public setValue (value: number): this {
-        // Throw error if value is an integer?
-        if (Number.isInteger(value)) throw new Error('Value is an integer, not a float')
-
         this.value = value
 
         return this
     }
 
     public override toKismet (): string {
-        return addVariable(super.toKismet(), [['FloatValue', this.value.toString()]])
+        return addVariable(super.toKismet(), [['IntValue', this.value.toString()]])
     }
 }
 
-export class RandomFloatVariable extends FloatVariable {
+export class RandomIntegerVariable extends IntegerVariable {
     public minValue: number;
     public maxValue: number;
 
     constructor (options?: KismetVariableOptions) {
         super(options)
 
-        this.minValue = 0.0
-        this.maxValue = 1.0
+        this.minValue = 0
+        this.maxValue = 100
         
-        this.setKismetSetting('ObjectArchetype', `SeqVar_RandomFloat'Engine.Default__SeqVar_RandomFloat'`)
+        this.setKismetSetting('ObjectArchetype', `SeqVar_RandomInt'Engine.Default__SeqVar_RandomInt'`)
     }
 
     public setMinValue (min: number): this {
