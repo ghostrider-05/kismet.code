@@ -33,15 +33,15 @@ export class SequenceNode extends BaseSequenceItem {
         return this
     }
 
-    public setVariable (variableName: string, value: SequenceVariable | string): this {
+    public setVariable (variableName: string, value: SequenceVariable | string | number): this {
         const connection = this.getConnection('variable', variableName)
 
-        if (connection && typeof value !== 'string') {
+        if (connection && (typeof value !== 'string' && typeof value !== 'number')) {
             connection.addLink(value.linkId, this.connections.variable.indexOf(connection))
         } else {
             this.variables.push({
                 name: variableName,
-                value: String(value)
+                value: value.toString()
             })
         }
 
@@ -51,11 +51,9 @@ export class SequenceNode extends BaseSequenceItem {
     public override toKismet (): string {
         const kismet = super.toKismet()
 
-        const properties = this.variables.map(v => [v.name, v.value])
-            .concat(this.hasBreakpoint ? [
-                'bIsBreakpointSet', 
-                boolToKismet(true)
-            ] : []) as [string, string][]
+        if (this.hasBreakpoint) this.setVariable('bIsBreakpointSet', boolToKismet(true))
+
+        const properties: [string, string][] = this.variables.map(v => [v.name, v.value])
 
         return addVariable(kismet, properties)
     }

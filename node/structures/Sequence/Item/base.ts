@@ -13,7 +13,8 @@ import type {
     BaseKismetItemOptions,
     KismetConnectionType,
     KismetConnections,
-    BaseKismetItemDrawOptions
+    BaseKismetItemDrawOptions,
+    SequenceItemType
 } from '../../../types/index.js'
 
 const DEFAULT_PARENT_SEQUENCE = "Sequence'Main_Sequence'"
@@ -51,7 +52,7 @@ export class BaseSequenceItem {
             ObjectArchetype: options.ObjectArchetype,
             ParentSequence: DEFAULT_PARENT_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
-            Name: `"${options.ObjectArchetype.split("'")[0].concat('_0')}"`,
+            nameId: 0,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
                 height: options.Draw?.height ?? null,
@@ -74,6 +75,10 @@ export class BaseSequenceItem {
         return filterEmptyLines(kismet)
     }
 
+    private getKismetName (): string {
+        return this.kismet.ObjectArchetype.split("'")[0].concat(`_${this.kismet.nameId}`)
+    }
+
     protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {
         this.kismet[type] = value as T as never
 
@@ -81,7 +86,11 @@ export class BaseSequenceItem {
     }
 
     public get linkId (): string {
-        return `${this.kismet.class}'${this.kismet.Name}'`
+        return `${this.kismet.class}'${this.getKismetName()}'`
+    }
+
+    public equals (item: SequenceItemType): boolean {
+        return item.kismet?.ObjectArchetype === this.kismet.ObjectArchetype
     }
 
     public getConnection (type: KismetConnectionType, connectionName: string): KismetConnection | null {
@@ -117,11 +126,12 @@ export class BaseSequenceItem {
             DrawConfig, 
             ObjectArchetype,
             ObjInstanceVersion, 
-            ParentSequence, 
-            Name,
+            ParentSequence,
             x,
             y
         } = this.kismet
+
+        const Name = `"${this.getKismetName()}"`
 
         const variables = [
             ['ObjInstanceVersion', ObjInstanceVersion],

@@ -28,13 +28,7 @@ export class Comment extends BaseSequenceItem {
 
     constructor (comment?: string) {
         super({
-            ObjInstanceVersion: 1,
             ObjectArchetype: `SequenceFrame'Engine.Default__SequenceFrame'`,
-            ParentSequence: '',
-            Draw: {
-                width: 0,
-                inputOffset: 0
-            },
             inputs: {}
         })
 

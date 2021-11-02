@@ -39,7 +39,7 @@ export interface BaseKismetItemDrawOptions {
     ObjectArchetype: string; 
     ParentSequence: string; 
     ObjInstanceVersion: number;
-    Name: string;
+    nameId: number;
     DrawConfig: {
         width: number
         maxWidth?: number | null

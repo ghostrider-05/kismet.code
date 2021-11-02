@@ -7,10 +7,10 @@ import type {
     KismetVariableOptions 
 } from '../../types/index.js'
 
-export class SequenceVariable<T extends {} = {}> extends BaseSequenceItem {
+export class SequenceVariable extends BaseSequenceItem {
     public name?: string | null;
 
-    constructor (options: KismetVariableOptions<T> & BaseKismetItemOptions) {
+    constructor (options: KismetVariableOptions & BaseKismetItemOptions) {
         super(options)
 
         this.name = options?.name ?? null

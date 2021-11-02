@@ -2,8 +2,7 @@ import { SequenceNode } from './Item/index.js'
 import { SequenceAction } from "./Action.js";
 
 import { 
-    addVariable, 
-    boolToKismet ,
+    boolToKismet,
     t
 } from '../../shared/index.js';
 
@@ -80,7 +79,6 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
     }
 
     public override toKismet(): string {
-        const kismet = super.toKismet()
 
         const variables: [string, string | number][] = [
             ['MaxTriggerCount', this.trigger.maxCount],
@@ -90,6 +88,8 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
             ['bClientSideOnly', boolToKismet(this.clientSideOnly)]
         ]
 
-        return addVariable(kismet, variables)
+        variables.forEach(v => super.setVariable(v[0], v[1]))
+
+        return super.toKismet()
     }
 }
