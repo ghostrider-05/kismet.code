@@ -8,9 +8,12 @@ import {
     RandomIntegerVariable as RandomInteger
 } from './Integer.js'
 
+import { StringVariable as String } from './String.js'
+
 export {
     Float,
     Integer,
     RandomFloat,
-    RandomInteger
+    RandomInteger,
+    String
 }
