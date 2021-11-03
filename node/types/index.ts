@@ -69,6 +69,12 @@ export interface BaseKismetActionOptions {
     next?: SequenceAction
 }
 
+export interface KismetVectorComponents {
+    x: number,
+    y: number,
+    z: number
+}
+
 export type SequenceItemType = SequenceAction | SequenceVariable | SequenceEvent
 
 export type SequenceItemTypeName = 'actions' | 'events'

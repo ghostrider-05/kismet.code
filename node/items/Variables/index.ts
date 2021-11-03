@@ -12,11 +12,14 @@ import {
 
 import { StringVariable as String } from './String.js'
 
+import { VectorVariable as Vector } from './Vector.js'
+
 export {
     Bool,
     Float,
     Integer,
     RandomFloat,
     RandomInteger,
-    String
+    String,
+    Vector
 }
