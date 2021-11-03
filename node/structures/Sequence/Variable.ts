@@ -1,6 +1,6 @@
 import { BaseSequenceItem } from './Item/base.js'
 
-import { addVariable } from '../../shared/kismet.js';
+import { addVariable } from '../../shared/index.js';
 
 import type { 
     BaseKismetItemOptions, 

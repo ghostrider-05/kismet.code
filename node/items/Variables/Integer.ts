@@ -2,7 +2,7 @@ import { SequenceVariable } from "../../structures/Sequence/Variable.js"
 
 import { 
     addVariable 
-} from "../../shared/kismet.js"
+} from "../../shared/index.js"
 
 import type { 
     KismetVariableOptions 
