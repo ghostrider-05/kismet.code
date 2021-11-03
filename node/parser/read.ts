@@ -1,6 +1,5 @@
 import {
-    KISMET_NODE_TYPES,
-    KISMET_PROPERTY_NAMES,
+    Constants,
     stringFirstCharUppercase,
 } from '../shared/index.js'
 
@@ -10,6 +9,8 @@ import type {
     RawUnrealJsonVariable,
     UnrealJsonReadFile
 } from '../types/index.js'
+
+const { KISMET_NODE_TYPES, KISMET_PROPERTY_NAMES } = Constants
 
 const propertiesUtil = class {
     properties: RawUnrealJsonDefaultVariables[]

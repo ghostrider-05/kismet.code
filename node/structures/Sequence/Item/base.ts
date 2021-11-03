@@ -2,11 +2,12 @@ import { Sequence } from '../base.js';
 import { KismetConnection } from './link.js';
 
 import {
-    KISMET_NODE_LINES,
+    Constants,
     boolToKismet,
     filterEmptyLines,
     mapObjectKeys,
-    parseVar
+    parseVar,
+    quote
 } from '../../../shared/index.js'
 
 import type { 
@@ -17,7 +18,10 @@ import type {
     SequenceItemType
 } from '../../../types/index.js'
 
-const DEFAULT_PARENT_SEQUENCE = "Sequence'Main_Sequence'"
+const { 
+    KISMET_NODE_LINES,
+    MAIN_SEQUENCE
+} = Constants
 
 export class BaseSequenceItem {
     public comment: string | null;
@@ -50,7 +54,7 @@ export class BaseSequenceItem {
             y: 0,
             class: options.ObjectArchetype.split("'")[0],
             ObjectArchetype: options.ObjectArchetype,
-            ParentSequence: DEFAULT_PARENT_SEQUENCE,
+            ParentSequence: MAIN_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
             nameId: 0,
             DrawConfig: {
@@ -60,14 +64,14 @@ export class BaseSequenceItem {
             }
         }
 
-        this.sequence = DEFAULT_PARENT_SEQUENCE
+        this.sequence = MAIN_SEQUENCE
 
         // if (!this.kismet.DrawConfig.height && !this.kismet.DrawConfig.maxWidth) throw new Error()
     }
 
     private commentToKismet (): string {
         const kismet = [
-            typeof this.comment === 'string' ? parseVar('ObjComment', `"${this.comment}"`) : '',
+            typeof this.comment === 'string' ? parseVar('ObjComment', quote(this.comment)) : '',
             this.supressAutoComment === false ? parseVar('bSuppressAutoComment', boolToKismet(this.supressAutoComment)) : '',
             this.outputCommentToScreen ? parseVar('bOutputObjCommentToScreen', boolToKismet(this.outputCommentToScreen)) : ''
         ]

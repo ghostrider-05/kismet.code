@@ -1,7 +1,7 @@
 import { 
     boolToKismet, 
+    Constants,
     filterEmptyLines, 
-    KISMET_NODE_LINES,
     parseVar 
 } from '../../shared/index.js';
 
@@ -10,6 +10,11 @@ import type {
     KismetVariableInternalTypeList, 
     SequenceItemType 
 } from '../../types/index.js'
+
+const {
+    KISMET_NODE_LINES,
+    MAIN_SEQUENCE
+} = Constants
 
 export class Sequence {
     public name: string;
@@ -26,7 +31,7 @@ export class Sequence {
         this.items = []
 
         this.subSequences = []
-        this.parentSequence = `Sequence'Main_Sequence'`
+        this.parentSequence = MAIN_SEQUENCE
 
         this.enabled = true
 

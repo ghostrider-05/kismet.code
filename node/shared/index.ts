@@ -1,4 +1,5 @@
 export * from './kismet.js'
+export * as Constants from './constants.js'
 
 export function filterEmptyLines (input: string | string[]): string {
     const output = (Array.isArray(input) ? input : input.split('\n'))
@@ -28,6 +29,10 @@ export function mapObjectKeys<T, C> (object: Record<string, T[]>, fn: (obj: T, i
     return Object.keys(object).map(key => {
         return (object[key] as T[]).map(fn)
     })
+}
+
+export function quote (value: string): string {
+    return `"${value}"` 
 }
 
 export function stringFirstCharUppercase (input: string): string {
