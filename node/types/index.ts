@@ -75,6 +75,10 @@ export interface KismetVectorComponents {
     z: number
 }
 
+export type UDKSceneObject = string
+
+export type UDKContentBrowserObject = 'None' | string
+
 export type SequenceItemType = SequenceAction | SequenceVariable | SequenceEvent
 
 export type SequenceItemTypeName = 'actions' | 'events'

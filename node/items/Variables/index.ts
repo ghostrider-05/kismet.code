@@ -10,6 +10,12 @@ import {
     RandomIntegerVariable as RandomInteger
 } from './Integer.js'
 
+import {
+    ObjectVariable as Object,
+    ObjectListVariable as ObjectList,
+    ObjectVolumeVariable as ObjectVolume
+} from './Object.js'
+
 import { StringVariable as String } from './String.js'
 
 import { VectorVariable as Vector } from './Vector.js'
@@ -18,6 +24,9 @@ export {
     Bool,
     Float,
     Integer,
+    Object,
+    ObjectList,
+    ObjectVolume,
     RandomFloat,
     RandomInteger,
     String,
