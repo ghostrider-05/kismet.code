@@ -16,6 +16,8 @@ import {
     ObjectVolumeVariable as ObjectVolume
 } from './Object.js'
 
+import { PlayerVariable as Player } from './Player.js'
+
 import { StringVariable as String } from './String.js'
 
 import { VectorVariable as Vector } from './Vector.js'
@@ -27,6 +29,7 @@ export {
     Object,
     ObjectList,
     ObjectVolume,
+    Player,
     RandomFloat,
     RandomInteger,
     String,
