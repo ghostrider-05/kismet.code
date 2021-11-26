@@ -15,3 +15,19 @@ export class ${node.name} extends SequenceAction {
 ${node.staticProperties ?? ''}
 }
                 `
+
+export const events = (node: UnrealJsonReadFile): string => `
+import { SequenceEvent } from "../../structures/Sequence/index.js";
+import { KismetEventOptions } from "../../types/index.js";
+
+export class ${node.name} extends SequenceEvent {
+    constructor (options?: KismetEventOptions) {
+        super({
+            ObjInstanceVersion: 3,
+            ObjectArchetype: ${node.archetype},
+            inputs: ${JSON.stringify(node.links, null, 4)},
+            ...options
+        })
+    }
+}
+`

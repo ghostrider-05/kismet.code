@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 
 import { readNodeFile } from './read.js'
-import { actions } from './templates.js'
+import { actions, events } from './templates.js'
 
 import { 
     filterEmptyLines, 
@@ -90,6 +90,8 @@ export async function findClasses (groupItems = false): Promise<void> {
             switch (type) {
                 case 'actions':
                     return writeFile(resolve('.', output), actions(node))
+                case 'events':
+                    return writeFile(resolve('.', output), events(node))
                 default:
                     console.log('Invalid type for class:' + node.Class)
                     continue;

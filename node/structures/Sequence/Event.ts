@@ -11,7 +11,7 @@ import type {
     KismetEventOptions 
 } from '../../types/index.js'
 
-export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends SequenceNode {
+export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     public trigger: { maxCount: number; delay: number; };
     public playerOnly: boolean;
     public clientSideOnly: boolean;
@@ -32,7 +32,7 @@ export class SequenceEvent<T extends {} = {}, E extends string = 'Out'> extends 
 
     }
 
-    public on<T = SequenceAction | unknown> ({ name, item }: { name: E, item: T }): this {
+    public on<T extends SequenceAction> ({ name, item }: { name: string, item: T }): this {
         const connection = this.getConnection('output', name)
 
         if (connection) {
