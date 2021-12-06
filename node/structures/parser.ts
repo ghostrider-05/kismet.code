@@ -5,23 +5,29 @@ import { findClasses } from "../parser/index.js"
 
 export class CustomNodesManager {
     public groupExportItems: boolean;
-    // TODO: expose properties and methods
-    private importPath: string;
-    private relativeFilePath: string;
+
+    public importPath: string | null = null;
+    public exportPath: string;
 
     constructor (relativeFilePath: string) {
-        this.importPath = ''
-        this.relativeFilePath = relativeFilePath
+        this.exportPath = relativeFilePath
 
         this.groupExportItems = false
     }
 
     public async createCustomNodeFiles (): Promise<void> {
-        return await findClasses(this.groupExportItems)
+        if (!this.importPath) {
+            this.importPath = ''
+        }
+
+        return await findClasses({
+            importPath: this.importPath,
+            exportPath: this.exportPath
+        }, this.groupExportItems)
     }
 
     public hasCustomNodeFiles (): boolean {
-        return existsSync(resolve('.', this.relativeFilePath))
+        return existsSync(resolve('.', this.exportPath))
     }
 
     public setGroupExportItems (groupExportItems: boolean): this {
@@ -30,14 +36,24 @@ export class CustomNodesManager {
         return this
     }
 
-    private setImportPath (path: string): this {
+    public setImportPath (path: string): this {
         this.importPath = path
 
         return this
     }
 
-    private setRelativeOutputPath (relativePath: string): this {
-        this.relativeFilePath = relativePath
+    public setExportPath (path: string): this {
+        if (!existsSync(path)) {
+            if (existsSync(resolve('.', path))) {
+                this.exportPath = resolve('.', path)
+
+                return this
+            } else {
+                console.error('Could not find path:' + path)
+            }
+        }
+
+        this.exportPath = path
 
         return this
     }

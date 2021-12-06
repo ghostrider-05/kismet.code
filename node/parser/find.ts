@@ -10,15 +10,11 @@ import {
     t 
 } from '../shared/index.js'
 
-
 import type { 
     RawUnrealJsonFile
 } from '../types/index.js'
 
 type ClassInfo = { name: string, type: string, category: string }
-
-const importPath = 'IMPORT_PATH';
-const outputPath = './node/test/'
 
 const collectedClasses: Record<string, ClassInfo[]> = {
     actions: [],
@@ -54,7 +50,19 @@ function getExportFile (classes: ClassInfo[], groupExportItems: boolean) {
     return content
 }
 
-export async function findClasses (groupItems = false): Promise<void> {
+export async function findClasses (paths: { importPath: string, exportPath: string }, groupItems = false): Promise<void> {
+    const { importPath, exportPath } = paths
+
+    if (!importPath || !fs.existsSync(importPath)) {
+        console.error(`Could not find path: ${importPath}`)
+        return;
+    }
+
+    if (!exportPath || !fs.existsSync(exportPath)) {
+        console.error(`Could not find path: ${exportPath}`)
+        return;
+    }
+
     const Packages = fs.readdirSync(importPath);
 
     for (const Package of Packages) {
@@ -63,7 +71,7 @@ export async function findClasses (groupItems = false): Promise<void> {
             .join('\\')
 
         if (!fs.existsSync(path)) {
-            console.log(`Could not find path: ${path}`)
+            console.error(`Could not find path: ${path}`)
             continue;
         }
 
@@ -79,7 +87,7 @@ export async function findClasses (groupItems = false): Promise<void> {
 
             const { name, category, type } = node
                 
-            const output = outputPath.concat(`${type}/Classes/${name}.ts`)
+            const output = exportPath.concat(`${type}/Classes/${name}.ts`)
 
             collectedClasses[type]?.push({
                 name,
@@ -104,7 +112,7 @@ export async function findClasses (groupItems = false): Promise<void> {
 
     Object.keys(collectedClasses).forEach(key => {
         const content = getExportFile(collectedClasses[key], groupItems)
-        const path = resolve('.', outputPath.concat(`${key}/index.ts`))
+        const path = resolve('.', exportPath.concat(`${key}/index.ts`))
 
         exportedPaths.push(`./${key}/index.ts`)
 
@@ -113,6 +121,6 @@ export async function findClasses (groupItems = false): Promise<void> {
 
     if (exportedPaths.length > 0) {
         const exports = exportedPaths.map(path => `export * from '${path}'`).join('\n')
-        writeFile(resolve('.', outputPath.concat(`index.ts`)), exports)
+        writeFile(resolve('.', exportPath.concat(`index.ts`)), exports)
     }
 }
