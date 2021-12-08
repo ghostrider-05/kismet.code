@@ -4,6 +4,7 @@ import {
     KismetColor,
     Sequence,
     SequenceAction,
+    SequenceCondition,
     SequenceEvent,
     SequenceVariable,
     KismetFile
@@ -14,6 +15,7 @@ const Structures = {
     Item,
     Sequence,
     SequenceAction,
+    SequenceCondition,
     SequenceEvent,
     SequenceVariable
 }

@@ -1,7 +1,7 @@
 export * from './base.js'
 export * from './Action.js'
 export * from './Comment.js'
-// export * from './Condition.js'
+export * from './Condition.js'
 export * from './Event.js'
 export * from './Variable.js'
 export * from './Item/index.js'
