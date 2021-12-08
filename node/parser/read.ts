@@ -10,7 +10,10 @@ import type {
     UnrealJsonReadFile
 } from '../types/index.js'
 
-const { KISMET_NODE_TYPES, KISMET_PROPERTY_NAMES } = Constants
+const { 
+    KISMET_CLASSES_PREFIXES,
+    KISMET_PROPERTY_NAMES 
+} = Constants
 
 const propertiesUtil = class {
     properties: RawUnrealJsonDefaultVariables[]
@@ -50,12 +53,12 @@ export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJ
     const staticProperties = getStaticProperties(variables)
 
     return {
-        name: name.replaceAll('"', ''),
+        name: name?.replaceAll('"', '').split(' ').join('').replace('?', '') ?? Class,
         Class,
         variables,
         category,
         defaultproperties,
-        type: KISMET_NODE_TYPES.get(Class as string) ?? '',
+        type: KISMET_CLASSES_PREFIXES.find(n => Class.startsWith(n.prefix))?.type ?? '',
         archetype: `"${Class}'${Package}.Default__${Class}'"`,
         staticProperties,
         links: {

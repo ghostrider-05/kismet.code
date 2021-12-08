@@ -10,6 +10,21 @@ const KISMET_NODE_TYPES = new Map<string, string>()
     .set('SequenceAction', 'actions')
     .set('SequenceCondition', 'conditions')
 
+const KISMET_CLASSES_PREFIXES = [
+    {
+        prefix: 'SeqAct_',
+        type: 'actions'
+    },
+    {
+        prefix: 'SeqCond_',
+        type: 'conditions'
+    },
+    {
+        prefix: 'SeqEvent_',
+        type: 'events'
+    }
+]
+
 const KISMET_PROPERTY_NAMES = {
     NAME: 'ObjName',
     CLASS: 'ObjCategory',
@@ -24,6 +39,7 @@ const KISMET_NODE_LINES = {
 }
 
 export {
+    KISMET_CLASSES_PREFIXES,
     KISMET_CONNECTION_SPACE,
     KISMET_LINE_INDENT,
     KISMET_NODE_LINES,

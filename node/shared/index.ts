@@ -35,7 +35,8 @@ export function quote (value: string): string {
     return `"${value}"` 
 }
 
-export function stringFirstCharUppercase (input: string): string {
+export function stringFirstCharUppercase (input: string): string | null {
+    if (!input) return null
     return input[0].toUpperCase() + input.slice(1)
 }
 
