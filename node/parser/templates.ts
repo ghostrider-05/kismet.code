@@ -1,8 +1,8 @@
 import type { UnrealJsonReadFile } from "../types";
 
 export const actions = (node: UnrealJsonReadFile): string => `
-import { SequenceAction } from "../../structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../types/index.js";
+import { SequenceAction } from "../../../structures/Sequence/index.js";
+import type { BaseKismetActionRequiredOptions } from "../../../types/index.js";
 
 export class ${node.name} extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
@@ -13,12 +13,26 @@ export class ${node.name} extends SequenceAction {
         })
     }
 ${node.staticProperties ?? ''}
-}
-                `
+}`
+
+export const conditions = (node: UnrealJsonReadFile): string => `
+import { SequenceCondition } from "../../../structures/Sequence/index.js";
+import type { BaseKismetActionRequiredOptions } from "../../../types/index.js";
+                
+export class ${node.name} extends SequenceCondition {
+    constructor (options?: BaseKismetActionRequiredOptions) {
+        super({
+            ...options,
+                ObjectArchetype: ${node.archetype},
+                inputs: ${JSON.stringify(node.links, null, 4)}
+            })
+        }
+        ${node.staticProperties ?? ''}
+}`
 
 export const events = (node: UnrealJsonReadFile): string => `
-import { SequenceEvent } from "../../structures/Sequence/index.js";
-import { KismetEventOptions } from "../../types/index.js";
+import { SequenceEvent } from "../../../structures/Sequence/index.js";
+import { KismetEventOptions } from "../../../types/index.js";
 
 export class ${node.name} extends SequenceEvent {
     constructor (options?: KismetEventOptions) {
