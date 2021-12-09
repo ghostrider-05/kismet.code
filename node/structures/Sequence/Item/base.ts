@@ -1,5 +1,5 @@
 import { Sequence } from '../base.js';
-import { KismetConnection } from './link.js';
+import { BaseKismetConnection, KismetConnection } from './link.js';
 
 import {
     Constants,
@@ -28,7 +28,7 @@ export class BaseSequenceItem {
     public supressAutoComment: boolean | null;
     public outputCommentToScreen: boolean | null;
 
-    public connections: KismetConnections;
+    public connections: KismetConnections | null = null;
     public sequence: string | Sequence;
 
     private kismet: BaseKismetItemDrawOptions;
@@ -38,16 +38,37 @@ export class BaseSequenceItem {
         this.supressAutoComment = null
         this.outputCommentToScreen = null
 
-        this.connections = ["input", "output", "variable"].map(key => {
-            const { inputs } = options;
+        try {
+            this.connections = ["input", "output", "variable"].map(key => {
+                const { inputs } = options;
+                const links = (inputs as Record<string, string[]>)[key]
 
-            return {
-                key,
-                connections: (inputs as Record<string, string[]>)[key]?.map(keys => {
-                    return new KismetConnection(keys, key as KismetConnectionType)
-                }) ?? []
-            }
-        }).reduce((x, y) => ({ ...x, [y.key]: y.connections }), {}) as KismetConnections
+                if (!links) return {
+                    key,
+                    connections: []
+                }
+
+                if (links.length === 0 && ['input', 'output'].includes(key)) {
+                    return {
+                        key,
+                        connections: [
+                            new BaseKismetConnection({
+                                input: key === 'input' ? 'In' : 'Out', 
+                                type: key as KismetConnectionType,
+                            })
+                        ]
+                    }
+                } else return {
+                    key,
+                    connections: links.map(keys => {
+                        return new KismetConnection(keys, key as KismetConnectionType)
+                    }) 
+                }
+            }).reduce((x, y) => ({ ...x, [y.key]: y.connections }), {}) as KismetConnections
+
+        } catch (err) {
+            console.log(err, this)
+        }
 
         this.kismet = {
             x: 0,
@@ -97,8 +118,8 @@ export class BaseSequenceItem {
         return item.kismet?.ObjectArchetype === this.kismet.ObjectArchetype
     }
 
-    public getConnection (type: KismetConnectionType, connectionName: string): KismetConnection | null {
-        return this.connections[type]?.find(c => c.name === connectionName) ?? null
+    public getConnection (type: KismetConnectionType, connectionName: string): (BaseKismetConnection | KismetConnection) | null {
+        return this.connections?.[type]?.find(c => c.name === connectionName) ?? null
     }
 
     public setComment ({ comment, supressAutoComment, outputCommentToScreen }: {
@@ -149,7 +170,7 @@ export class BaseSequenceItem {
             ['ObjectArchetype', ObjectArchetype]
         ].map(prop => parseVar(prop[0] as string, prop[1]))
 
-        const properties = mapObjectKeys(this.connections, (c, i) => c.toKismet(i))
+        const properties = mapObjectKeys(this.connections ?? {}, (c, i) => c.toKismet(i))
             .map(c => c.join('\n'))
             .concat(this.commentToKismet(), variables)
 

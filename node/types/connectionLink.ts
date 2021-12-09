@@ -1,21 +1,21 @@
 import { 
+    BaseKismetConnection,
     KismetConnection
 } from '../structures/index.js'
 
-type KismetVariableLinkConnection = string
+export type KismetVariableLinkConnection = string
 
 export type KismetConnectionType = 'input' | 'variable' | 'output'
 
 // Cannot convert to interface
 export type KismetConnections = {
-    input: KismetConnection[],
-    output: KismetConnection[],
-    variable: KismetConnection[]
+    input: (BaseKismetConnection | KismetConnection)[],
+    output: (BaseKismetConnection | KismetConnection)[],
+    variable: (BaseKismetConnection | KismetConnection)[]
 }
 
 export interface BaseKismetVariableLink {
     name: string
-    OverrideDelta: number;
     bClampedMin: boolean;
     bClampedMax: boolean;
     bMoving: boolean;
@@ -46,7 +46,6 @@ export interface KismetVariableLink extends BaseKismetVariableLink {
     bWriteable: boolean;
     bSequenceNeverReadsOnlyWritesToThisVar: boolean;
     bModifiesLinkedObject: boolean;
-    links: KismetVariableLinkConnection[];
 }
 
 export interface KismetInputLink extends KismetConnectionLink {
@@ -56,5 +55,4 @@ export interface KismetInputLink extends KismetConnectionLink {
 export interface KismetOutputLink extends KismetConnectionLink {
     bIsActivated: boolean;
     PIEActivationTime: number;
-    links: KismetVariableLinkConnection[];
 }

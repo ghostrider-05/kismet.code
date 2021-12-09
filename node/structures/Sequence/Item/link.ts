@@ -12,18 +12,89 @@ import type {
     KismetOutputLink
 } from '../../../types/index.js'
 
-export class KismetConnection implements BaseKismetVariableLink {
-    private type: KismetConnectionType;
+interface BaseKismetConnectionOptions {
+    Draw: number,
+    OverrideDelta: number
+}
 
-    name: string;
-    OverrideDelta: number;
-    bClampedMin: boolean;
-    bClampedMax: boolean;
-    bMoving: boolean;
-    bHidden: boolean;
+export class BaseKismetConnection {
+    protected readonly type: KismetConnectionType;
+    // TODO: overwrite values when formatting
+    protected kismet: BaseKismetConnectionOptions;
+    
+    public name: string;
+    public connectionIndex = 0;
+    
+    public links: string[] | null = null;
 
-    constructor (input: string, type: KismetConnectionType) {
+    constructor (options: { 
+        input: 'In' | 'Out', 
+        type: KismetConnectionType, 
+        index?: number,
+        kismetOptions?: BaseKismetConnectionOptions 
+    }) {
+        const { input, type, kismetOptions, index } = options
+
+        this.name = input
+        this.connectionIndex = index ?? 0
+
         this.type = type
+        this.kismet = kismetOptions ?? {
+            Draw: 0,
+            OverrideDelta: 0
+        }
+    }
+
+    private get typeName () : string {
+        return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
+    }
+
+    private get formatted (): string {
+        const base = [
+            `OverrideDelta=${this.kismet.OverrideDelta}`
+        ]
+
+        const prefix = this.type === 'variable' ? 'LinkedVariables' : 'Links'
+        const Draw = `${this.type === 'variable' ? 'DrawX' : 'DrawY'}=${this.kismet.Draw}`
+        const linksLength = this.links?.length ?? 0
+
+        return base.concat([Draw].concat(linksLength > 0 ? [
+            `${prefix}=(${this.links?.join(',')})`
+        ] : [])).join(',')
+    }
+
+    public addLink (linkId: string, index?: number): this {
+        if (this.links == undefined) {
+            this.links = []
+        }
+
+        const linkIndex = typeof index === 'number' && (index ?? 0) > 0 ? `,InputLinkIdx=${index}` : ''
+        const link = this.type !== 'variable' ? `(LinkedOp=${linkId}${linkIndex})` : linkId
+            
+        this.links.push(link)
+
+        return this
+    }
+
+    public toKismet (index?: number): string {
+        return parseVar(`${this.typeName}(${index ?? this.connectionIndex})`, `(${this.formatted})`)
+    }
+}
+
+// TODO: fix types
+export class KismetConnection extends BaseKismetConnection implements BaseKismetVariableLink {
+    public OverrideDelta: number;
+    public bClampedMin: boolean;
+    public bClampedMax: boolean;
+    public bMoving: boolean;
+    public bHidden: boolean;
+
+    constructor (input: string, type: KismetConnectionType, index?: number) {
+        super({
+            input: "In",
+            type,
+            index
+        })
 
         const properties = this.getPropsFromInput(input)
 
@@ -44,10 +115,6 @@ export class KismetConnection implements BaseKismetVariableLink {
 
         this.bMoving = t(bMoving) ?? false;
         this.bHidden = t(bHidden) ?? false;
-
-        if (this.isOutputLink() || this.isVariableLink()) {
-            this.links = [];
-        }
 
         if (this.isVariableLink()) {
             const {
@@ -109,30 +176,6 @@ export class KismetConnection implements BaseKismetVariableLink {
         }
     }
 
-    private formatConnection (): string {
-        const base = [
-            `OverrideDelta=${this.OverrideDelta}`
-        ]
-        
-        if (this.isVariableLink()) {
-            return base.concat([
-                `DrawX=${this.DrawX}`,
-            ]).join(',')
-
-        } else if (this.isLinkType()) {
-            return base.concat([
-                `DrawY=${this.DrawY}`
-            ].concat(this.isOutputLink() && this.links.length > 0 ? [
-                `Links=(${this.links.join(',')})`
-            ] : [])).join(',')
-            
-        } else return '' // Types
-    }
-
-    private getCollectionName () : string {
-        return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
-    }
-
     private getPropsFromInput (input: string): Record<string, string | number | boolean> {
         return input.slice(1, -1).split(',').map(prop => {
             return {
@@ -158,22 +201,13 @@ export class KismetConnection implements BaseKismetVariableLink {
         return this.type === 'output'
     }
 
-    public addLink (linkId: string, index?: number): this {
-        if (this.isOutputLink() || this.isVariableLink()) {
-            const linkIndex = typeof index === 'number' && (index ?? 0) > 0 ? `,InputLinkIdx=${index}` : ''
-            this.links.push(`(LinkedOp=${linkId}${linkIndex})`)
-        }
-
-        return this
-    }
-
     public setHidden (hidden: boolean): this {
         this.bHidden = hidden
 
         return this
     }
 
-    public toKismet (index: number): string {
-        return parseVar(`${this.getCollectionName()}(${index})`, `(${this.formatConnection()})`)
+    public override toKismet(index?: number): string {
+        return super.toKismet(index)
     }
 }

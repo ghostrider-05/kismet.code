@@ -37,7 +37,7 @@ export class SequenceNode extends BaseSequenceItem {
         const connection = this.getConnection('variable', variableName)
 
         if (connection && (typeof value !== 'string' && typeof value !== 'number')) {
-            connection.addLink(value.linkId, this.connections.variable.indexOf(connection))
+            connection.addLink(value.linkId, this.connections?.variable.indexOf(connection))
         } else {
             this.variables.push({
                 name: variableName,

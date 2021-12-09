@@ -16,7 +16,14 @@ export class SequenceAction extends SequenceNode {
         const itemConnection = item.getConnection('input', inputName);
         
         if (connection && itemConnection) {
-            connection.addLink(item.linkId, item.connections.input.indexOf(itemConnection))
+            this.connections?.output.find(n => n.name === outputName)?.addLink(
+                item.linkId, 
+                item.connections?.input.indexOf(itemConnection)
+            )
+        } else if (!connection) {
+            console.warn(`Could not find output connection for '${outputName}' on ${this['kismet']['class']}`)
+        } else {
+            console.warn(`Could not find input connection for '${inputName}' on ${item['kismet']['class']}`)
         }
 
         return this

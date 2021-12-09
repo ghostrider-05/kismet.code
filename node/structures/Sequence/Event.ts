@@ -36,7 +36,9 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         const connection = this.getConnection('output', name)
 
         if (connection) {
-            connection.addLink(t<SequenceAction>(item).linkId, this.connections.output.indexOf(connection))
+            connection.addLink(t<SequenceAction>(item).linkId, this.connections?.output.indexOf(connection))
+        } else {
+            console.warn(`Could not find output connection for '${name}' on ${this['kismet']['class']}`)
         }
 
         return this
