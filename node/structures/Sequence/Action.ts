@@ -8,7 +8,7 @@ import type {
 export class SequenceAction extends SequenceNode {
 
     constructor (options: KismetActionRequiredOptions & BaseKismetItemOptions) {
-        super(options)
+        super({ ...options, type: 'actions' })
     } 
 
     public addConnection (item: SequenceAction, outputName: string, inputName: string): this {

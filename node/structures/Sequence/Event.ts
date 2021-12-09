@@ -18,7 +18,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     public enabled: boolean;
 
     constructor (options: KismetEventOptions<T> & BaseKismetItemOptions) {
-        super(options)
+        super({ ...options, type: 'events' })
 
         this.trigger = {
             maxCount: options?.maxTriggerCount ?? 0,

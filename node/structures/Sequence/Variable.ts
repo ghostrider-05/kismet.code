@@ -11,7 +11,7 @@ export class SequenceVariable extends BaseSequenceItem {
     public name?: string | null;
 
     constructor (options: KismetVariableOptions & BaseKismetItemOptions) {
-        super(options)
+        super({ ...options, type: 'variables' })
 
         this.name = options?.name ?? null
     }

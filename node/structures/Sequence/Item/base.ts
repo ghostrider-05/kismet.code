@@ -15,13 +15,17 @@ import type {
     KismetConnectionType,
     KismetConnections,
     BaseKismetItemDrawOptions,
-    SequenceItemType
+    SequenceItemType,
+    SequenceItemTypeName
 } from '../../../types/index.js'
 
 const { 
     KISMET_NODE_LINES,
     MAIN_SEQUENCE
 } = Constants
+
+// TODO: merge with parent type?
+export type BaseSequenceItemTypeName = SequenceItemTypeName | 'conditions' | 'variables' | null
 
 export class BaseSequenceItem {
     public comment: string | null;
@@ -30,13 +34,16 @@ export class BaseSequenceItem {
 
     public connections: KismetConnections | null = null;
     public sequence: string | Sequence;
+    public readonly type: BaseSequenceItemTypeName
 
     private kismet: BaseKismetItemDrawOptions;
 
-    constructor (options: BaseKismetItemOptions) {
+    constructor (options: BaseKismetItemOptions & { type?: BaseSequenceItemTypeName }) {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
+
+        this.type = options.type ?? null
 
         try {
             this.connections = ["input", "output", "variable"].map(key => {

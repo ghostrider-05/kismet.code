@@ -1,4 +1,4 @@
-import { BaseSequenceItem } from './base.js'
+import { BaseSequenceItem, BaseSequenceItemTypeName } from './base.js'
 import { SequenceVariable } from "../Variable";
 
 import {
@@ -14,7 +14,7 @@ export class SequenceNode extends BaseSequenceItem {
     public hasBreakpoint: boolean;
     private variables: { name: string, value: string }[]
 
-    constructor (options: BaseKismetItemOptions) {
+    constructor (options: BaseKismetItemOptions & { type?: BaseSequenceItemTypeName}) {
         super(options)
 
         this.hasBreakpoint = false
