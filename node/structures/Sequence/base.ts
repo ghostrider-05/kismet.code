@@ -90,6 +90,10 @@ export class Sequence {
         return subSequence
     }
 
+    public filterByClassName (className: string): (SequenceItemType | Sequence)[] {
+        return this.items.filter(n => n.linkId.split('\'')[0] === className)
+    }
+
     public setDisabled (): this {
         this.enabled = false
 
