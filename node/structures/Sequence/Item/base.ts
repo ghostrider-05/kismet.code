@@ -21,7 +21,8 @@ import type {
 
 const { 
     KISMET_NODE_LINES,
-    MAIN_SEQUENCE
+    MAIN_SEQUENCE,
+    ObjInstanceVersions
 } = Constants
 
 // TODO: merge with parent type?
@@ -58,7 +59,7 @@ export class BaseSequenceItem {
                 if (links.length === 0 && ['input', 'output'].includes(key)) {
                     return {
                         key,
-                        connections: [
+                        connections: this.type === 'events' && key === 'input' ? [] : [
                             new BaseKismetConnection({
                                 input: key === 'input' ? 'In' : 'Out', 
                                 type: key as KismetConnectionType,
@@ -114,6 +115,10 @@ export class BaseSequenceItem {
     protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {
         this.kismet[type] = value as T as never
 
+        if (type === 'ObjectArchetype') {
+            this.kismet.class = (value as unknown as string).split('\'')[0]
+        }
+
         return this
     }
 
@@ -166,7 +171,7 @@ export class BaseSequenceItem {
         const Name = `"${this.getKismetName()}"`
 
         const variables = [
-            ['ObjInstanceVersion', ObjInstanceVersion],
+            ['ObjInstanceVersion', ObjInstanceVersions.get(Class) ?? ObjInstanceVersion],
             ['ParentSequence', ParentSequence],
             ['ObjPosX', x],
             ['ObjPosY', y],

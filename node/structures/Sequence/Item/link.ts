@@ -1,4 +1,5 @@
 import {
+    boolToKismet,
     parseVar,
     t
 } from '../../../shared/index.js'
@@ -26,6 +27,7 @@ export class BaseKismetConnection {
     public connectionIndex = 0;
     
     public links: string[] | null = null;
+    public bHidden: boolean;
 
     constructor (options: { 
         input: 'In' | 'Out', 
@@ -37,6 +39,8 @@ export class BaseKismetConnection {
 
         this.name = input
         this.connectionIndex = index ?? 0
+
+        this.bHidden = true
 
         this.type = type
         this.kismet = kismetOptions ?? {
@@ -52,7 +56,7 @@ export class BaseKismetConnection {
     private get formatted (): string {
         const base = [
             `OverrideDelta=${this.kismet.OverrideDelta}`
-        ]
+        ].concat(!this.bHidden && this.type === 'variable' ? [`bHidden=${boolToKismet(this.bHidden)}`] : [])
 
         const prefix = this.type === 'variable' ? 'LinkedVariables' : 'Links'
         const Draw = `${this.type === 'variable' ? 'DrawX' : 'DrawY'}=${this.kismet.Draw}`
@@ -63,9 +67,13 @@ export class BaseKismetConnection {
         ] : [])).join(',')
     }
 
-    public addLink (linkId: string, index?: number): this {
+    public addLink (linkId: string, index?: number, hidden?: boolean): this {
         if (this.links == undefined) {
             this.links = []
+        }
+
+        if (hidden != undefined) {
+            this.bHidden = hidden
         }
 
         const linkIndex = typeof index === 'number' && (index ?? 0) > 0 ? `,InputLinkIdx=${index}` : ''

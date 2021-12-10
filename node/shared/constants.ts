@@ -38,6 +38,11 @@ const KISMET_NODE_LINES = {
     end: 'End Object'
 }
 
+const ObjInstanceVersions = new Map<string, number>()
+    .set('SeqAct_ConvertToString', 2)
+    .set('SeqAct_DrawText', 3)
+    .set('SeqAct_SetInt', 2)
+
 export {
     KISMET_CLASSES_PREFIXES,
     KISMET_CONNECTION_SPACE,
@@ -47,5 +52,6 @@ export {
     KISMET_OUTPUT_OFFSET,
     KISMET_PROPERTY_NAMES,
     KISMET_VARIABLE_OFFSET,
-    MAIN_SEQUENCE
+    MAIN_SEQUENCE,
+    ObjInstanceVersions
 }
