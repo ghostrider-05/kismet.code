@@ -13,6 +13,7 @@ import {
 import { CustomNodesManager } from './parser.js';
 
 import type { 
+    layoutOptions,
     projectOptions
 } from '../types/index.js'
 
@@ -20,25 +21,24 @@ export class KismetFile {
     public mainSequence: Sequence;
     public parser: CustomNodesManager;
     public projectName: string;
-    public layoutOptions: { 
-        startPosition: { x: number; y?: number; }; 
-        space: number; 
-    };
+    public layoutOptions: Required<layoutOptions>
 
     constructor (options: projectOptions) {
-        const { projectName } = options
+        const { projectName, layout } = options
 
         this.projectName = projectName
 
         this.layoutOptions = {
-            startPosition: {
-                x: options?.layout?.startX ?? 500,
-                y: options?.layout?.startY ?? 500
-            },
-            space: options?.layout?.spaceBetween ?? 200
+            startX: layout?.startX ?? 500,
+            startY: layout?.startY ?? 500,
+            spaceBetween: layout?.spaceBetween ?? 200
         }
 
-        this.mainSequence = new Sequence('Main_Sequence')
+        this.mainSequence = new Sequence({ 
+            name: 'Main_Sequence',  
+            layoutOptions: this.layoutOptions,
+            mainSequence: true
+        })
 
         this.parser = new CustomNodesManager('./node/test/')
     }

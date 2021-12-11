@@ -1,11 +1,14 @@
+import { SequencePositionManager } from './misc/PositionManager.js'
+
 import { 
     boolToKismet, 
     Constants,
     filterEmptyLines, 
     parseVar 
-} from '../../shared/index.js';
+} from '../../shared/index.js'
 
 import type { 
+    layoutOptions,
     KismetVariableInternalType, 
     KismetVariableInternalTypeList, 
     SequenceItemType 
@@ -25,8 +28,12 @@ export class Sequence {
 
     private items: (SequenceItemType | Sequence)[];
     private kismet: { ObjPosX: number; ObjPosY: number; };
+    private positionManager: SequencePositionManager;
+    private mainSequence: boolean;
 
-    constructor (name?: string) {
+    constructor (options: { name?: string, layoutOptions: Required<layoutOptions>, mainSequence?: boolean }) {
+        const { name, layoutOptions, mainSequence } = options
+
         this.name = name ?? 'Sub_Sequence'
         this.items = []
 
@@ -34,11 +41,16 @@ export class Sequence {
         this.parentSequence = MAIN_SEQUENCE
 
         this.enabled = true
+        this.mainSequence = mainSequence ?? false
 
         this.kismet = {
             ObjPosX: 0,
             ObjPosY: 0
         }
+
+        this.positionManager = new SequencePositionManager({
+            layoutOptions
+        })
     }
 
     private get properties () {
@@ -62,7 +74,16 @@ export class Sequence {
     public addItem (item: SequenceItemType): this {      
         item.setSequence(this)
 
-        this.items.push(item)
+        const [x, y] = this.positionManager.addItem(item)
+
+        const setPosition = (item: SequenceItemType, cords: [number, number]): SequenceItemType => {
+            item['kismet']['x'] = cords[0]
+            item['kismet']['y'] = cords[1]
+
+            return item
+        }
+
+        this.items.push(setPosition(item, [x, y]))
 
         return this
     }
@@ -74,7 +95,7 @@ export class Sequence {
     }
 
     public addSubSequence (name: string, objects?: SequenceItemType[]): Sequence {
-        const subSequence = new Sequence(name)
+        const subSequence = new Sequence({ layoutOptions: this.positionManager.options, name })
             .addItems(objects?.map(x => x.setSequence(name)) ?? [])
 
         this.subSequences.push(subSequence)
@@ -85,8 +106,18 @@ export class Sequence {
         return subSequence
     }
 
-    public filterByClassName (className: string): (SequenceItemType | Sequence)[] {
-        return this.items.filter(n => n.linkId.split('\'')[0] === className)
+    public filterByClassName (item: SequenceItemType | Sequence): (SequenceItemType | Sequence)[] {
+        return this.items.filter(n => n.linkId.split('\'')[0] === item.linkId.split('\'')[0])
+    }
+
+    public replaceItem (linkId: string, newItem: (SequenceItemType | Sequence)): void {
+        const item = this.items.find(n => n.linkId === linkId)
+
+        if (!item) {
+            return console.warn(`Could not find replacement item with id: ${linkId}`)
+        }
+
+        this.items[this.items.indexOf(item)] = newItem
     }
 
     public setDisabled (): this {
@@ -123,11 +154,13 @@ export class Sequence {
                 ['bEnabled', boolToKismet(this.enabled)]
             ]) as KismetVariableInternalTypeList
 
-        const lines = [
+        const lines = !this.mainSequence ? [
             KISMET_NODE_LINES.begin(this.name, 'Sequence'),
             filterEmptyLines(this.items.map(i => i.toKismet())),
             filterEmptyLines(variables.map(v => parseVar(v[0], v[1]))),
             KISMET_NODE_LINES.end
+        ] : [
+            filterEmptyLines(this.items.map(i => i.toKismet()))
         ]
 
         return lines.join('\n')
