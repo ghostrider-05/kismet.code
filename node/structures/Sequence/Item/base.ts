@@ -2,6 +2,11 @@ import { Sequence } from '../base.js';
 import { BaseKismetConnection, KismetConnection } from './link.js';
 
 import {
+    ProcessId,
+    ProcessManager
+} from '../../../managers/index.js'
+
+import {
     Constants,
     boolToKismet,
     filterEmptyLines,
@@ -32,7 +37,9 @@ export class BaseSequenceItem {
 
     public connections: KismetConnections | null = null;
     public sequence: string | Sequence;
+
     public readonly type: SequenceItemTypeName | null
+    public readonly id: ProcessId;
 
     private kismet: BaseKismetItemDrawOptions;
 
@@ -82,13 +89,14 @@ export class BaseSequenceItem {
             ObjectArchetype: options.ObjectArchetype,
             ParentSequence: MAIN_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
-            nameId: 0,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
                 height: options.Draw?.height ?? null,
                 maxWidth: options.Draw?.maxWidth ?? null
             }
         }
+
+        this.id = ProcessManager.id(this.kismet.class)
 
         this.sequence = MAIN_SEQUENCE
     }
@@ -104,7 +112,8 @@ export class BaseSequenceItem {
     }
 
     private getKismetName (): string {
-        return this.kismet.ObjectArchetype.split("'")[0].concat(`_${this.kismet.nameId}`)
+        const [, id] = this.id.resolveId().split('|')
+        return this.kismet.ObjectArchetype.split("'")[0].concat(`_${id}`)
     }
 
     protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {

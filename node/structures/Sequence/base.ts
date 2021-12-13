@@ -62,11 +62,6 @@ export class Sequence {
     public addItem (item: SequenceItemType): this {      
         item.setSequence(this)
 
-        const sameTypeItems = this.items.filter(i => item.equals(i as SequenceItemType))
-        if (sameTypeItems.length > 0) {
-            item['kismet']['nameId'] = sameTypeItems.length
-        }
-
         this.items.push(item)
 
         return this
