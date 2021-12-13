@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { writeFile as writeToFile } from 'fs/promises'
 import { resolve } from 'path';
 
-import { readNodeFile } from './read.js'
+import { readNodeFile, _validateNodeInput } from './read.js'
 import { actions, conditions, events } from './templates.js'
 
 import { 
@@ -27,27 +27,18 @@ const collectedClasses: Record<string, JsonFile[]> = {
 
 const writeFile = async (path: string, content: string) => await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
 
-// TODO: fix groupItems
-function getExportFile (classes: JsonFile[], groupExportItems: boolean) {
+function getExportFile (classes: JsonFile[], groupItems: boolean) {
     const importStatement = (name: string) => `import { ${name} } from './Classes/${name}.js'`
-    const exportStatement = (items: (string | JsonFile)[]) => //groupExportItems ? `
-    // export {
-        // ${groupByProperty(t<ClassInfo[]>(items), '').map(group => {
-    //         return `    ${group[0].category}: {
-    //             ${group.map(item => item.name).join(',\n')}
-    //         }`
-    //     })}
-    // }` : 
-    `
-    export {
-        ${t<string[]>(items).join(',\n')}
-    }`
+    const exportStatement = (items: (string | JsonFile)[]) => {
+        const groupExport = groupItems ? groupByProperty(classes, 'Package').map(items => `export const ${items[0].Package} = {\n\t${items.map(n => n.name).join(',\n\t')}\n}`).join('\n') : ''
+        return `\n\nexport {\n\t${t<string[]>(items).join(',\n\t')}\n}\n\n${groupExport}`
+    }
 
     if (classes?.length === 0) return '';
     const classNames = classes.map(item => item.name)
 
     const content = classNames.map(name => importStatement(name))
-        .concat(exportStatement(/*groupExportItems ? classes : */classNames))
+        .concat('\n', exportStatement(classNames))
         .join('\n')
 
     return content
@@ -57,12 +48,12 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
     const { importPath, exportPath } = paths
 
     if (!importPath || !fs.existsSync(importPath)) {
-        console.error(`Could not find path: ${importPath}`)
+        console.warn(`Could not find path: ${importPath}`)
         return;
     }
 
     if (!exportPath || !fs.existsSync(exportPath)) {
-        console.error(`Could not find path: ${exportPath}`)
+        console.warn(`Could not find path: ${exportPath}`)
         return;
     }
 
@@ -74,17 +65,22 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
             .join('\\')
 
         if (!fs.existsSync(path)) {
-            console.error(`Could not find path: ${path}`)
+            console.warn(`Invalid folder for class package: ${path}`)
             continue;
         }
 
         const kismetNodes = fs.readdirSync(path).filter(file => {
-            return file.toLowerCase().startsWith('seq') && !file.startsWith('Sequence')
+            return file.toLowerCase().startsWith('seq') && !file.toLowerCase().startsWith('sequence')
         })
 
         for await (const file of kismetNodes) {
             const fileContent = fs.readFileSync(path + '\\' + file, 'utf-8')
             const fileJSON = JSON.parse(fileContent) as RawUnrealJsonFile
+
+            if (!_validateNodeInput(fileJSON)) {
+                console.warn(`Invalid input for ${Package}.${file.split('.')[0]}`)
+                continue
+            }
 
             const node = readNodeFile(fileJSON, Package)
 
@@ -114,11 +110,20 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
                 collectedClasses[type]?.push({
                     name,
                     category,
-                    type
+                    type,
+                    Package
                 })
 
             } catch (err) {
-                console.log(err)
+                const error = err as {
+                    code: string
+                    path: string
+                    syscall: string
+                }
+
+                if (error.code === 'ENOENT' && error.syscall === 'open') {
+                    console.warn(`Invalid path: ${error.path}`)
+                } else console.error(error)
             }
         }
     }

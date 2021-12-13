@@ -2,10 +2,11 @@ import { KismetBoolean } from './enums.js'
 
 import type { KismetConnectionType } from './connectionLink.js'
 
-export interface JsonFile { 
+export interface JsonFile extends Record<string, string>{ 
     name: string
     type: string
     category: string 
+    Package: string
 }
 
 export interface RawUnrealJsonConstant {
@@ -31,7 +32,7 @@ export interface RawUnrealJsonVariable {
     replicated: KismetBoolean
 }
 
-export interface RawUnrealJsonFile {
+export interface RawUnrealJsonFile extends Record<string, unknown> {
     name: string
     extends: string
     extendswithin: string | 'Object'

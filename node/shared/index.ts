@@ -25,6 +25,39 @@ export function groupByProperty<T extends Record<string, unknown>> (input: T[], 
     return output
 } 
 
+type objectType = 'string' | 'array' | 'number' | 'object'
+
+export function isType (type: objectType, input: unknown, keys?: string[]): boolean {
+    const validateObjectKeys = (obj: Record<string, unknown>) => keys ? keys.every((n, i) => {
+        if (obj[n] == undefined) {
+            throw new Error(`[${i}]: Missing required key ${n}`)
+        } else return true
+    }) : true
+
+    if (input == undefined) return true
+    let isValid = true
+
+    switch (type) {
+        case 'string':
+            if (typeof input !== 'string') throw new Error(`Expected typeof ${type}, received ${typeof input}: ${input}`)
+            break
+        case 'array': 
+            if (!Array.isArray(input)) throw new Error(`Expected typeof array, received ${typeof input}: ${input}`)
+            isValid = input.length > 0 ? input.every(n => validateObjectKeys(n)) : true
+            break
+        case 'number':
+            if (isNaN(input as number)) throw new Error(`Expected typeof number, received ${typeof input}: ${input}`)
+            isValid = isNaN(input as number)
+            break
+        case 'object':
+            isValid = typeof input === 'object' && input !== null && validateObjectKeys(input as Record<string, unknown>)
+            if (!isValid) throw new Error (`Invalid type for object, received type ${typeof input}`)
+            break
+    }
+
+    return isValid
+}
+
 export function mapObjectKeys<T, C> (object: Record<string, T[]>, fn: (obj: T, i: number, array: T[]) => C): C[][] {
     return Object.keys(object).map(key => {
         return (object[key] as T[]).map(fn)

@@ -1,6 +1,7 @@
 import {
     Constants,
     stringFirstCharUppercase,
+    isType
 } from '../shared/index.js'
 
 import type { 
@@ -40,6 +41,16 @@ function getStaticProperties (variables: RawUnrealJsonVariable[]) {
     const staticProperties = enums.variables.length > 0 ? enums.variables.map(c => `    ${c}`).join('\n') : ''
 
     return staticProperties
+}
+
+export function _validateNodeInput (json: Record<string, unknown>): boolean {
+    return isType('string', json.name) 
+        && isType('string', json.extends)
+        && isType('string', json.extendswithin)
+        && isType('array', json.variables, ['flags', 'replicated', 'name', 'type'])
+        && isType('array', json.defaultproperties, ['name'])
+        && isType('object', json.enums)
+        && isType('array', json.constants, ['name', 'value'])
 }
 
 export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJsonReadFile {
