@@ -2,6 +2,12 @@ import { KismetBoolean } from './enums.js'
 
 import type { KismetConnectionType } from './connectionLink.js'
 
+export interface JsonFile { 
+    name: string
+    type: string
+    category: string 
+}
+
 export interface RawUnrealJsonConstant {
     name: string
     value: string
@@ -22,7 +28,7 @@ export interface RawUnrealJsonVariable {
     flags: string
     name: string
     type: string
-    replicated: KismetBoolean.True | KismetBoolean.False
+    replicated: KismetBoolean
 }
 
 export interface RawUnrealJsonFile {
@@ -44,6 +50,7 @@ export interface RawUnrealJsonFile {
 export interface UnrealJsonReadFile {
     archetype: string
     Class: string
+    Package: string
     defaultproperties: RawUnrealJsonConstant[]
     links: Record<KismetConnectionType, string[]>
     name: string

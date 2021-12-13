@@ -8,10 +8,10 @@ export type KismetVariableLinkConnection = string
 export type KismetConnectionType = 'input' | 'variable' | 'output'
 
 // Cannot convert to interface
-export type KismetConnections = {
-    input: (BaseKismetConnection | KismetConnection)[],
-    output: (BaseKismetConnection | KismetConnection)[],
-    variable: (BaseKismetConnection | KismetConnection)[]
+export type KismetConnections<I = BaseKismetConnection | KismetConnection, V = BaseKismetConnection | KismetConnection>  = {
+    input: I[],
+    output: V[],
+    variable: V[]
 }
 
 export interface BaseKismetVariableLink {

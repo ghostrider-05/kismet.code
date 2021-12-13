@@ -25,9 +25,6 @@ const {
     ObjInstanceVersions
 } = Constants
 
-// TODO: merge with parent type?
-export type BaseSequenceItemTypeName = SequenceItemTypeName | 'conditions' | 'variables' | null
-
 export class BaseSequenceItem {
     public comment: string | null;
     public supressAutoComment: boolean | null;
@@ -35,11 +32,11 @@ export class BaseSequenceItem {
 
     public connections: KismetConnections | null = null;
     public sequence: string | Sequence;
-    public readonly type: BaseSequenceItemTypeName
+    public readonly type: SequenceItemTypeName | null
 
     private kismet: BaseKismetItemDrawOptions;
 
-    constructor (options: BaseKismetItemOptions & { type?: BaseSequenceItemTypeName }) {
+    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName }) {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
@@ -94,8 +91,6 @@ export class BaseSequenceItem {
         }
 
         this.sequence = MAIN_SEQUENCE
-
-        // if (!this.kismet.DrawConfig.height && !this.kismet.DrawConfig.maxWidth) throw new Error()
     }
 
     private commentToKismet (): string {

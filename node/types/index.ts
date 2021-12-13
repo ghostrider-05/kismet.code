@@ -21,7 +21,7 @@ export type UDKContentBrowserObject = 'None' | string
 
 export type SequenceItemType = SequenceAction | SequenceCondition | SequenceVariable | SequenceEvent
 
-export type SequenceItemTypeName = 'actions' | 'events'
+export type SequenceItemTypeName = 'actions' | 'events' | 'conditions' | 'variables'
 
 export type KismetVariableInternalType = string | number
 

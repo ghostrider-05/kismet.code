@@ -12,7 +12,7 @@ import type {
 
 const { 
     KISMET_CLASSES_PREFIXES,
-    KISMET_PROPERTY_NAMES 
+    NodeProperty 
 } = Constants
 
 const propertiesUtil = class {
@@ -47,14 +47,15 @@ export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJ
 
     const defaultProperties = new propertiesUtil(defaultproperties)
 
-    const name = stringFirstCharUppercase(defaultProperties.get(KISMET_PROPERTY_NAMES.NAME))
-    const category = defaultProperties.get(KISMET_PROPERTY_NAMES.CLASS)
+    const name = stringFirstCharUppercase(defaultProperties.get(NodeProperty.NAME))
+    const category = defaultProperties.get(NodeProperty.CATEGORY)
 
     const staticProperties = getStaticProperties(variables)
 
     return {
         name: name?.replaceAll('"', '').split(' ').join('').replace('?', '') ?? Class,
         Class,
+        Package,
         variables,
         category,
         defaultproperties,
@@ -62,9 +63,9 @@ export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJ
         archetype: `"${Class}'${Package}.Default__${Class}'"`,
         staticProperties,
         links: {
-            input: defaultProperties.filter('InputLinks'),
-            output: defaultProperties.filter('OutputLinks'),
-            variable: defaultProperties.filter('VariableLinks')
+            input: defaultProperties.filter(NodeProperty.LINKS_INPUT),
+            output: defaultProperties.filter(NodeProperty.LINKS_OUTPUT),
+            variable: defaultProperties.filter(NodeProperty.LINKS_VARIABLE)
         }
     }
 }

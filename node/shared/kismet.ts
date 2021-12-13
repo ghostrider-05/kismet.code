@@ -1,5 +1,6 @@
 import {
-    KISMET_LINE_INDENT
+    KISMET_LINE_INDENT,
+    KismetBoolean
 } from './constants.js'
 
 import type { 
@@ -17,7 +18,7 @@ export function addVariable (node: string, variable: KismetVariableInternalTypeL
 }
 
 export function boolToKismet (input: boolean | null): string {
-    return input ? 'True' : 'False'
+    return input ? KismetBoolean.True : KismetBoolean.False
 }
 
 export function parseVar (name: string, value: KismetVariablesType): string {

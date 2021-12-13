@@ -1,10 +1,12 @@
 import {
     boolToKismet,
     parseVar,
-    t
+    t,
+    Constants
 } from '../../../shared/index.js'
 
 import type {
+    BaseKismetConnectionOptions,
     BaseKismetVariableLink,
     KismetConnectionLink,
     KismetConnectionType,
@@ -13,14 +15,8 @@ import type {
     KismetOutputLink
 } from '../../../types/index.js'
 
-interface BaseKismetConnectionOptions {
-    Draw: number,
-    OverrideDelta: number
-}
-
 export class BaseKismetConnection {
     protected readonly type: KismetConnectionType;
-    // TODO: overwrite values when formatting
     protected kismet: BaseKismetConnectionOptions;
     
     public name: string;
@@ -30,7 +26,7 @@ export class BaseKismetConnection {
     public bHidden: boolean;
 
     constructor (options: { 
-        input: 'In' | 'Out', 
+        input: string, 
         type: KismetConnectionType, 
         index?: number,
         kismetOptions?: BaseKismetConnectionOptions 
@@ -99,7 +95,7 @@ export class KismetConnection extends BaseKismetConnection implements BaseKismet
 
     constructor (input: string, type: KismetConnectionType, index?: number) {
         super({
-            input: "In",
+            input: Constants.DefaultConnectionName.IN,
             type,
             index
         })

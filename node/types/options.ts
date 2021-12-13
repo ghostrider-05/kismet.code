@@ -14,6 +14,11 @@ export interface projectOptions {
     layout?: layoutOptions
 }
 
+export interface BaseKismetConnectionOptions {
+    Draw: number,
+    OverrideDelta: number
+}
+
 export interface BaseKismetItemOptions {
     ObjInstanceVersion?: number
     ObjectArchetype: string

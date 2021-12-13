@@ -6,18 +6,20 @@ import { readNodeFile } from './read.js'
 import { actions, conditions, events } from './templates.js'
 
 import { 
+    Constants,
     filterEmptyLines, 
     groupByProperty, 
     t 
 } from '../shared/index.js'
 
 import type { 
+    JsonFile,
     RawUnrealJsonFile
 } from '../types/index.js'
 
-type ClassInfo = { name: string, type: string, category: string }
+const { NodeType } = Constants
 
-const collectedClasses: Record<string, ClassInfo[]> = {
+const collectedClasses: Record<string, JsonFile[]> = {
     actions: [],
     events: [],
     conditions: []
@@ -26,9 +28,9 @@ const collectedClasses: Record<string, ClassInfo[]> = {
 const writeFile = async (path: string, content: string) => await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
 
 // TODO: fix groupItems
-function getExportFile (classes: ClassInfo[], groupExportItems: boolean) {
+function getExportFile (classes: JsonFile[], groupExportItems: boolean) {
     const importStatement = (name: string) => `import { ${name} } from './Classes/${name}.js'`
-    const exportStatement = (items: (string | ClassInfo)[]) => //groupExportItems ? `
+    const exportStatement = (items: (string | JsonFile)[]) => //groupExportItems ? `
     // export {
         // ${groupByProperty(t<ClassInfo[]>(items), '').map(group => {
     //         return `    ${group[0].category}: {
@@ -96,13 +98,13 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
 
             try {
                 switch (type) {
-                    case 'actions':
+                    case NodeType.ACTIONS:
                         await writeFile(resolve('.', output), actions(node))
                         break
-                    case 'conditions':
+                    case NodeType.CONDITIONS:
                         await writeFile(resolve('.', output), conditions(node))
                         break
-                    case 'events':
+                    case NodeType.EVENTS:
                         await writeFile(resolve('.', output), events(node))
                         break
                     default:
