@@ -2,15 +2,10 @@ import type {
     layoutOptions,
     PositionStyle,
     SequenceItemType,
-    SequenceItemTypeName
-} from '../../../types/index.js'
+    SequenceItemTypeName,
+    SequencePositionManagerOptions
+} from '../types/index.js'
 
-interface SequencePositionManagerOptions {
-    layoutOptions: Required<layoutOptions>,
-    style?: PositionStyle 
-}
-
-// TODO: optimize positions
 export class SequencePositionManager {
     private items: {
         blocks: SequenceItemType[],
@@ -32,7 +27,7 @@ export class SequencePositionManager {
         this.options = layoutOptions
     }
 
-    private pushItem (type: SequenceItemTypeName | 'variables' | 'conditions' | null, item: SequenceItemType) {
+    private pushItem (type: SequenceItemTypeName | null, item: SequenceItemType) {
         switch (type) {
             case 'events':
                 this.items.events.push(item)

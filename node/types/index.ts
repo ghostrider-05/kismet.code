@@ -15,8 +15,6 @@ export interface KismetVectorComponents {
     z: number
 }
 
-export type PositionStyle = 'default'
-
 export type UDKSceneObject = string
 
 export type UDKContentBrowserObject = 'None' | string

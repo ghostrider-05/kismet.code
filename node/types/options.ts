@@ -3,6 +3,8 @@ import {
     SequenceCondition
 } from '../structures/Sequence/index.js'
 
+export type PositionStyle = 'default' | 'none' | 'grid'
+
 export interface layoutOptions {
     startX?: number
     startY?: number
@@ -12,6 +14,11 @@ export interface layoutOptions {
 export interface projectOptions {
     projectName: string
     layout?: layoutOptions
+}
+
+export interface SequencePositionManagerOptions {
+    layoutOptions: Required<layoutOptions>,
+    style?: PositionStyle 
 }
 
 export interface BaseKismetConnectionOptions {

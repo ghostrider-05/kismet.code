@@ -1,4 +1,6 @@
-import { SequencePositionManager } from './misc/PositionManager.js'
+import { 
+    SequencePositionManager 
+} from '../../managers/index.js'
 
 import { 
     boolToKismet, 
