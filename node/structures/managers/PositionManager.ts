@@ -4,7 +4,7 @@ import type {
     SequenceItemType,
     SequenceItemTypeName,
     SequencePositionManagerOptions
-} from '../types/index.js'
+} from '../../types/index.js'
 
 export class SequencePositionManager {
     private items: {

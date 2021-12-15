@@ -2,7 +2,7 @@ import {
     ProcessManager,
     ProcessId,
     SequencePositionManager 
-} from '../../managers/index.js'
+} from '../managers/index.js'
 
 import { 
     boolToKismet, 

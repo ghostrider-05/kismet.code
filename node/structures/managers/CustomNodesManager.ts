@@ -1,7 +1,7 @@
 import { existsSync } from "fs"
 import { resolve } from "path"
 
-import { findClasses } from "../parser/index.js"
+import { findClasses } from "../../parser/index.js"
 
 export class CustomNodesManager {
     public groupExportItems: boolean;

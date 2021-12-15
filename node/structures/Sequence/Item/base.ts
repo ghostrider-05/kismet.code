@@ -4,7 +4,7 @@ import { BaseKismetConnection, KismetConnection } from './link.js';
 import {
     ProcessId,
     ProcessManager
-} from '../../../managers/index.js'
+} from '../../managers/index.js'
 
 import {
     Constants,

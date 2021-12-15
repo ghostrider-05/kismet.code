@@ -10,7 +10,7 @@ import {
     Variables 
 } from '../items/index.js'
 
-import { CustomNodesManager } from './parser.js';
+import { CustomNodesManager } from './managers/CustomNodesManager.js';
 
 import type { 
     layoutOptions,
