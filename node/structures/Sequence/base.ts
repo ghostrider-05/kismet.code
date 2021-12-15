@@ -1,4 +1,6 @@
 import { 
+    ProcessManager,
+    ProcessId,
     SequencePositionManager 
 } from '../../managers/index.js'
 
@@ -25,6 +27,8 @@ export class Sequence {
     public name: string;
     public subSequences: Sequence[];
 
+    public readonly id: ProcessId;
+
     public enabled: boolean;
     public parentSequence: string;
 
@@ -37,6 +41,7 @@ export class Sequence {
         const { name, layoutOptions, mainSequence } = options
 
         this.name = name ?? 'Sub_Sequence'
+        this.id = ProcessManager.id('Sequence')
         this.items = []
 
         this.subSequences = []
@@ -106,6 +111,10 @@ export class Sequence {
         subSequence.parentSequence = this.linkId
 
         return subSequence
+    }
+
+    public find (id: string): SequenceItemType | Sequence | null {
+        return this.items.find(n => n.id.equals(id)) ?? null
     }
 
     public filterByClassName (item: SequenceItemType | Sequence): (SequenceItemType | Sequence)[] {
