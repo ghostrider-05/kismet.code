@@ -63,6 +63,12 @@ export class BaseKismetConnection {
         ] : [])).join(',')
     }
 
+    public setHidden (hidden: boolean): this {
+        this.bHidden = hidden
+
+        return this
+    }
+
     public addLink (linkId: string, index?: number, hidden?: boolean): this {
         if (this.links == undefined) {
             this.links = []
@@ -205,7 +211,7 @@ export class KismetConnection extends BaseKismetConnection implements BaseKismet
         return this.type === 'output'
     }
 
-    public setHidden (hidden: boolean): this {
+    public override setHidden (hidden: boolean): this {
         this.bHidden = hidden
 
         return this

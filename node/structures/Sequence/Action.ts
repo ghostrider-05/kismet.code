@@ -20,6 +20,10 @@ export class SequenceAction extends SequenceNode {
                 item.linkId, 
                 item.connections?.input.indexOf(itemConnection)
             )
+
+            if (typeof this.sequence !== 'string') {
+                this.sequence.replaceItem(this.linkId, this)
+            }
         } else if (!connection) {
             console.warn(`Could not find output connection for '${outputName}' on ${this['kismet']['class']}`)
         } else {
