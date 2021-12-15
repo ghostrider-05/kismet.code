@@ -12,10 +12,12 @@ import {
 } from '../../shared/index.js'
 
 import type { 
-    layoutOptions,
     KismetVariableInternalType, 
     KismetVariableInternalTypeList, 
-    SequenceItemType 
+    SequenceItemType, 
+    SequenceViewOptions,
+    SequenceOptions,
+    SequenceConstructorOptions
 } from '../../types/index.js'
 
 const {
@@ -26,6 +28,7 @@ const {
 export class Sequence {
     public name: string;
     public subSequences: Sequence[];
+    public defaultView: Required<SequenceViewOptions>;
 
     public readonly id: ProcessId;
 
@@ -37,8 +40,8 @@ export class Sequence {
     private positionManager: SequencePositionManager;
     private mainSequence: boolean;
 
-    constructor (options: { name?: string, layoutOptions: Required<layoutOptions>, mainSequence?: boolean }) {
-        const { name, layoutOptions, mainSequence } = options
+    constructor (options: SequenceConstructorOptions) {
+        const { name, layoutOptions, mainSequence, defaultView } = options
 
         this.name = name ?? 'Sub_Sequence'
         this.id = ProcessManager.id('Sequence')
@@ -53,6 +56,12 @@ export class Sequence {
         this.kismet = {
             ObjPosX: 0,
             ObjPosY: 0
+        }
+
+        this.defaultView = {
+            x: defaultView?.x ?? 0,
+            y: defaultView?.y ?? 0,
+            zoom: defaultView?.zoom ?? 1
         }
 
         this.positionManager = new SequencePositionManager({
@@ -101,9 +110,12 @@ export class Sequence {
         return this
     }
 
-    public addSubSequence (name: string, objects?: SequenceItemType[]): Sequence {
-        const subSequence = new Sequence({ layoutOptions: this.positionManager.options, name })
-            .addItems(objects?.map(x => x.setSequence(name)) ?? [])
+    public addSubSequence ({ name, objects, layoutOptions, defaultView } : SequenceOptions<SequenceItemType>): Sequence {
+        const subSequence = new Sequence({ 
+            layoutOptions: layoutOptions ?? this.positionManager.options, 
+            name,
+            defaultView
+        }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
 
         this.subSequences.push(subSequence)
         this.items.push(subSequence)
@@ -143,6 +155,16 @@ export class Sequence {
         return this
     }
 
+    public setView (options: SequenceViewOptions): this {
+        const { x, y, zoom } = options
+
+        if (x) this.defaultView.x = x
+        if (y) this.defaultView.y = y
+        if (zoom) this.defaultView.zoom = zoom
+
+        return this
+    }
+
     public toKismet(): string {
         const { 
             archetype, 
@@ -162,7 +184,10 @@ export class Sequence {
                 ['ObjPosX', this.kismet.ObjPosX],
                 ['ObjPosY', this.kismet.ObjPosY],
                 ['ParentSequence', this.parentSequence],
-                ['bEnabled', boolToKismet(this.enabled)]
+                ['bEnabled', boolToKismet(this.enabled)],
+                ['DefaultViewX', this.defaultView.x],
+                ['DefaultViewY', this.defaultView.y],
+                ['DefaultViewZoom', this.defaultView.zoom]
             ]) as KismetVariableInternalTypeList
 
         const lines = !this.mainSequence ? [

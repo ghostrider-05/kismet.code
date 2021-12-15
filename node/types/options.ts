@@ -21,6 +21,32 @@ export interface SequencePositionManagerOptions {
     style?: PositionStyle 
 }
 
+export interface SequenceViewOptions {
+    x?: number
+    y?: number
+    zoom?: number
+}
+
+interface SequenceBaseConstructorOptions {
+    layoutOptions?: Required<layoutOptions>
+    name?: string
+    mainSequence?: boolean
+    defaultView?: Required<SequenceViewOptions>
+}
+
+export type SequenceConstructorOptions = SequenceBaseConstructorOptions & {
+    layoutOptions: Required<layoutOptions>
+}
+
+interface SequenceExtendedOptions {
+    layoutOptions?: Required<layoutOptions>
+}
+
+export type SequenceOptions<T> = Omit<SequenceBaseConstructorOptions, 'mainSequence'> & {
+    objects?: T[]
+    name: string
+}
+
 export interface BaseKismetConnectionOptions {
     Draw: number,
     OverrideDelta: number
