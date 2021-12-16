@@ -38,6 +38,6 @@ More examples and guides can be found in the `docs` folder
 
 ## State and roadmap
 
-This repo is currently in beta version for typescript. For upcoming features take a look at the open issues and [roadmap project](https://github.com/ghostrider-05/kismet.code/projects/1).
+This repo is currently in beta version for typescript. For upcoming features take a look at the open issues and [roadmap project](https://github.com/ghostrider-05/kismet.code/projects/1). Discussion and other questions can also be asked on [discord](https://discord.gg/BNe5DhJKC4)
 
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
