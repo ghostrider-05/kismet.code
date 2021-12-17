@@ -1,19 +1,25 @@
 import { SequenceNode } from './Item/index.js'
 
+import { 
+    Constants 
+} from '../../shared/index.js'
+
 import type { 
     BaseKismetItemOptions,
     KismetActionRequiredOptions 
 } from '../../types/index.js'
 
+const { NodeType, ConnectionType } = Constants
+
 export class SequenceAction extends SequenceNode {
 
     constructor (options: KismetActionRequiredOptions & BaseKismetItemOptions) {
-        super({ ...options, type: 'actions' })
+        super({ ...options, type: NodeType.ACTIONS })
     } 
 
     public addConnection (item: SequenceAction, outputName: string, inputName: string): this {
-        const connection = this.getConnection('output', outputName);
-        const itemConnection = item.getConnection('input', inputName);
+        const connection = this.getConnection(ConnectionType.OUTPUT, outputName);
+        const itemConnection = item.getConnection(ConnectionType.INPUT, inputName);
         
         if (connection && itemConnection) {
             this.connections?.output.find(n => n.name === outputName)?.addLink(

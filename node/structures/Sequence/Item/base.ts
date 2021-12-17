@@ -111,8 +111,9 @@ export class BaseSequenceItem {
         return filterEmptyLines(kismet)
     }
 
-    private getKismetName (): string {
+    public get name (): string {
         const [, id] = this.id.resolveId().split('|')
+
         return this.kismet.ObjectArchetype.split("'")[0].concat(`_${id}`)
     }
 
@@ -127,7 +128,7 @@ export class BaseSequenceItem {
     }
 
     public get linkId (): string {
-        return `${this.kismet.class}'${this.getKismetName()}'`
+        return `${this.kismet.class}'${this.name}'`
     }
 
     public equals (item: SequenceItemType): boolean {
@@ -172,7 +173,7 @@ export class BaseSequenceItem {
             y
         } = this.kismet
 
-        const Name = `"${this.getKismetName()}"`
+        const Name = `"${this.name}"`
 
         const variables = [
             ['ObjInstanceVersion', ObjInstanceVersions.get(Class) ?? ObjInstanceVersion],

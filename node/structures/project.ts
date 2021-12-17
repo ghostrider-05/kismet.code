@@ -4,39 +4,38 @@ import {
     Comment,
     CommentFrame,
     Sequence 
-} from "./Sequence/index.js";
+} from "./Sequence/index.js"
 
 import {
     Variables 
 } from '../items/index.js'
 
-import { CustomNodesManager } from './managers/CustomNodesManager.js';
+import { 
+    CustomNodesManager 
+} from './managers/index.js'
 
 import type { 
-    layoutOptions,
-    projectOptions
+    projectOptions,
+    SchemaItemNames,
+    SequencePositionOptions
 } from '../types/index.js'
 
 export class KismetFile {
     public mainSequence: Sequence;
     public parser: CustomNodesManager;
     public projectName: string;
-    public layoutOptions: Required<layoutOptions>
+    public layout?: SequencePositionOptions<SchemaItemNames>
 
-    constructor (options: projectOptions) {
+    constructor (options: projectOptions<SchemaItemNames>) {
         const { projectName, layout } = options
 
         this.projectName = projectName
 
-        this.layoutOptions = {
-            startX: layout?.startX ?? 500,
-            startY: layout?.startY ?? 500,
-            spaceBetween: layout?.spaceBetween ?? 200
-        }
+        this.layout = layout
 
         this.mainSequence = new Sequence({ 
             name: 'Main_Sequence',  
-            layoutOptions: this.layoutOptions,
+            layout: this.layout,
             mainSequence: true
         })
 

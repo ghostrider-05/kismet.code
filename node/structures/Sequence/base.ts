@@ -17,10 +17,13 @@ import type {
     SequenceItemType, 
     SequenceViewOptions,
     SequenceOptions,
-    SequenceConstructorOptions
+    SequenceBaseConstructorOptions,
+    SchemaItemNames,
+    SequenceItemTypeName
 } from '../../types/index.js'
 
 const {
+    DefaultLayoutOptions,
     KISMET_NODE_LINES,
     MAIN_SEQUENCE
 } = Constants
@@ -31,17 +34,18 @@ export class Sequence {
     public defaultView: Required<SequenceViewOptions>;
 
     public readonly id: ProcessId;
+    public readonly type: SequenceItemTypeName = 'sequences'
 
     public enabled: boolean;
     public parentSequence: string;
 
     private items: (SequenceItemType | Sequence)[];
-    private kismet: { ObjPosX: number; ObjPosY: number; };
+    private kismet: { x: number; y: number; };
     private positionManager: SequencePositionManager;
     private mainSequence: boolean;
 
-    constructor (options: SequenceConstructorOptions) {
-        const { name, layoutOptions, mainSequence, defaultView } = options
+    constructor (options: SequenceBaseConstructorOptions<SchemaItemNames>) {
+        const { name, mainSequence, defaultView, layout } = options
 
         this.name = name ?? 'Sub_Sequence'
         this.id = ProcessManager.id('Sequence')
@@ -54,8 +58,8 @@ export class Sequence {
         this.mainSequence = mainSequence ?? false
 
         this.kismet = {
-            ObjPosX: 0,
-            ObjPosY: 0
+            x: 0,
+            y: 0
         }
 
         this.defaultView = {
@@ -65,7 +69,9 @@ export class Sequence {
         }
 
         this.positionManager = new SequencePositionManager({
-            layoutOptions
+            layoutOptions: layout?.position ?? DefaultLayoutOptions,
+            style: layout?.style,
+            schema: layout?.schema
         })
     }
 
@@ -90,16 +96,7 @@ export class Sequence {
     public addItem (item: SequenceItemType): this {      
         item.setSequence(this)
 
-        const [x, y] = this.positionManager.addItem(item)
-
-        const setPosition = (item: SequenceItemType, cords: [number, number]): SequenceItemType => {
-            item['kismet']['x'] = cords[0]
-            item['kismet']['y'] = cords[1]
-
-            return item
-        }
-
-        this.items.push(setPosition(item, [x, y]))
+        this.items.push(item)
 
         return this
     }
@@ -110,9 +107,13 @@ export class Sequence {
         return this
     }
 
-    public addSubSequence ({ name, objects, layoutOptions, defaultView } : SequenceOptions<SequenceItemType>): Sequence {
+    public addSubSequence ({ name, objects, layout, defaultView } : SequenceOptions<SequenceItemType, SchemaItemNames>): Sequence {
         const subSequence = new Sequence({ 
-            layoutOptions: layoutOptions ?? this.positionManager.options, 
+            layout: {
+                position: layout?.position ?? this.positionManager.options,
+                schema: layout?.schema,
+                style: layout?.style
+            },
             name,
             defaultView
         }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
@@ -173,6 +174,8 @@ export class Sequence {
             DrawWidth 
         } = this.properties
 
+        this.positionManager.fillPositions(this)
+
         const variables = this.items.map<[string, KismetVariableInternalType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
             .concat([
                 ['ObjectArchetype', archetype],
@@ -181,8 +184,8 @@ export class Sequence {
                 ['DrawWidth', DrawWidth],
                 ['DrawHeight', DrawHeight],
                 ['Name', this.name],
-                ['ObjPosX', this.kismet.ObjPosX],
-                ['ObjPosY', this.kismet.ObjPosY],
+                ['ObjPosX', this.kismet.x],
+                ['ObjPosY', this.kismet.y],
                 ['ParentSequence', this.parentSequence],
                 ['bEnabled', boolToKismet(this.enabled)],
                 ['DefaultViewX', this.defaultView.x],

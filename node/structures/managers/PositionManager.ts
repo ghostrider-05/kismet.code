@@ -1,66 +1,72 @@
+import { 
+    Constants 
+} from '../../shared/index.js'
+
 import type { 
     layoutOptions,
-    PositionStyle,
+    PositionStyleOptions,
+    SchemaItemNames,
     SequenceItemType,
-    SequenceItemTypeName,
-    SequencePositionManagerOptions
+    SequencePositionManagerOptions,
+    SequenceSchemaOptions
 } from '../../types/index.js'
+import { Sequence } from '../index.js'
+
+const { NodeType, PositionStyleOption } = Constants
 
 export class SequencePositionManager {
-    private items: {
-        blocks: SequenceItemType[],
-        events: SequenceItemType[],
-        variables: SequenceItemType[]
-    } = {
-        blocks: [],
-        events: [],
-        variables: []
-    }
-
-    public readonly style: PositionStyle
+    public readonly style: PositionStyleOptions
     public options: Required<layoutOptions>
+    public schema?: SequenceSchemaOptions<SchemaItemNames>[]
 
-    constructor (options: SequencePositionManagerOptions) {
-        const { layoutOptions, style } = options
+    constructor (options: SequencePositionManagerOptions<SchemaItemNames>) {
+        const { layoutOptions, style, schema } = options
 
-        this.style = style ?? 'default'
+        this.style = style ?? PositionStyleOption.DEFAULT
         this.options = layoutOptions
+        this.schema = schema
     }
 
-    private pushItem (type: SequenceItemTypeName | null, item: SequenceItemType) {
-        switch (type) {
-            case 'events':
-                this.items.events.push(item)
-                break
-            case 'actions' || 'conditions':
-                this.items.blocks.push(item)
-                break
-            case 'variables':
-                this.items.variables.push(item)
-                break
+    public fillPositions (sequence: Sequence): Sequence {
+        const sequenceItems = sequence['items']
+        const itemCount = sequenceItems.length
+
+        if (itemCount === 0) {
+            console.log(`Sequence '${sequence.name}' is empty`)
+
+            return sequence
+        } else if (this.style === PositionStyleOption.NONE) {
+            console.log('No positions were set for sequence:' + sequence.name)
+
+            return sequence
         }
-    }
-
-    public addItem (item: SequenceItemType): [number, number] {
-        this.pushItem(item.type, item)
-
-        const { type } = item
 
         const { spaceBetween, startX, startY } = this.options
-        const { events, blocks, variables } = this.items
 
-        const blockOffset = [spaceBetween, spaceBetween]
+        for (let i = 0; i < itemCount; i++) {
+            const item = sequenceItems[i]
 
-        if (type === 'events' && events.length === 1) {
-            return [startX, startY]
-        } else if (type === 'events') {
-            return [startX, startY + 3 * spaceBetween]
-        } else if (type === 'actions' && events.length === 1) {
-            return [startX + blockOffset[0], startY + blockOffset[1]]
-        } else if (type === 'actions') {
-            return [startX + blockOffset[0], startY + blockOffset[1]]
-        } else {
-            return [startX + variables.length * 0.4 * spaceBetween, startY * 5]
+            const { type } = item
+
+            let position: [number, number] = [0, 0];
+
+            switch (type) {
+                case NodeType.ACTIONS || NodeType.CONDITIONS:
+                case NodeType.EVENTS:
+                case NodeType.VARIABLES:
+                    // do something
+                    position  = [startX, startY]
+                    break
+                case NodeType.SEQUENCES:
+                    // handle subsequences
+            }
+
+            if (item.type !== NodeType.SEQUENCES) {
+                (sequence['items'][i] as SequenceItemType)['kismet']['x'] = position[0];
+                (sequence['items'][i] as SequenceItemType)['kismet']['x'] = position[1];
+            }
         }
+
+        return sequence
     }
 }

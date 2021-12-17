@@ -3,7 +3,36 @@ import {
     SequenceCondition
 } from '../structures/Sequence/index.js'
 
-export type PositionStyle = 'default' | 'none' | 'grid'
+import {
+    PositionStyleOption,
+    VariablePositionStyleOption
+} from './enums.js'
+
+/**
+ * Options for layouts
+ * 
+ * - none: set no position
+ * - default: apply only layoutOptions
+ * - grid: place all nodes in a grid
+ * - waterfall: place the next object in the sequence right and below the current object
+ * - mountain: place the next object in the sequence right and above the current object
+ * - schema: apply the options in the given schema
+ * 
+ * @default 'default'
+ */
+ export type PositionStyleOptions = PositionStyleOption
+
+/**
+ * Position options for variables
+ * 
+ * - inherit: set default positions
+ * - global: set all variables in global box
+ * - attach: place variables close to the first connected item
+ * - schema: apply the options in the given schema
+ * 
+ * @default 'inherit'
+ */
+export type VariablePositionStyleOptions = VariablePositionStyleOption
 
 export interface layoutOptions {
     startX?: number
@@ -11,14 +40,42 @@ export interface layoutOptions {
     spaceBetween?: number
 }
 
-export interface projectOptions {
+/**
+ * Options for creating a new kismet sequence for a project
+ * 
+ * @param projectName - The name of the project
+ * @param layout - Default position options for sequences in the project 
+ */
+export interface projectOptions<S> {
     projectName: string
-    layout?: layoutOptions
+    layout?: SequencePositionOptions<S>
 }
 
-export interface SequencePositionManagerOptions {
-    layoutOptions: Required<layoutOptions>,
-    style?: PositionStyle 
+
+export interface SequenceSchemaOptions<T> {
+    event?: {
+        name: string
+        connectionName?: string
+    },
+    layout: {
+        type: T
+        style?: Omit<PositionStyleOptions, 'schema'>
+        variables?: {
+            style: Omit<VariablePositionStyleOptions, 'schema'>,
+            itemClass?: string
+        }[]
+        options?: layoutOptions
+    }[]
+}
+
+export interface SequencePositionManagerOptions<S> {
+    layoutOptions: Required<layoutOptions>
+    style?: PositionStyleOptions
+    schema?: SequenceSchemaOptions<S>[]
+}
+
+export type SequencePositionOptions<S> = Omit<SequencePositionManagerOptions<S>, 'layoutOptions'> & {
+    position?: Required<layoutOptions>
 }
 
 export interface SequenceViewOptions {
@@ -27,22 +84,14 @@ export interface SequenceViewOptions {
     zoom?: number
 }
 
-interface SequenceBaseConstructorOptions {
-    layoutOptions?: Required<layoutOptions>
+export interface SequenceBaseConstructorOptions<S> {
+    layout?: SequencePositionOptions<S>
     name?: string
     mainSequence?: boolean
     defaultView?: Required<SequenceViewOptions>
 }
 
-export type SequenceConstructorOptions = SequenceBaseConstructorOptions & {
-    layoutOptions: Required<layoutOptions>
-}
-
-interface SequenceExtendedOptions {
-    layoutOptions?: Required<layoutOptions>
-}
-
-export type SequenceOptions<T> = Omit<SequenceBaseConstructorOptions, 'mainSequence'> & {
+export type SequenceOptions<T, S> = Omit<SequenceBaseConstructorOptions<S>, 'mainSequence'> & {
     objects?: T[]
     name: string
 }
