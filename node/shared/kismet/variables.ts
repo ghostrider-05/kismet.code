@@ -1,12 +1,12 @@
 import {
     KISMET_LINE_INDENT,
     KismetBoolean
-} from './constants.js'
+} from '../util/Constants.js'
 
 import type { 
     KismetVariableInternalTypeList, 
     KismetVariablesType 
-} from '../types/index.js'
+} from '../../types/index.js'
 
 export function addVariable (node: string, variable: KismetVariableInternalTypeList): string {
 

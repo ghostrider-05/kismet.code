@@ -1,6 +1,6 @@
 import type { 
     layoutOptions 
-} from '../types/index.js'
+} from '../../types/index.js'
 
 const KISMET_LINE_INDENT = '   '
 const MAIN_SEQUENCE = "Sequence'Main_Sequence'"
@@ -36,7 +36,7 @@ const ObjInstanceVersions = new Map<string, number>()
     .set('SeqAct_DrawText', 3)
     .set('SeqAct_SetInt', 2)
 
-export * from '../types/enums.js'
+export * from '../../types/enums.js'
 export {
     KISMET_CLASSES_PREFIXES,
     KISMET_LINE_INDENT,
