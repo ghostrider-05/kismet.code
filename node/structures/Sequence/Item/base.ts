@@ -82,10 +82,14 @@ export class BaseSequenceItem {
             console.log(err, this)
         }
 
+        const [Class, defaultClass,] = options.ObjectArchetype.split("'")
+        const [Package, ] = defaultClass.split('.')
+
         this.kismet = {
             x: 0,
             y: 0,
-            class: options.ObjectArchetype.split("'")[0],
+            class: Class,
+            classType: `Class'${Package}.${Class}'`,
             ObjectArchetype: options.ObjectArchetype,
             ParentSequence: MAIN_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
