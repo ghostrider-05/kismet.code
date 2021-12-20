@@ -1,5 +1,7 @@
 import { BoolVariable as Bool } from './Bool.js'
 
+import { ExternalVariable as External } from './External.js'
+
 import { 
     FloatVariable as Float, 
     RandomFloatVariable as RandomFloat
@@ -28,6 +30,7 @@ import { VectorVariable as Vector } from './Vector.js'
 
 export {
     Bool,
+    External,
     Float,
     Integer,
     InterpData,

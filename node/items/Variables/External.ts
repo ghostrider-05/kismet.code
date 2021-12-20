@@ -8,21 +8,21 @@ import type {
     KismetVariableOptions 
 } from '../../types/index.js'
 
-export class NamedVariable extends SequenceVariable {
+export class ExternalVariable extends SequenceVariable {
     public expectedType: string | null = null
-    public searchVariableName: string | null = null
+    public variableLabel: string | null = null
 
     constructor (options: KismetVariableOptions) {
-        super ({
+        super({
             ...options,
-            ObjectArchetype: `SeqVar_Named'Engine.Default__SeqVar_Named'`,
+            ObjectArchetype: `SeqVar_External'Engine.Default__SeqVar_External'`,
             inputs: {}
         })
     }
 
-    public setSearchVariable<T extends SequenceVariable> (options: { name?: string, type?: T}): this {
-        this.searchVariableName = options.name ?? null
+    public setExternalVariable<T extends SequenceVariable> (options: { label?: string, type?: T }): this {
         this.expectedType = options.type?.['kismet']['classType'] ?? null
+        this.variableLabel = options.label ?? null
 
         return this
     }
@@ -32,8 +32,8 @@ export class NamedVariable extends SequenceVariable {
 
         const variables = [
             (this.expectedType ? ['ExpectedType', this.expectedType] : []),
-            (this.searchVariableName ? ['FindVarName', `"${this.searchVariableName}"`] : [])
-        ].filter(n => n.length > 0) as [string, string][] 
+            (this.variableLabel ? ['VariableLabel', `"${this.variableLabel}"`] : [])
+        ].filter(n => n.length > 0) as [string, string][]
 
         return addVariable(kismet, variables)
     }
