@@ -1,5 +1,5 @@
 import { Sequence } from '../base.js';
-import { BaseKismetConnection, KismetConnection } from './link.js';
+import { BaseKismetConnection, ItemConnection, VariableConnection } from './link.js';
 
 import {
     ProcessId,
@@ -18,6 +18,7 @@ import {
 import type { 
     BaseKismetItemOptions,
     KismetConnectionType,
+    KismetConnection,
     KismetConnections,
     BaseKismetItemDrawOptions,
     SequenceItemType,
@@ -72,9 +73,9 @@ export class BaseSequenceItem {
                     }
                 } else return {
                     key,
-                    connections: links.map(keys => {
-                        return new KismetConnection(keys, key as KismetConnectionType)
-                    }) 
+                    connections: links.map(input => {
+                        return BaseKismetConnection.convertLink(key as KismetConnectionType, input)
+                    }).filter(n => n != undefined) as (ItemConnection | VariableConnection)[]
                 }
             }).reduce((x, y) => ({ ...x, [y.key]: y.connections }), {}) as KismetConnections
 
@@ -139,7 +140,9 @@ export class BaseSequenceItem {
     }
 
     public getConnection (type: KismetConnectionType, connectionName: string): (BaseKismetConnection | KismetConnection) | null {
-        return this.connections?.[type]?.find(c => c.name === connectionName) ?? null
+        const connections = this.connections?.[type] as BaseKismetConnection[] | undefined
+
+        return connections ? connections.find(c => c.name === connectionName) ?? null : null
     }
 
     public setComment ({ comment, supressAutoComment, outputCommentToScreen }: {
@@ -190,7 +193,8 @@ export class BaseSequenceItem {
             ['ObjectArchetype', ObjectArchetype]
         ].map(prop => parseVar(prop[0] as string, prop[1]))
 
-        const properties = mapObjectKeys(this.connections ?? {}, (c, i) => c.toKismet(i))
+        const connections = (this.connections as Record<string, BaseKismetConnection[]>) ?? {}
+        const properties = mapObjectKeys(connections, (c, i) => c.toKismet(i))
             .map(c => c.join('\n'))
             .concat(this.commentToKismet(), variables)
 

@@ -1,4 +1,4 @@
-import { SequenceNode } from './Item/index.js'
+import { SequenceNode, ItemConnection } from './Item/index.js'
 
 import type { 
     BaseKismetItemOptions,
@@ -13,7 +13,7 @@ export class SequenceAction extends SequenceNode {
 
     public addConnection (item: SequenceAction, outputName: string, inputName: string): this {
         const connection = this.getConnection('output', outputName);
-        const itemConnection = item.getConnection('input', inputName);
+        const itemConnection = item.getConnection('input', inputName) as ItemConnection;
         
         if (connection && itemConnection) {
             this.connections?.output.find(n => n.name === outputName)?.addLink(

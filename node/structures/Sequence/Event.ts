@@ -1,4 +1,4 @@
-import { SequenceNode } from './Item/index.js'
+import { ItemConnection, SequenceNode } from './Item/index.js'
 import { SequenceAction } from "./Action.js";
 
 import { 
@@ -33,7 +33,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     }
 
     public on<T extends SequenceAction> ({ name, item }: { name: string, item: T }): this {
-        const connection = this.getConnection('output', name)
+        const connection = this.getConnection('output', name) as ItemConnection
 
         if (connection) {
             connection.addLink(t<SequenceAction>(item).linkId, this.connections?.output.indexOf(connection))

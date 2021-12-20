@@ -1,4 +1,5 @@
 import { BaseSequenceItem } from './base.js'
+import { VariableConnection } from './link.js'
 import { SequenceVariable } from '../Variable.js'
 
 import {
@@ -35,7 +36,7 @@ export class SequenceNode extends BaseSequenceItem {
     }
 
     public setVariable (variableName: string, value: SequenceVariable | string | number, hidden?: boolean): this {
-        const connection = this.getConnection('variable', variableName)
+        const connection = this.getConnection('variable', variableName) as VariableConnection
 
         if (connection && (typeof value !== 'string' && typeof value !== 'number')) {
             connection.addLink(value.linkId, this.connections?.variable.indexOf(connection), hidden)
