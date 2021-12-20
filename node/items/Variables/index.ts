@@ -10,6 +10,8 @@ import {
     RandomIntegerVariable as RandomInteger
 } from './Integer.js'
 
+import { InterpData } from './InterpData.js'
+
 import { NamedVariable as Named } from './Named.js'
 
 import {
@@ -28,6 +30,7 @@ export {
     Bool,
     Float,
     Integer,
+    InterpData,
     Named,
     Object,
     ObjectList,
