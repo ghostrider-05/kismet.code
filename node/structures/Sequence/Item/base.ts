@@ -142,7 +142,7 @@ export class BaseSequenceItem {
     public getConnection (type: KismetConnectionType, connectionName: string): (BaseKismetConnection | KismetConnection) | null {
         const connections = this.connections?.[type] as BaseKismetConnection[] | undefined
 
-        return connections ? connections.find(c => c.name === connectionName) ?? null : null
+        return connections?.find(c => c.name === connectionName) ?? null
     }
 
     public setComment ({ comment, supressAutoComment, outputCommentToScreen }: {

@@ -64,8 +64,9 @@ export class BaseKismetConnection {
         return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
     }
 
-    private get formatted (): string {
+    private format (keys?: string[]): string {
         const base = [
+            ...(keys ?? []),
             `OverrideDelta=${this.kismet.OverrideDelta}`
         ].concat(!this.bHidden && this.type === 'variable' ? [`bHidden=${boolToKismet(this.bHidden)}`] : [])
 
@@ -101,22 +102,22 @@ export class BaseKismetConnection {
         return this
     }
 
-    public toKismet (index?: number): string {
-        return parseVar(`${this.typeName}(${index ?? this.connectionIndex})`, `(${this.formatted})`)
+    public toKismet (index?: number, keys?: string[]): string {
+        return parseVar(`${this.typeName}(${index ?? this.connectionIndex})`, `(${this.format(keys)})`)
     }
 }
 
 export class VariableConnection extends BaseKismetConnection {
-    expectedType: string;
-    PropertyName: string;
-    bAllowAnyType: boolean;
-    CachedProperty: boolean;
-    MinVars: number;
-    MaxVars: number;
-    DrawX: number;
-    bWriteable: boolean;
-    bSequenceNeverReadsOnlyWritesToThisVar: boolean;
-    bModifiesLinkedObject: boolean;
+    public expectedType: string;
+    public PropertyName: string;
+    public bAllowAnyType: boolean;
+    public CachedProperty: boolean;
+    public MinVars: number;
+    public MaxVars: number;
+    public DrawX: number;
+    public bWriteable: boolean;
+    public bSequenceNeverReadsOnlyWritesToThisVar: boolean;
+    public bModifiesLinkedObject: boolean;
 
     constructor (input: string, type: KismetConnectionType, index?: number ) {
         super({
@@ -219,5 +220,13 @@ export class ItemConnection extends BaseKismetConnection {
 
     public isOutputLink (): boolean {
         return this.type === 'output'
+    }
+
+    public override toKismet(index?: number): string {
+        const delay = this.ActivateDelay > 0 ? [`ActivateDelay=${this.ActivateDelay}`] : []
+
+        const kismet = super.toKismet(index, delay)
+
+        return kismet
     }
 }

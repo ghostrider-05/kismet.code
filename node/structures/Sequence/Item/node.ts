@@ -23,14 +23,8 @@ export class SequenceNode extends BaseSequenceItem {
         this.variables = []
     }
 
-    public setBreakPoint (): this {
-        this.hasBreakpoint = true
-
-        return this
-    }
-
-    public removeBreakpoint (): this {
-        this.hasBreakpoint = false
+    public setBreakPoint (enabled: boolean): this {
+        this.hasBreakpoint = enabled
 
         return this
     }
