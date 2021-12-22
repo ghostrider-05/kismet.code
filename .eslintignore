@@ -4,5 +4,5 @@
 node_modules
 
 # Output files
-node/dist/
-node/items/
+src/dist/
+src/items/

@@ -5,5 +5,9 @@
 node_modules
 
 # Output files
-node/dist/
-node/test*/
+src/dist/
+src/test*/
+
+src/items/actions
+src/items/events
+src/items/conditions
