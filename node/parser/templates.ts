@@ -1,6 +1,16 @@
-import type { UnrealJsonReadFile } from "../types";
+import type { KismetConnectionType, UnrealJsonReadFile } from "../types";
+
+const formatLinks = (links: Record<KismetConnectionType, string[]>): string => {
+    const formatted = JSON.stringify(links, null, 4)
+        .split('\n')
+        .map((n, i) => i > 0 ? `\t\t\t${n}` : n)
+        .join('\n')
+
+    return formatted
+}
 
 export const actions = (node: UnrealJsonReadFile): string => `
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { SequenceAction } from "../../../structures/Sequence/index.js";
 import type { BaseKismetActionRequiredOptions } from "../../../types/index.js";
 
@@ -9,13 +19,14 @@ export class ${node.name} extends SequenceAction {
         super({
             ...options,
             ObjectArchetype: ${node.archetype},
-            inputs: ${JSON.stringify(node.links, null, 4)}
+            inputs: ${formatLinks(node.links)}
         })
     }
 ${node.staticProperties ?? ''}
 }`
 
 export const conditions = (node: UnrealJsonReadFile): string => `
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { SequenceCondition } from "../../../structures/Sequence/index.js";
 import type { BaseKismetActionRequiredOptions } from "../../../types/index.js";
                 
@@ -24,13 +35,14 @@ export class ${node.name} extends SequenceCondition {
         super({
             ...options,
                 ObjectArchetype: ${node.archetype},
-                inputs: ${JSON.stringify(node.links, null, 4)}
+                inputs: ${formatLinks(node.links)}
             })
         }
         ${node.staticProperties ?? ''}
 }`
 
 export const events = (node: UnrealJsonReadFile): string => `
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { SequenceEvent } from "../../../structures/Sequence/index.js";
 import { KismetEventOptions } from "../../../types/index.js";
 
@@ -39,7 +51,7 @@ export class ${node.name} extends SequenceEvent {
         super({
             ObjInstanceVersion: 3,
             ObjectArchetype: ${node.archetype},
-            inputs: ${JSON.stringify(node.links, null, 4)},
+            inputs: ${formatLinks(node.links)},
             ...options
         })
     }

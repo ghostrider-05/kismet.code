@@ -16,8 +16,8 @@ const {
     NodeProperty 
 } = Constants
 
-const propertiesUtil = class {
-    properties: RawUnrealJsonDefaultVariables[]
+const propertyMap = class {
+    private properties: RawUnrealJsonDefaultVariables[]
 
     constructor (properties: RawUnrealJsonDefaultVariables[]) {
         this.properties = properties
@@ -35,7 +35,11 @@ const propertiesUtil = class {
 function getStaticProperties (variables: RawUnrealJsonVariable[]) {
     const enums = {
         // TODO: fix indent size
-        variables: variables.length > 0 ? ['static Variables = {', variables.map(v => `    ${v.name}:'${v.name}'`).join(',\n'), '}'] : []
+        variables: variables.length > 0 ? [
+            'static Variables = {', 
+            variables.map((v, i) => `${i > 0 ? '\t' : ''}\t${v.name}:'${v.name}'`).join(',\n'), 
+            '}'
+        ] : []
     }
 
     const staticProperties = enums.variables.length > 0 ? enums.variables.map(c => `    ${c}`).join('\n') : ''
@@ -56,7 +60,7 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
 export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJsonReadFile {
     const { name: Class, variables, defaultproperties } = json
 
-    const defaultProperties = new propertiesUtil(defaultproperties)
+    const defaultProperties = new propertyMap(defaultproperties)
 
     const name = stringFirstCharUppercase(defaultProperties.get(NodeProperty.NAME))
     const category = defaultProperties.get(NodeProperty.CATEGORY)

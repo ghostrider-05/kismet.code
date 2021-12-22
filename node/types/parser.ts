@@ -9,6 +9,11 @@ export interface JsonFile extends Record<string, string>{
     Package: string
 }
 
+export interface PathInput { 
+    importPath: string
+    exportPath: string 
+}
+
 export interface RawUnrealJsonConstant {
     name: string
     value: string

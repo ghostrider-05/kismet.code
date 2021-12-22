@@ -14,6 +14,7 @@ import {
 
 import type { 
     JsonFile,
+    PathInput,
     RawUnrealJsonFile
 } from '../types/index.js'
 
@@ -25,26 +26,33 @@ const collectedClasses: Record<string, JsonFile[]> = {
     conditions: []
 }
 
-const writeFile = async (path: string, content: string) => await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
+const writeFile = async (path: string, content: string) => {
+    return await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
+}
 
 function getExportFile (classes: JsonFile[], groupItems: boolean) {
     const importStatement = (name: string) => `import { ${name} } from './Classes/${name}.js'`
+
     const exportStatement = (items: (string | JsonFile)[]) => {
-        const groupExport = groupItems ? groupByProperty(classes, 'Package').map(items => `export const ${items[0].Package} = {\n\t${items.map(n => n.name).join(',\n\t')}\n}`).join('\n') : ''
+        const groupExport = groupItems ? groupByProperty(classes, 'Package').map(items => {
+            return `export const ${items[0].Package} = {\n\t${items.map(n => n.name).join(',\n\t')}\n}`
+        }).join('\n') : ''
+        
         return `\n\nexport {\n\t${t<string[]>(items).join(',\n\t')}\n}\n\n${groupExport}`
     }
 
     if (classes?.length === 0) return '';
+
     const classNames = classes.map(item => item.name)
 
-    const content = classNames.map(name => importStatement(name))
+    const content = classNames.map(importStatement)
         .concat('\n', exportStatement(classNames))
         .join('\n')
 
     return content
 }
 
-export async function findClasses (paths: { importPath: string, exportPath: string }, groupItems = false): Promise<void> {
+export async function findClasses (paths: PathInput, groupItems = false): Promise<void> {
     const { importPath, exportPath } = paths
 
     if (!importPath || !fs.existsSync(importPath)) {
@@ -141,7 +149,10 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
     })
 
     if (exportedPaths.length > 0) {
-        const exports = exportedPaths.map(path => `export * as ${path[1]} from '${path[0]}'`).join('\n')
+        const exports = exportedPaths.map(path => {
+            return `export * as ${path[1]} from '${path[0]}'`
+        }).join('\n')
+
         writeFile(resolve('.', './' + exportPath.concat(`/index.ts`)), exports)
     }
 }
