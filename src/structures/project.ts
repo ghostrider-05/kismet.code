@@ -7,7 +7,10 @@ import {
 } from "./Sequence/index.js";
 
 import {
-    Variables 
+    Variables,
+    Actions,
+    Conditions,
+    Events 
 } from '../items/index.js'
 
 import { CustomNodesManager } from './parser.js';
@@ -40,15 +43,14 @@ export class KismetFile {
 
         this.mainSequence = new Sequence('Main_Sequence')
 
-        this.parser = new CustomNodesManager('./node/test/')
+        this.parser = new CustomNodesManager('./src/test/')
     }
 
     static Items = {
-        Action: null,
-        Matinee: null,
-        Condition: null,
+        Actions,
+        Conditions,
         Variables,
-        Event: null,
+        Events,
 
         Comment,
         CommentFrame

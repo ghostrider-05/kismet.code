@@ -7,7 +7,3 @@ node_modules
 # Output files
 src/dist/
 src/test*/
-
-src/items/actions
-src/items/events
-src/items/conditions
