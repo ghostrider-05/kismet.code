@@ -14,6 +14,12 @@ export interface projectOptions {
     layout?: layoutOptions
 }
 
+export interface TextManagerCharOptions { 
+    split?: string[]
+    property?: string
+    connection?: string 
+}
+
 export interface BaseKismetConnectionOptions {
     Draw: number,
     OverrideDelta: number

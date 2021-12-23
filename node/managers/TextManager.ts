@@ -10,6 +10,7 @@ import {
 import type { 
     Class,
     SequenceItemType,
+    TextManagerCharOptions,
     TextManagerInput
 } from "../types/index.js";
 
@@ -25,13 +26,13 @@ class ItemType {
 export class TextManager<T extends TextManagerInput> {
     public items: BaseSequenceItem[];
 
-    public splitChars = ['->', '>']
+    public splitChar = ['->', '>']
     public propertyChar = '.'
     public connectionChar = ':'
 
     private itemNames: [string, string][];
 
-    constructor (items: T) {
+    constructor (items: T, characters?: TextManagerCharOptions) {
         this.items = Object.keys(items)
             .map(n => Object.keys(items[n])
                 .map(k => items[n][k])
@@ -46,6 +47,12 @@ export class TextManager<T extends TextManagerInput> {
                 //
             }
         }).filter(n => n) as [string, string][]
+
+        if (characters) Object.keys(characters).map(key => {
+            if (t<Record<string, unknown>>(this)[`${key}Char`]) {
+                t<Record<string, unknown>>(this)[`${key}Char`] = t<Record<string, unknown>>(characters)[key] as string
+            }
+        })
     }
 
     private findNodeName (input: string): string | undefined {
@@ -54,10 +61,6 @@ export class TextManager<T extends TextManagerInput> {
 
     private isNodeText (input: string): boolean {
         return input.startsWith(Constants.KISMET_NODE_LINES.begin('', ''))
-    }
-
-    private isSequenceText (input: string): boolean {
-        return this.splitChars.some(n => input.includes(n))
     }
 
     private propertiesFromNodeInput (input: string) {
@@ -77,7 +80,28 @@ export class TextManager<T extends TextManagerInput> {
         } else return null
     }
 
-    public async nodeFromText (input: string): Promise<SequenceItemType | SequenceItemType[] | undefined> {
+    /**
+     * Check if the input can be a sequence string
+     * @param input Unknown input to check
+     */
+    public isSequenceText (input: string): boolean {
+        return this.splitChar.some(n => input.includes(n))
+    }
+
+    /**
+     * Check if the given input is certainly not a kismet input
+     * @param input 
+     * @returns 
+     */
+    public isInvalidInput (input: string): boolean {
+        return !this.isNodeText(input) && !this.isSequenceText(input)
+    }
+
+    /**
+     * Create a kismet node from text input
+     * @param input The text to create the node from
+     */
+    public node (input: string): SequenceItemType | SequenceItemType[] | undefined {
         if (this.isNodeText(input)) {
             console.log('Input is normal node')
             const nodes = input.split('End Object').map(n => n.split('\n'))
@@ -87,7 +111,7 @@ export class TextManager<T extends TextManagerInput> {
             }
         } else if (this.findNodeName(input)) {
 
-            return await this.createNode(this.findNodeName(input) as string)
+            return this.createNode(this.findNodeName(input) as string)
         } else if (input.includes(this.propertyChar)) {
 
             const [obj, ...properties] = input.toLowerCase().split(this.propertyChar)
@@ -154,11 +178,15 @@ export class TextManager<T extends TextManagerInput> {
         return item
     }
  
-    public sequenceFromText (input: string): void {
-        const output = []
+    /**
+     * Create a Sequence from input text
+     * @param input The input text
+     */
+    public sequence (input: string): void {
+        const items = []
 
         if (this.isSequenceText(input)) {
-            const splitChar = this.splitChars.find(n => input.includes(n)) as string
+            const splitChar = this.splitChar.find(n => input.includes(n)) as string
 
             for (const node of input.split(splitChar)) {
                 if (!node.includes(this.propertyChar)) {
