@@ -1,6 +1,11 @@
 import { Variables } from "../items/index.js";
 
-import { BaseSequenceItem, SequenceAction, SequenceVariable } from "../structures/index.js";
+import { 
+    BaseSequenceItem, 
+    Sequence, 
+    SequenceAction, 
+    SequenceVariable 
+} from "../structures/index.js";
 
 import { 
     Constants, 
@@ -104,11 +109,9 @@ export class TextManager<T extends TextManagerInput> {
     public node (input: string): SequenceItemType | SequenceItemType[] | undefined {
         if (this.isNodeText(input)) {
             console.log('Input is normal node')
-            const nodes = input.split('End Object').map(n => n.split('\n'))
+            const nodes = input.replace('End Object', 'End Object#EOF').split('End Object#EOF').map(n => n + 'End Object')
 
-            for (const node of nodes) {
-                console.log(node)
-            }
+            return nodes.map(node => BaseSequenceItem.fromText(node).item as SequenceItemType)
         } else if (this.findNodeName(input)) {
 
             return this.createNode(this.findNodeName(input) as string)
@@ -182,30 +185,36 @@ export class TextManager<T extends TextManagerInput> {
      * Create a Sequence from input text
      * @param input The input text
      */
-    public sequence (input: string): void {
-        const items = []
+    public sequence (input: string): Sequence {
+        const items: SequenceItemType[] = []
+        const bracketRegex = /(?<=\()(.*?)(?=\))/g
+
+        const rawInput = input.toLowerCase()
+        let lastItem: SequenceItemType | null = null, lastConnection: string | null = null
 
         if (this.isSequenceText(input)) {
             const splitChar = this.splitChar.find(n => input.includes(n)) as string
+            const subsequence = rawInput.split(' ')[0].match(/(?<=sequence\()(.*?)(?=\))/)?.[0]
+
+            const sequence = new Sequence(subsequence)
 
             for (const node of input.split(splitChar)) {
-                if (!node.includes(this.propertyChar)) {
+                const nodeInput = node.replace('()', '')
+                
+                const connectionName = nodeInput.includes(':') ? nodeInput.split(':').at(-1)?.match(bracketRegex)?.[0] ?? null : null
+                const properties = nodeInput.match(bracketRegex)?.map(n => {
+                    return n[0].includes(',') ? n[0].split(',').map(k => k.split('=')) : [n[0].split('=')]
+                })[0]
 
-                    const item = this.createNode(node)
+                const nodeClass = this.createNode(node);
 
-                    if (item) {
-                        console.log(item)
-                    }
-                        
-                } else {
-                    const [nodeName, ...props] = node.split(this.propertyChar)
-                    const item = this.createNode(nodeName)
+                items.push(nodeClass)
 
-                    if (item) {
-                        console.log(item)
-                    }
-                }
+                lastItem = nodeClass
+                lastConnection = connectionName
             }
+
+            return sequence.addItems(items)
         } else throw new Error ('Unable to process sequence: input contains no follow up')
     }
 }
