@@ -3,6 +3,8 @@ import {
     SequenceCondition
 } from '../structures/Sequence/index.js'
 
+import { LogLevel } from './enums.js'
+
 export interface layoutOptions {
     startX?: number
     startY?: number
@@ -12,6 +14,11 @@ export interface layoutOptions {
 export interface projectOptions {
     projectName: string
     layout?: layoutOptions
+}
+
+export interface ProcessOptions {
+    logLevel?: LogLevel
+    throwOnError?: boolean
 }
 
 export interface TextManagerCharOptions { 

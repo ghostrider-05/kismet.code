@@ -10,9 +10,14 @@ import {
     Variables 
 } from '../items/index.js'
 
+import { 
+    ProcessManager 
+} from '../managers/index.js'
+
 import { CustomNodesManager } from './parser.js';
 
 import type { 
+    ProcessOptions,
     projectOptions
 } from '../types/index.js'
 
@@ -25,7 +30,7 @@ export class KismetFile {
         space: number; 
     };
 
-    constructor (options: projectOptions) {
+    constructor (options: projectOptions & ProcessOptions) {
         const { projectName } = options
 
         this.projectName = projectName
@@ -41,6 +46,8 @@ export class KismetFile {
         this.mainSequence = new Sequence('Main_Sequence')
 
         this.parser = new CustomNodesManager('./node/test/')
+
+        ProcessManager.setLogOptions(options)
     }
 
     static Items = {

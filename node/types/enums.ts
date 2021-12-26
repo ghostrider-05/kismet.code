@@ -14,6 +14,13 @@ export enum KismetBoolean {
     False = 'False'
 }
 
+export enum LogLevel {
+    ALL = 0,
+    DEBUG = 1,
+    ERRORS = 2,
+    NOTHING = 3
+}
+
 export enum NodeProperty {
     CATEGORY = 'ObjCategory',
     LINKS_INPUT = 'InputLinks',
