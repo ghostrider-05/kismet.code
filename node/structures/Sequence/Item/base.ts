@@ -12,7 +12,8 @@ import {
     filterEmptyLines,
     mapObjectKeys,
     parseVar,
-    quote
+    quote,
+    propertyFromText
 } from '../../../shared/index.js'
 
 import type { 
@@ -43,7 +44,7 @@ export class BaseSequenceItem {
 
     private kismet: BaseKismetItemDrawOptions;
 
-    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName }) {
+    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName, overWriteNumber?: number }) {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
@@ -96,7 +97,7 @@ export class BaseSequenceItem {
             }
         }
 
-        this.id = ProcessManager.id(this.kismet.class)
+        this.id = ProcessManager.id(this.kismet.class, options.overWriteNumber)
 
         this.sequence = MAIN_SEQUENCE
     }
@@ -124,6 +125,66 @@ export class BaseSequenceItem {
         }
 
         return this
+    }
+
+    private static linksFromText (lines: [string, string][]): Record<KismetConnectionType, string[]> {
+        const linkLines = lines.map(n => {
+            if (n[0].match(/\w*(InputLinks|OutputLinks|VariableLinks)\w*/g)) {
+                return {
+                    type: n[0].slice(0, n.indexOf('(')).toLowerCase().slice(0, n[0].indexOf('Links')),
+                    value: n
+                }
+            } else return undefined
+        }).filter(n => n != undefined)
+        
+        return linkLines.reduce((prev, curr) => {
+            const type = curr?.type as string
+            const value = curr?.value[1] as string
+
+            if (!prev[type]) prev[type] = []
+            prev[type].push(value)
+
+            return prev
+        }, {} as Record<string, string[]>)
+    }
+
+    public static fromText (input: string): { item: BaseSequenceItem, properties: [string, string][] } {
+        const map = new Map<string, string>()
+
+        const lines = input.split('\n')
+        const ClassInfo = (info: RegExp) => lines[0].match(info)?.[0].split('=')[1]
+
+        const Class = ClassInfo(/\w*Class=\w*/g), 
+            name = ClassInfo(/\w*Name=\w*/)
+
+        const nameId = name?.slice(name.lastIndexOf('_') + 1)
+
+        const properties = lines
+            .filter((_, i) => i > 0 && (i + 1) < lines.length)
+            .map(propertyFromText)
+
+        properties.forEach(property => {
+                const [rawName, value] = property
+                map.set(rawName, value)
+        })
+
+        const item = new BaseSequenceItem({
+            inputs: BaseSequenceItem.linksFromText(properties),
+            ObjectArchetype: map.get('ObjectArchetype') as string,
+            ObjInstanceVersion: Number(map.get('ObjInstanceVersion') ?? 1),
+            overWriteNumber: nameId ? Number(nameId) : undefined
+        })
+
+        // set additional item properties
+        if (map.has('ParentSequence')) item.setSequence(map.get('ParentSequence') as string)
+
+        item.setKismetSetting('x', map.get('ObjPosX'))
+        item.setKismetSetting('y', map.get('ObjPosY'))
+
+        return {
+            item,
+            properties
+        }
     }
 
     public get linkId (): string {

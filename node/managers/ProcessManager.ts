@@ -22,11 +22,14 @@ export class ProcessId {
  */
 export const ProcessManager = new class ProcessManager {
     private ids: Map<string, number>
+    private overwrittenNumbers: Map<string, number[]>
+
     private logLevel: Constants.LogLevel
     private overwriteErrors: boolean
     
     constructor () {
         this.ids = new Map()
+        this.overwrittenNumbers = new Map()
 
         this.logLevel = Constants.LogLevel.ALL
         this.overwriteErrors = false
@@ -50,8 +53,17 @@ export const ProcessManager = new class ProcessManager {
      * Create a new id for a given class. 
      * The id can then be resolved into a name for linking nodes
      */
-    public id (Class: string): ProcessId {
+    public id (Class: string, number?: number): ProcessId {
         const count = this.ids.get(Class)
+
+        if (number != undefined) {
+            const numbers = this.overwrittenNumbers.get(Class)
+            if (!numbers?.some(n => n === number)) {
+                this.overwrittenNumbers.set(Class, (numbers ?? []).concat(number))
+            } else {
+                throw new Error('Cannot have multiple items of the same class with the same id')
+            }
+        } 
 
         this.ids.set(Class, count != undefined ? count + 1 : 0)
 

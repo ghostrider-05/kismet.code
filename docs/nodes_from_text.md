@@ -41,6 +41,8 @@ Then the template for a node would be:
 
 ```txt
 MyClass(myProp=0, secondProp="Hello world"):(<output_name>)
+// or when an input connection name is needed:
+MyClass(myProp=0, secondProp="Hello world"):(in=<input_name>, out=<output_name>)
 ```
 
 Note that the output name is not required if the only output name is `Out`:
