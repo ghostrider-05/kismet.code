@@ -40,6 +40,14 @@ export interface BaseKismetItemOptions {
         output?: string[],
         variable?: string[]
     }
+    textOptions?: {
+        overwriteNumber?: number
+        sequence?: string
+        position?: { 
+            x: number,
+            y: number
+        }
+    }
     Draw?: {
         width: number
         maxWidth?: number

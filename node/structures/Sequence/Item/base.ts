@@ -44,7 +44,7 @@ export class BaseSequenceItem {
 
     private kismet: BaseKismetItemDrawOptions;
 
-    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName, overWriteNumber?: number }) {
+    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName }) {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
@@ -83,12 +83,14 @@ export class BaseSequenceItem {
             console.log(err, this)
         }
 
+        const { position, sequence, overwriteNumber } = options.textOptions || {}
+
         this.kismet = {
-            x: 0,
-            y: 0,
+            x: position?.x ?? 0,
+            y: position?.y ?? 0,
             class: options.ObjectArchetype.split("'")[0],
             ObjectArchetype: options.ObjectArchetype,
-            ParentSequence: MAIN_SEQUENCE,
+            ParentSequence: `Sequence'${sequence}'` ?? MAIN_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
@@ -97,7 +99,7 @@ export class BaseSequenceItem {
             }
         }
 
-        this.id = ProcessManager.id(this.kismet.class, options.overWriteNumber)
+        this.id = ProcessManager.id(this.kismet.class, overwriteNumber)
 
         this.sequence = MAIN_SEQUENCE
     }
@@ -157,6 +159,8 @@ export class BaseSequenceItem {
         const Class = ClassInfo(/\w*Class=\w*/g), 
             name = ClassInfo(/\w*Name=\w*/)
 
+        if (Class === 'Sequence') throw new Error('Missing sequence items')
+
         const nameId = name?.slice(name.lastIndexOf('_') + 1)
 
         const properties = lines
@@ -172,14 +176,15 @@ export class BaseSequenceItem {
             inputs: BaseSequenceItem.linksFromText(properties),
             ObjectArchetype: map.get('ObjectArchetype') as string,
             ObjInstanceVersion: Number(map.get('ObjInstanceVersion') ?? 1),
-            overWriteNumber: nameId ? Number(nameId) : undefined
+            textOptions: {
+                overwriteNumber: nameId ? Number(nameId) : undefined,
+                sequence: map.get('ParentSequence'),
+                position: {
+                    x: Number(map.get('ObjPosX')),
+                    y: Number(map.get('ObjPostY'))
+                }
+            }
         })
-
-        // set additional item properties
-        if (map.has('ParentSequence')) item.setSequence(map.get('ParentSequence') as string)
-
-        item.setKismetSetting('x', map.get('ObjPosX'))
-        item.setKismetSetting('y', map.get('ObjPosY'))
 
         return {
             item,
