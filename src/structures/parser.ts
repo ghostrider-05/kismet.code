@@ -15,6 +15,14 @@ export class CustomNodesManager {
         this.groupExportItems = false
     }
 
+    private isPath (inputPath: string): boolean {
+        return existsSync(inputPath) || existsSync(resolve('.', inputPath))
+    }
+
+    private resolvePath (path: string): string {
+        return !existsSync(path) ? resolve('.', path) : path
+    }
+
     public async createCustomNodeFiles (): Promise<void> {
         if (!this.importPath) {
             this.importPath = ''
@@ -43,17 +51,11 @@ export class CustomNodesManager {
     }
 
     public setExportPath (path: string): this {
-        if (!existsSync(path)) {
-            if (existsSync(resolve('.', path))) {
-                this.exportPath = resolve('.', path)
-
-                return this
-            } else {
-                console.error('Could not find path:' + path)
-            }
+        if (!this.isPath(path)) {
+            console.error('Could not find path:' + path)
         }
 
-        this.exportPath = path
+        this.exportPath = this.resolvePath(path)
 
         return this
     }
