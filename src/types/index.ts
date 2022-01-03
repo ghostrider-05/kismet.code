@@ -23,8 +23,6 @@ export type SequenceItemType = SequenceAction | SequenceCondition | SequenceVari
 
 export type SequenceItemTypeName = 'actions' | 'events' | 'conditions' | 'variables'
 
-export type KismetVariableInternalType = string | number
+export type KismetVariablesType = string | number | boolean | null | undefined
 
-export type KismetVariableInternalTypeList = [string, KismetVariableInternalType][]
-
-export type KismetVariablesType = string | number | null | undefined
+export type KismetVariableInternalTypeList = [string, KismetVariablesType][]

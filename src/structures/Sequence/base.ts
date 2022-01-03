@@ -6,8 +6,8 @@ import {
 } from '../../shared/index.js';
 
 import type { 
-    KismetVariableInternalType, 
     KismetVariableInternalTypeList, 
+    KismetVariablesType, 
     SequenceItemType 
 } from '../../types/index.js'
 
@@ -101,7 +101,7 @@ export class Sequence {
         return this
     }
 
-    public toKismet(): string {
+    public toJSON (): Record<string, KismetVariablesType> {
         const { 
             archetype, 
             ObjInstanceVersion, 
@@ -109,7 +109,7 @@ export class Sequence {
             DrawWidth 
         } = this.properties
 
-        const variables = this.items.map<[string, KismetVariableInternalType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
+        const variables = this.items.map<[string, KismetVariablesType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
             .concat([
                 ['ObjectArchetype', archetype],
                 ['ObjName', this.name],
@@ -123,13 +123,29 @@ export class Sequence {
                 ['bEnabled', boolToKismet(this.enabled)]
             ]) as KismetVariableInternalTypeList
 
+        return variables.reduce((prev, curr) => ({
+            ...prev,
+            [curr[0]]: curr[1]
+        }), {})
+    }
+
+    public toString (): string {
+        const json = this.toJSON()
+
         const lines = [
             KISMET_NODE_LINES.begin(this.name, 'Sequence'),
-            filterEmptyLines(this.items.map(i => i.toKismet())),
-            filterEmptyLines(variables.map(v => parseVar(v[0], v[1]))),
+            filterEmptyLines(this.items.map(i => i.toString())),
+            filterEmptyLines(Object.keys(json).map(v => parseVar(v, json[v]))),
             KISMET_NODE_LINES.end
         ]
 
         return lines.join('\n')
+    }
+
+    /**
+     * @deprecated 
+     */
+    public toKismet(): string {
+        return this.toString()
     }
 }

@@ -8,7 +8,6 @@ import {
 
 import {
     Constants,
-    boolToKismet,
     filterEmptyLines,
     mapObjectKeys,
     parseVar,
@@ -22,7 +21,8 @@ import type {
     KismetConnections,
     BaseKismetItemDrawOptions,
     SequenceItemType,
-    SequenceItemTypeName
+    SequenceItemTypeName,
+    KismetVariablesType
 } from '../../../types/index.js'
 
 const { 
@@ -106,19 +106,19 @@ export class BaseSequenceItem {
         this.sequence = MAIN_SEQUENCE
     }
 
-    private commentToKismet (): string {
-        const kismet = [
-            typeof this.comment === 'string' ? parseVar('ObjComment', quote(this.comment)) : '',
-            this.supressAutoComment === false ? parseVar('bSuppressAutoComment', boolToKismet(this.supressAutoComment)) : '',
-            this.outputCommentToScreen ? parseVar('bOutputObjCommentToScreen', boolToKismet(this.outputCommentToScreen)) : ''
-        ]
-
-        return filterEmptyLines(kismet)
-    }
-
     private getKismetName (): string {
         const [, id] = this.id.resolveId().split('|')
         return this.kismet.ObjectArchetype.split("'")[0].concat(`_${id}`)
+    }
+
+    protected formatNode (properties: string[]): string {
+        const item = [
+            KISMET_NODE_LINES.begin(quote(this.getKismetName()), this.kismet.class), 
+            filterEmptyLines(properties), 
+            KISMET_NODE_LINES.end
+        ]
+
+        return item.join('\n')
     }
 
     protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {
@@ -168,7 +168,7 @@ export class BaseSequenceItem {
         return this
     }
 
-    public toKismet (): string {
+    public toJSON (): Record<string, KismetVariablesType> {
         const { 
             class: Class,
             DrawConfig, 
@@ -179,31 +179,41 @@ export class BaseSequenceItem {
             y
         } = this.kismet
 
-        const Name = `"${this.getKismetName()}"`
-
-        const variables = [
-            ['ObjInstanceVersion', ObjInstanceVersions.get(Class) ?? ObjInstanceVersion],
-            ['ParentSequence', ParentSequence],
-            ['ObjPosX', x],
-            ['ObjPosY', y],
-            ['DrawWidth', DrawConfig.width],
-            ['MaxWidth', DrawConfig.maxWidth],
-            ['DrawHeight', DrawConfig.height],
-            ['Name', Name],
-            ['ObjectArchetype', ObjectArchetype]
-        ].map(prop => parseVar(prop[0] as string, prop[1]))
+        const json: Record<string, KismetVariablesType> = {
+            'ObjInstanceVersion': ObjInstanceVersions.get(Class) ?? ObjInstanceVersion,
+            ParentSequence,
+            'ObjPosX': x,
+            'ObjPosY': y,
+            'DrawWidth': DrawConfig.width,
+            'MaxWidth': DrawConfig.maxWidth ?? null,
+            'DrawHeight': DrawConfig.height ?? null,
+            Name: quote(this.getKismetName()),
+            ObjectArchetype
+        }
 
         const connections = (this.connections as Record<string, BaseKismetConnection[]>) ?? {}
-        const properties = mapObjectKeys(connections, (c, i) => c.toKismet(i))
-            .map(c => c.join('\n'))
-            .concat(this.commentToKismet(), variables)
+        const connectionValues = mapObjectKeys(connections, (c, i) => [c.prefix(i), c.value] as [string, string])
 
-        const node = [
-            KISMET_NODE_LINES.begin(Name, Class), 
-            filterEmptyLines(properties), 
-            KISMET_NODE_LINES.end
-        ]
+        connectionValues.forEach(type => {
+            type.forEach(link => json[link[0]] = json[link[1]])
+        })
 
-        return node.join('\n')
+        if (typeof this.comment === 'string') json['ObjComment'] = quote(this.comment)
+        if (this.supressAutoComment === false) json['bSuppressAutoComment'] = this.supressAutoComment
+        if (this.outputCommentToScreen) json['bOutputObjCommentToScreen'] = this.outputCommentToScreen
+
+        return json
+    }
+
+    public toString (): string {
+        const json = this.toJSON()
+
+        const variables = Object.keys(json).map(n => parseVar(n, json[n]))
+
+        return this.formatNode(variables)
+    }
+
+    public toKismet (): string {
+        return this.toString()
     }
 }

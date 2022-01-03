@@ -64,7 +64,7 @@ export class BaseKismetConnection {
         return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
     }
 
-    private format (keys?: string[]): string {
+    protected format (keys?: string[]): string {
         const base = [
             ...(keys ?? []),
             `OverrideDelta=${this.kismet.OverrideDelta}`
@@ -102,8 +102,16 @@ export class BaseKismetConnection {
         return this
     }
 
-    public toKismet (index?: number, keys?: string[]): string {
-        return parseVar(`${this.typeName}(${index ?? this.connectionIndex})`, `(${this.format(keys)})`)
+    public prefix (index?: number): string {
+        return `${this.typeName}(${index ?? this.connectionIndex})`
+    }
+
+    public get value (): string {
+        return `(${this.format()})`
+    }
+
+    public toKismet (index?: number): string {
+        return parseVar(this.prefix(index), this.value)
     }
 }
 
@@ -222,10 +230,14 @@ export class ItemConnection extends BaseKismetConnection {
         return this.type === 'output'
     }
 
-    public override toKismet(index?: number): string {
+    public override get value (): string {
         const delay = this.ActivateDelay > 0 ? [`ActivateDelay=${this.ActivateDelay}`] : []
 
-        const kismet = super.toKismet(index, delay)
+        return super.format(delay)
+    }
+
+    public override toKismet(index?: number): string {
+        const kismet = super.toKismet(index)
 
         return kismet
     }

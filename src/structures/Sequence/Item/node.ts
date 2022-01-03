@@ -9,6 +9,7 @@ import {
 
 import type {   
     BaseKismetItemOptions,
+    KismetVariablesType,
     SequenceItemTypeName
 } from '../../../types/index.js'
 
@@ -26,6 +27,8 @@ export class SequenceNode extends BaseSequenceItem {
     public setBreakPoint (enabled: boolean): this {
         this.hasBreakpoint = enabled
 
+        this.setVariable('bIsBreakpointSet', boolToKismet(enabled))
+
         return this
     }
 
@@ -35,22 +38,46 @@ export class SequenceNode extends BaseSequenceItem {
         if (connection && (typeof value !== 'string' && typeof value !== 'number')) {
             connection.addLink(value.linkId, this.connections?.variable.indexOf(connection), hidden)
         } else {
-            this.variables.push({
-                name: variableName,
-                value: value.toString()
-            })
+            if (!this.variables.some(n => n.name === variableName)) {
+                this.variables.push({
+                    name: variableName,
+                    value: value.toString()
+                })
+            } else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                this.variables.find(n => n.name === variableName)!.value = value as string
+            }
         }
 
         return this
     }
 
-    public override toKismet (): string {
-        const kismet = super.toKismet()
+    public override toJSON (): Record<string, KismetVariablesType> {
+        const breakpoint = this.hasBreakpoint ? {
+            'bIsBreakpointSet': this.hasBreakpoint
+        } : {}
 
-        if (this.hasBreakpoint) this.setVariable('bIsBreakpointSet', boolToKismet(true))
+        const variables = this.variables.reduce((prev, curr) => ({
+            ...prev,
+            [curr.name]: curr.value
+        }), {})
+
+        return {
+            ...breakpoint,
+            ...variables,
+            ...super.toJSON()
+        }
+    }
+
+    public override toString (): string {
+        const node = super.toString()
 
         const properties: [string, string][] = this.variables.map(v => [v.name, v.value])
 
-        return addVariable(kismet, properties)
+        return addVariable(node, properties)
+    }
+
+    public override toKismet (): string {
+        return this.toString()
     }
 }

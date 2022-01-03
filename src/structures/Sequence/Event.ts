@@ -2,13 +2,14 @@ import { ItemConnection, SequenceNode } from './Item/index.js'
 import { SequenceAction } from "./Action.js";
 
 import { 
-    boolToKismet,
-    t
+    addVariable,
+    boolToKismet
 } from '../../shared/index.js';
 
 import type { 
     BaseKismetItemOptions, 
-    KismetEventOptions 
+    KismetEventOptions, 
+    KismetVariablesType
 } from '../../types/index.js'
 
 export class SequenceEvent<T extends {} = {}> extends SequenceNode {
@@ -36,7 +37,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         const connection = this.getConnection('output', name) as ItemConnection
 
         if (connection) {
-            connection.addLink(t<SequenceAction>(item).linkId, this.connections?.output.indexOf(connection))
+            connection.addLink(item.linkId, this.connections?.output.indexOf(connection))
         } else {
             console.warn(`Could not find output connection for '${name}' on ${this['kismet']['class']}`)
         }
@@ -80,18 +81,36 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         return this
     }
 
-    public override toKismet(): string {
-
-        const variables: [string, string | number][] = [
+    public override toJSON (): Record<string, KismetVariablesType> {
+        const variables = [
             ['MaxTriggerCount', this.trigger.maxCount],
             ['ReTriggerDelay', this.trigger.delay],
             ['bEnabled', boolToKismet(this.enabled)],
             ['bPlayerOnly', boolToKismet(this.playerOnly)],
             ['bClientSideOnly', boolToKismet(this.clientSideOnly)]
-        ]
+        ].reduce((prev, curr) => ({
+            ...prev,
+            [curr[0]]: curr[1]
+        }), {}) 
 
-        variables.forEach(v => super.setVariable(v[0], v[1]))
+        return {
+            ...variables,
+            ...super.toJSON()
+        }
+    }
 
-        return super.toKismet()
+    public override toString (): string {
+        const json = super.toJSON()
+
+        const variables = Object.keys(json).map(n => [n, json[n]] as [string, KismetVariablesType])
+
+        return addVariable(super.toString(), variables)
+    }
+
+    /**
+     * @deprecated 
+     */
+    public override toKismet (): string {
+        return this.toString()
     }
 }
