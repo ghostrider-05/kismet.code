@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { writeFile as writeToFile } from 'fs/promises'
 import { resolve } from 'path';
 
-import { readNodeFile, _validateNodeInput } from './read.js'
+import { nodeToJSON, readNodeFile, _validateNodeInput } from './read.js'
 import { actions, conditions, events } from './templates.js'
 
 import { 
@@ -13,7 +13,9 @@ import {
 } from '../shared/index.js'
 
 import type { 
+    ExportOptions,
     JsonFile,
+    PathInput,
     RawUnrealJsonFile
 } from '../types/index.js'
 
@@ -25,27 +27,40 @@ const collectedClasses: Record<string, JsonFile[]> = {
     conditions: []
 }
 
-const writeFile = async (path: string, content: string) => await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
+const jsonnodes: Record<string, unknown>[] = []
+
+const writeFile = async (path: string, content: string) => {
+    return await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
+}
 
 function getExportFile (classes: JsonFile[], groupItems: boolean) {
     const importStatement = (name: string) => `import { ${name} } from './Classes/${name}.js'`
+
     const exportStatement = (items: (string | JsonFile)[]) => {
-        const groupExport = groupItems ? groupByProperty(classes, 'Package').map(items => `export const ${items[0].Package} = {\n\t${items.map(n => n.name).join(',\n\t')}\n}`).join('\n') : ''
+        const groupExport = groupItems ? groupByProperty(classes, 'Package').map(items => {
+            return `export const ${items[0].Package} = {\n\t${items.map(n => n.name).join(',\n\t')}\n}`
+        }).join('\n') : ''
+        
         return `\n\nexport {\n\t${t<string[]>(items).join(',\n\t')}\n}\n\n${groupExport}`
     }
 
     if (classes?.length === 0) return '';
+
     const classNames = classes.map(item => item.name)
 
-    const content = classNames.map(name => importStatement(name))
+    const content = classNames.map(importStatement)
         .concat('\n', exportStatement(classNames))
         .join('\n')
 
     return content
 }
 
-export async function findClasses (paths: { importPath: string, exportPath: string }, groupItems = false): Promise<void> {
-    const { importPath, exportPath } = paths
+export async function findClasses (paths: PathInput, exportOptions?: ExportOptions): Promise<void> {
+    const { importPath, exportPath, packages } = paths
+    let { groupItems, json } = exportOptions || {}
+
+    groupItems ??= true
+    json ??= false
 
     if (!importPath || !fs.existsSync(importPath)) {
         console.warn(`Could not find path: ${importPath}`)
@@ -73,6 +88,10 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
             return file.toLowerCase().startsWith('seq') && !file.toLowerCase().startsWith('sequence')
         })
 
+        if ((packages?.length ?? 0) > 0 && !packages?.includes(Package)) {
+            continue
+        }
+
         for await (const file of kismetNodes) {
             const fileContent = fs.readFileSync(path + '\\' + file, 'utf-8')
             const fileJSON = JSON.parse(fileContent) as RawUnrealJsonFile
@@ -83,6 +102,7 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
             }
 
             const node = readNodeFile(fileJSON, Package)
+            let isValidType = true
 
             const { name, category, type } = node
 
@@ -104,7 +124,14 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
                         await writeFile(resolve('.', output), events(node))
                         break
                     default:
+                        isValidType = false
                         console.log('Invalid type for class:' + node.Class)
+                }
+
+                if (json && isValidType) {
+                    const jsonNode = nodeToJSON(node)
+
+                    jsonnodes.push(jsonNode)
                 }
                 
                 collectedClasses[type]?.push({
@@ -132,7 +159,7 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
     const exportedPaths: [string, string][] = []
 
     Object.keys(collectedClasses).forEach(key => {
-        const content = getExportFile(collectedClasses[key], groupItems)
+        const content = getExportFile(collectedClasses[key], <boolean>groupItems)
         const path = resolve('.', './' + exportPath.concat(`/${key}/index.ts`))
 
         exportedPaths.push([`./${key}/index.js`, key])
@@ -141,7 +168,12 @@ export async function findClasses (paths: { importPath: string, exportPath: stri
     })
 
     if (exportedPaths.length > 0) {
-        const exports = exportedPaths.map(path => `export * as ${path[1]} from '${path[0]}'`).join('\n')
+        const exports = exportedPaths.map(path => {
+            return `export * as ${path[1]} from '${path[0]}'`
+        }).join('\n')
+
         writeFile(resolve('.', './' + exportPath.concat(`/index.ts`)), exports)
     }
+
+    if (json) writeFile(resolve('.', './' + exportPath.concat(`/nodes.json`)), JSON.stringify(jsonnodes))
 }

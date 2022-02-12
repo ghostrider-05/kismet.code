@@ -7,17 +7,13 @@ import {
 
 import type {
     BaseKismetConnectionOptions,
-    BaseKismetVariableLink,
-    KismetConnectionLink,
-    KismetConnectionType,
-    KismetVariableLink,
-    KismetInputLink,
-    KismetOutputLink
+    KismetConnectionType
 } from '../../../types/index.js'
 
 export class BaseKismetConnection {
     protected readonly type: KismetConnectionType;
     protected kismet: BaseKismetConnectionOptions;
+    protected input: string;
     
     public name: string;
     public connectionIndex = 0;
@@ -33,6 +29,8 @@ export class BaseKismetConnection {
     }) {
         const { input, type, kismetOptions, index } = options
 
+        this.input = input
+
         this.name = input
         this.connectionIndex = index ?? 0
 
@@ -45,12 +43,36 @@ export class BaseKismetConnection {
         }
     }
 
+    public static convertLink (type: KismetConnectionType, input: string, index?: number): ItemConnection | VariableConnection | undefined {
+        switch (type) {
+            case Constants.ConnectionType.INPUT:
+            case Constants.ConnectionType.OUTPUT:
+                return new ItemConnection(input, type, index)
+            case Constants.ConnectionType.VARIABLE:
+                return new VariableConnection(input, type, index)
+            default:
+                console.warn('Unknown connection link type: ' + type)
+        }
+    }
+
+    public static convertInput (input: string): Record<string, string | number | boolean> {
+        const output = input.slice(1, -1).split(',').map(prop => {
+            return {
+                name: prop.substring(0, prop.indexOf('=')),
+                value: prop.substring(prop.indexOf('=') + 1)
+            }
+        }).reduce((z, a) => ({...z, [a.name]: a.value}), {})
+
+        return output
+    }
+
     private get typeName () : string {
         return (this.type[0].toUpperCase() + this.type.slice(1)) + 'Links'
     }
 
-    private get formatted (): string {
+    protected format (keys?: string[]): string {
         const base = [
+            ...(keys ?? []),
             `OverrideDelta=${this.kismet.OverrideDelta}`
         ].concat(!this.bHidden && this.type === 'variable' ? [`bHidden=${boolToKismet(this.bHidden)}`] : [])
 
@@ -58,15 +80,11 @@ export class BaseKismetConnection {
         const Draw = `${this.type === 'variable' ? 'DrawX' : 'DrawY'}=${this.kismet.Draw}`
         const linksLength = this.links?.length ?? 0
 
-        return base.concat([Draw].concat(linksLength > 0 ? [
+        const output = base.concat([Draw].concat(linksLength > 0 ? [
             `${prefix}=(${this.links?.join(',')})`
         ] : [])).join(',')
-    }
 
-    public setHidden (hidden: boolean): this {
-        this.bHidden = hidden
-
-        return this
+        return `(${output})`
     }
 
     public addLink (linkId: string, index?: number, hidden?: boolean): this {
@@ -86,138 +104,151 @@ export class BaseKismetConnection {
         return this
     }
 
+    public setHidden (hidden: boolean): this {
+        this.bHidden = hidden
+
+        return this
+    }
+
+    public prefix (index?: number): string {
+        return `${this.typeName}(${index ?? this.connectionIndex})`
+    }
+
+    public get value (): string {
+        return this.format()
+    }
+
     public toKismet (index?: number): string {
-        return parseVar(`${this.typeName}(${index ?? this.connectionIndex})`, `(${this.formatted})`)
+        return parseVar(this.prefix(index), this.value)
     }
 }
 
-// TODO: fix types
-export class KismetConnection extends BaseKismetConnection implements BaseKismetVariableLink {
-    public OverrideDelta: number;
-    public bClampedMin: boolean;
-    public bClampedMax: boolean;
-    public bMoving: boolean;
-    public bHidden: boolean;
+export class VariableConnection extends BaseKismetConnection {
+    public expectedType: string;
+    public PropertyName: string;
+    public bAllowAnyType: boolean;
+    public CachedProperty: boolean;
+    public MinVars: number;
+    public MaxVars: number;
+    public DrawX: number;
+    public bWriteable: boolean;
+    public bSequenceNeverReadsOnlyWritesToThisVar: boolean;
+    public bModifiesLinkedObject: boolean;
 
-    constructor (input: string, type: KismetConnectionType, index?: number) {
+    constructor (input: string, type: KismetConnectionType, index?: number ) {
         super({
-            input: Constants.DefaultConnectionName.IN,
-            type,
-            index
+            input,
+            index,
+            type
         })
 
-        const properties = this.getPropsFromInput(input)
+        const properties = BaseKismetConnection.convertInput(input)
 
-        const { 
-            LinkDesc, 
-            OverrideDelta, 
-            bClampedMin, 
-            bClampedMax, 
-            bMoving, 
-            bHidden 
+        const {
+            ExpectedType,
+            PropertyName,
+            bAllowAnyType,
+            CachedProperty,
+            MinVars,
+            MaxVars,
+            DrawX,
+            bWriteable,
+            bSequenceNeverReadsOnlyWritesToThisVar,
+            bModifiesLinkedObject
         } = properties
 
-        this.name = (<string>t(LinkDesc)).replaceAll('"', '')
+        this.expectedType = t(ExpectedType);
+        this.PropertyName = t(PropertyName);
+        this.bAllowAnyType = t(bAllowAnyType) ?? false;
+        this.CachedProperty = t(CachedProperty) ?? null;
+        this.MinVars = t(MinVars) ?? 1;
+        this.MaxVars = t(MaxVars) ?? 255;
+        this.DrawX = t(DrawX) ?? 0;
+        this.bWriteable = t(bWriteable) ?? false;
+        this.bSequenceNeverReadsOnlyWritesToThisVar = t(bSequenceNeverReadsOnlyWritesToThisVar) ?? false;
+        this.bModifiesLinkedObject = t(bModifiesLinkedObject) ?? false;
+    }
 
-        this.OverrideDelta = t(OverrideDelta) ?? 0;
-        this.bClampedMin = t(bClampedMin) ?? false;
-        this.bClampedMax = t(bClampedMax) ?? false;
-
-        this.bMoving = t(bMoving) ?? false;
-        this.bHidden = t(bHidden) ?? false;
-
-        if (this.isVariableLink()) {
-            const {
-                ExpectedType,
-                PropertyName,
-                bAllowAnyType,
-                CachedProperty,
-                MinVars,
-                MaxVars,
-                DrawX,
-                bWriteable,
-                bSequenceNeverReadsOnlyWritesToThisVar,
-                bModifiesLinkedObject
-            } = properties
-
-            this.expectedType = t(ExpectedType);
-            this.PropertyName = t(PropertyName);
-            this.bAllowAnyType = t(bAllowAnyType) ?? false;
-            this.CachedProperty = t(CachedProperty) ?? null;
-            this.MinVars = t(MinVars) ?? 1;
-            this.MaxVars = t(MaxVars) ?? 255;
-            this.DrawX = t(DrawX) ?? 0;
-            this.bWriteable = t(bWriteable) ?? false;
-            this.bSequenceNeverReadsOnlyWritesToThisVar = t(bSequenceNeverReadsOnlyWritesToThisVar) ?? false;
-            this.bModifiesLinkedObject = t(bModifiesLinkedObject) ?? false;
+    public override addLink(linkId: string, index?: number, hidden?: boolean): this {
+        if ((this.links?.length ?? 0) > this.MaxVars) {
+            console.warn(`Maximum connections reached (${this.MaxVars}). Cannot add more connections to ${linkId}`)
         }
 
-        if (this.isLinkType()) {
-            const {
-                bHasImpulse,
-                bDisabled,
-                bDisabledPIE,
-                ActivateDelay,
-                LinkedOp,
-                DrawY
-            } = properties
+        const expectedClass = this.expectedType.split("'")[1].split('.')[1]
 
-            this.bHasImpulse = t(bHasImpulse) ?? false;
-            this.bDisabled = t(bDisabled) ?? false;
-            this.bDisabledPIE = t(bDisabledPIE) ?? false;
-            this.ActivateDelay = t(ActivateDelay) ?? 0.0;
-            this.LinkedOp = t(LinkedOp) ?? null;
-            this.DrawY = t(DrawY) ?? 0;
-
-            this.setActivateDelay = (duration: number): KismetConnectionLink => {
-                t<KismetConnectionLink>(this).ActivateDelay = duration;
-
-                return t<KismetConnectionLink>(this)
-            }
-
-            if (this.isInputLink()) {
-                this.QueuedActivations = t(properties.QueuedActivations) ?? 0;
-            } else if (this.isOutputLink()) {
-                const { bIsActivated, PIEActivationTime } = properties
-                
-                this.bIsActivated = t(bIsActivated) ?? false;
-                this.PIEActivationTime = t(PIEActivationTime) ?? 0.0;
-            }
+        if (!this.bAllowAnyType && (linkId.split("'")[0] !== expectedClass)) {
+            console.warn(`Incorrect input type. Received class ${linkId.split("'")[0]}, expected ${expectedClass}`)
         }
-    }
 
-    private getPropsFromInput (input: string): Record<string, string | number | boolean> {
-        return input.slice(1, -1).split(',').map(prop => {
-            return {
-                name: prop.substring(0, prop.indexOf('=')),
-                value: prop.substring(prop.indexOf('=') + 1)
-            }
-        }).reduce((z, a) => ({...z, [a.name]: a.value}), {})
-    }
-
-    private isLinkType (): this is KismetConnectionLink {
-        return this.isInputLink() || this.isOutputLink()
-    }
-
-    public isVariableLink (): this is KismetVariableLink {
-        return this.type === 'variable'
-    }
-
-    public isInputLink (): this is KismetInputLink {
-        return this.type === 'input'
-    }
-
-    public isOutputLink (): this is KismetOutputLink {
-        return this.type === 'output'
-    }
-
-    public override setHidden (hidden: boolean): this {
-        this.bHidden = hidden
+        super.addLink(linkId, index, hidden)
 
         return this
     }
 
     public override toKismet(index?: number): string {
         return super.toKismet(index)
+    }
+}
+
+export class ItemConnection extends BaseKismetConnection {
+    public bHasImpulse: boolean;
+    public bDisabled: boolean;
+    public bDisabledPIE: boolean;
+    public ActivateDelay: number;
+    public LinkedOp: string;
+    public DrawY: number;
+
+    constructor (input: string, type: KismetConnectionType, index?: number) {
+        super({
+            input,
+            type,
+            index
+        })
+
+        const properties = BaseKismetConnection.convertInput(input)
+
+        const {
+            LinkDesc,
+            bHasImpulse,
+            bDisabled,
+            bDisabledPIE,
+            ActivateDelay,
+            LinkedOp,
+            DrawY
+        } = properties
+
+        this.name = LinkDesc ? (<string>LinkDesc).replaceAll('"', '') : this.name
+        this.bHasImpulse = t(bHasImpulse) ?? false;
+        this.bDisabled = t(bDisabled) ?? false;
+        this.bDisabledPIE = t(bDisabledPIE) ?? false;
+        this.ActivateDelay = t(ActivateDelay) ?? 0.0;
+        this.LinkedOp = t(LinkedOp) ?? null;
+        this.DrawY = t(DrawY) ?? 0;
+    }
+
+    public setActivateDelay = (duration: number): this => {
+        this.ActivateDelay = duration;
+
+        return this
+    }
+
+    public isInputLink (): boolean {
+        return this.type === 'input'
+    }
+
+    public isOutputLink (): boolean {
+        return this.type === 'output'
+    }
+
+    public override get value (): string {
+        const delay = this.ActivateDelay > 0 ? [`ActivateDelay=${this.ActivateDelay}`] : []
+
+        return super.format(delay)
+    }
+
+    public override toKismet(index?: number): string {
+        const kismet = super.toKismet(index)
+
+        return kismet
     }
 }

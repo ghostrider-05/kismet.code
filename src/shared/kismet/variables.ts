@@ -24,7 +24,7 @@ export function boolToKismet (input: boolean | null): string {
 export function parseVar (name: string, value: KismetVariablesType): string {
     if (value == null) return ''
     
-    const stringValue = typeof value === 'number' ? value.toString() : value
+    const stringValue = typeof value === 'number' ? value.toString() : typeof value === 'boolean' ? boolToKismet(value) : value
 
     return KISMET_LINE_INDENT + `${name}=${stringValue}`
 }

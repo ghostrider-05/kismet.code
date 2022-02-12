@@ -26,9 +26,16 @@ export class SequenceVariable extends BaseSequenceItem {
         return this
     }
 
-    public override toKismet (): string {
-        const kismet = super.toKismet()
+    public override toString(): string {
+        const kismet = super.toString()
 
         return this.variableName ? addVariable(kismet, [['VarName', quote(this.variableName)]]) : kismet
+    }
+
+    /**
+     * @deprecated 
+     */
+    public override toKismet (): string {
+        return this.toString()
     }
 }

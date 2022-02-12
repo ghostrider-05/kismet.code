@@ -2,12 +2,12 @@ import { BaseSequenceItem } from "./Item/index.js";
 import { KismetColor } from "./misc/index.js";
 
 import { 
-    addVariable, 
-    boolToKismet 
+    boolToKismet, 
+    parseVar
 } from "../../shared/index.js";
 
 import { 
-    KismetVariableInternalType 
+    KismetVariablesType 
 } from "../../types/index.js";
 
 const DEFAULT_COMMENT_FRAME_SIZE_X = 248
@@ -130,10 +130,8 @@ export class Comment extends BaseSequenceItem {
         return this
     }
 
-    public override toKismet (): string {
-        const kismet = super.toKismet()
-
-        const variables: [string, KismetVariableInternalType][] = [
+    public override toJSON(): Record<string, KismetVariablesType> {
+        const variables: [string, KismetVariablesType][] = [
             ['SizeX', this.size.x],
             ['SizeY', this.size.y],
             ['BorderWidth', this.borderWidth],
@@ -146,7 +144,29 @@ export class Comment extends BaseSequenceItem {
             ['FillTexture', this.fillTexture ?? '']
         ]
 
-        return addVariable(kismet, variables)
+        const json = variables.reduce((prev, curr) => ({
+            ...prev,
+            [curr[0]]: curr[1]
+        }), {})
+
+        return {
+            ...json,
+            ...super.toJSON()
+        }
+    }
+
+    public override toString(): string {
+        const json = this.toJSON()
+        const properties = Object.keys(json).map(n => parseVar(n, json[n]))
+
+        return this.formatNode(properties)
+    }
+
+    /**
+     * @deprecated 
+     */
+    public override toKismet (): string {
+        return this.toString()
     }
 }
 

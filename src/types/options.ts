@@ -121,6 +121,7 @@ export interface BaseKismetItemDrawOptions {
     x: number; 
     y: number; 
     class: string; 
+    classType: string;
     ObjectArchetype: string; 
     ParentSequence: string; 
     ObjInstanceVersion: number;

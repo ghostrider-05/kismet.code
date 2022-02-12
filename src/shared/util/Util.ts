@@ -47,7 +47,7 @@ export function isType (type: objectType, input: unknown, keys?: string[]): bool
             isValid = isNaN(input as number)
             break
         case 'object':
-            isValid = typeof input === 'object' && input !== null && validateObjectKeys(input as Record<string, unknown>)
+            isValid = typeof input === 'object' && validateObjectKeys(input as Record<string, unknown>)
             if (!isValid) throw new Error (`Invalid type for object, received type ${typeof input}`)
             break
     }

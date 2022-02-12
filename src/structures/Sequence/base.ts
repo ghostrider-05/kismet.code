@@ -12,7 +12,7 @@ import {
 } from '../../shared/index.js'
 
 import type { 
-    KismetVariableInternalType, 
+    KismetVariablesType, 
     KismetVariableInternalTypeList, 
     SequenceItemType, 
     SequenceViewOptions,
@@ -176,7 +176,7 @@ export class Sequence {
 
         this.positionManager.fillPositions(this)
 
-        const variables = this.items.map<[string, KismetVariableInternalType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
+        const variables = this.items.map<[string, KismetVariablesType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
             .concat([
                 ['ObjectArchetype', archetype],
                 ['ObjName', this.name],

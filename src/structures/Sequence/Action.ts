@@ -1,4 +1,4 @@
-import { SequenceNode } from './Item/index.js'
+import { ItemConnection, SequenceNode } from './Item/index.js'
 
 import { 
     Constants 
@@ -19,7 +19,7 @@ export class SequenceAction extends SequenceNode {
 
     public addConnection (item: SequenceAction, outputName: string, inputName: string): this {
         const connection = this.getConnection(ConnectionType.OUTPUT, outputName);
-        const itemConnection = item.getConnection(ConnectionType.INPUT, inputName);
+        const itemConnection = item.getConnection(ConnectionType.INPUT, inputName) as ItemConnection;
         
         if (connection && itemConnection) {
             this.connections?.output.find(n => n.name === outputName)?.addLink(
