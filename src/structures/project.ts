@@ -13,7 +13,7 @@ import {
     Events 
 } from '../items/index.js'
 
-import { CustomNodesManager } from './parser.js';
+import { CustomNodesManager } from './managers/index.js';
 
 import type { 
     projectOptions

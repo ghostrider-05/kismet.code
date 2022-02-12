@@ -13,6 +13,7 @@ import type {
 export class BaseKismetConnection {
     protected readonly type: KismetConnectionType;
     protected kismet: BaseKismetConnectionOptions;
+    protected input: string;
     
     public name: string;
     public connectionIndex = 0;
@@ -28,6 +29,8 @@ export class BaseKismetConnection {
     }) {
         const { input, type, kismetOptions, index } = options
 
+        this.input = input
+
         this.name = input
         this.connectionIndex = index ?? 0
 
@@ -42,7 +45,8 @@ export class BaseKismetConnection {
 
     public static convertLink (type: KismetConnectionType, input: string, index?: number): ItemConnection | VariableConnection | undefined {
         switch (type) {
-            case Constants.ConnectionType.INPUT || Constants.ConnectionType.OUTPUT:
+            case Constants.ConnectionType.INPUT:
+            case Constants.ConnectionType.OUTPUT:
                 return new ItemConnection(input, type, index)
             case Constants.ConnectionType.VARIABLE:
                 return new VariableConnection(input, type, index)
@@ -52,12 +56,14 @@ export class BaseKismetConnection {
     }
 
     public static convertInput (input: string): Record<string, string | number | boolean> {
-        return input.slice(1, -1).split(',').map(prop => {
+        const output = input.slice(1, -1).split(',').map(prop => {
             return {
                 name: prop.substring(0, prop.indexOf('=')),
                 value: prop.substring(prop.indexOf('=') + 1)
             }
         }).reduce((z, a) => ({...z, [a.name]: a.value}), {})
+
+        return output
     }
 
     private get typeName () : string {
@@ -74,9 +80,11 @@ export class BaseKismetConnection {
         const Draw = `${this.type === 'variable' ? 'DrawX' : 'DrawY'}=${this.kismet.Draw}`
         const linksLength = this.links?.length ?? 0
 
-        return base.concat([Draw].concat(linksLength > 0 ? [
+        const output = base.concat([Draw].concat(linksLength > 0 ? [
             `${prefix}=(${this.links?.join(',')})`
         ] : [])).join(',')
+
+        return `(${output})`
     }
 
     public addLink (linkId: string, index?: number, hidden?: boolean): this {
@@ -107,7 +115,7 @@ export class BaseKismetConnection {
     }
 
     public get value (): string {
-        return `(${this.format()})`
+        return this.format()
     }
 
     public toKismet (index?: number): string {
@@ -200,6 +208,7 @@ export class ItemConnection extends BaseKismetConnection {
         const properties = BaseKismetConnection.convertInput(input)
 
         const {
+            LinkDesc,
             bHasImpulse,
             bDisabled,
             bDisabledPIE,
@@ -208,6 +217,7 @@ export class ItemConnection extends BaseKismetConnection {
             DrawY
         } = properties
 
+        this.name = LinkDesc ? (<string>LinkDesc).replaceAll('"', '') : this.name
         this.bHasImpulse = t(bHasImpulse) ?? false;
         this.bDisabled = t(bDisabled) ?? false;
         this.bDisabledPIE = t(bDisabledPIE) ?? false;

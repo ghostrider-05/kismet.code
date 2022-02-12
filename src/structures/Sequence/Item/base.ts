@@ -4,7 +4,7 @@ import { BaseKismetConnection, ItemConnection, VariableConnection } from './link
 import {
     ProcessId,
     ProcessManager
-} from '../../../managers/index.js'
+} from '../../managers/index.js'
 
 import {
     Constants,
@@ -55,11 +55,6 @@ export class BaseSequenceItem {
             this.connections = ["input", "output", "variable"].map(key => {
                 const { inputs } = options;
                 const links = (inputs as Record<string, string[]>)[key]
-
-                if (!links) return {
-                    key,
-                    connections: []
-                }
 
                 if (links.length === 0 && ['input', 'output'].includes(key)) {
                     return {
@@ -195,7 +190,9 @@ export class BaseSequenceItem {
         const connectionValues = mapObjectKeys(connections, (c, i) => [c.prefix(i), c.value] as [string, string])
 
         connectionValues.forEach(type => {
-            type.forEach(link => json[link[0]] = json[link[1]])
+            if (type.length > 0) {
+                type.forEach(link => json[link[0]] = link[1])
+            }
         })
 
         if (typeof this.comment === 'string') json['ObjComment'] = quote(this.comment)
