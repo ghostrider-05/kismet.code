@@ -84,3 +84,46 @@ export function readNodeFile (json: RawUnrealJsonFile, Package: string): UnrealJ
         }
     }
 }
+
+export function nodeToJSON (node: UnrealJsonReadFile): Record<string, unknown> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { staticProperties, defaultproperties, links, ...json } = node
+                    
+    const updateLinks = (links: string[]) => links.map(link => ({ 
+        name: link.match(/(?<=LinkDesc=)(.*?)(?=,)/g)?.[0] as string 
+    }))
+    
+    const inputLinks = updateLinks(links.input), outputLinks = updateLinks(links.output);
+
+    const variableLinks = links.variable.map(link => ({
+        name: link.match(/(?<=LinkDesc=)(.*?)(?=,)/g)?.[0] as string,
+        expectedType: link.match(/(?<=ExpectedType=)(.*?)(?=,)/g)?.[0] as string
+    }))
+
+    const props = defaultproperties.map(prop => {
+        const nodeProp = Constants.NodeProperty
+        const { name, value } = prop
+
+        if (!value || name === nodeProp.NAME || name === nodeProp.CATEGORY) return null
+        return (
+            name.includes(nodeProp.LINKS_INPUT)
+            || name.includes(nodeProp.LINKS_OUTPUT)
+            || name.includes(nodeProp.LINKS_VARIABLE)
+        ) ? null : prop
+    }).filter(n => n)
+
+    const displayName = defaultproperties.find(x => x?.name === Constants.NodeProperty.NAME)?.value
+
+    const output = {
+        ...json,
+        displayName,
+        defaultproperties: props,
+        links: {
+            input: inputLinks,
+            output: outputLinks,
+            variable: variableLinks
+        }
+    }
+
+    return output
+}

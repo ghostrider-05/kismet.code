@@ -11,7 +11,13 @@ export interface JsonFile extends Record<string, string>{
 
 export interface PathInput { 
     importPath: string
-    exportPath: string 
+    exportPath: string,
+    packages?: string[]
+}
+
+export interface ExportOptions {
+    groupItems?: boolean
+    json?: boolean
 }
 
 export interface RawUnrealJsonConstant {

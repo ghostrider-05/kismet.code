@@ -7,3 +7,7 @@ node_modules
 # Output files
 src/dist/
 src/test*/
+nodes.json
+
+# Other
+*.cs

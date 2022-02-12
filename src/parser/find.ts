@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { writeFile as writeToFile } from 'fs/promises'
 import { resolve } from 'path';
 
-import { readNodeFile, _validateNodeInput } from './read.js'
+import { nodeToJSON, readNodeFile, _validateNodeInput } from './read.js'
 import { actions, conditions, events } from './templates.js'
 
 import { 
@@ -13,6 +13,7 @@ import {
 } from '../shared/index.js'
 
 import type { 
+    ExportOptions,
     JsonFile,
     PathInput,
     RawUnrealJsonFile
@@ -25,6 +26,8 @@ const collectedClasses: Record<string, JsonFile[]> = {
     events: [],
     conditions: []
 }
+
+const jsonnodes: Record<string, unknown>[] = []
 
 const writeFile = async (path: string, content: string) => {
     return await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })
@@ -52,8 +55,12 @@ function getExportFile (classes: JsonFile[], groupItems: boolean) {
     return content
 }
 
-export async function findClasses (paths: PathInput, groupItems = false): Promise<void> {
-    const { importPath, exportPath } = paths
+export async function findClasses (paths: PathInput, exportOptions?: ExportOptions): Promise<void> {
+    const { importPath, exportPath, packages } = paths
+    let { groupItems, json } = exportOptions || {}
+
+    groupItems ??= true
+    json ??= false
 
     if (!importPath || !fs.existsSync(importPath)) {
         console.warn(`Could not find path: ${importPath}`)
@@ -81,6 +88,10 @@ export async function findClasses (paths: PathInput, groupItems = false): Promis
             return file.toLowerCase().startsWith('seq') && !file.toLowerCase().startsWith('sequence')
         })
 
+        if ((packages?.length ?? 0) > 0 && !packages?.includes(Package)) {
+            continue
+        }
+
         for await (const file of kismetNodes) {
             const fileContent = fs.readFileSync(path + '\\' + file, 'utf-8')
             const fileJSON = JSON.parse(fileContent) as RawUnrealJsonFile
@@ -91,6 +102,7 @@ export async function findClasses (paths: PathInput, groupItems = false): Promis
             }
 
             const node = readNodeFile(fileJSON, Package)
+            let isValidType = true
 
             const { name, category, type } = node
 
@@ -112,7 +124,14 @@ export async function findClasses (paths: PathInput, groupItems = false): Promis
                         await writeFile(resolve('.', output), events(node))
                         break
                     default:
+                        isValidType = false
                         console.log('Invalid type for class:' + node.Class)
+                }
+
+                if (json && isValidType) {
+                    const jsonNode = nodeToJSON(node)
+
+                    jsonnodes.push(jsonNode)
                 }
                 
                 collectedClasses[type]?.push({
@@ -140,7 +159,7 @@ export async function findClasses (paths: PathInput, groupItems = false): Promis
     const exportedPaths: [string, string][] = []
 
     Object.keys(collectedClasses).forEach(key => {
-        const content = getExportFile(collectedClasses[key], groupItems)
+        const content = getExportFile(collectedClasses[key], <boolean>groupItems)
         const path = resolve('.', './' + exportPath.concat(`/${key}/index.ts`))
 
         exportedPaths.push([`./${key}/index.js`, key])
@@ -155,4 +174,6 @@ export async function findClasses (paths: PathInput, groupItems = false): Promis
 
         writeFile(resolve('.', './' + exportPath.concat(`/index.ts`)), exports)
     }
+
+    if (json) writeFile(resolve('.', './' + exportPath.concat(`/nodes.json`)), JSON.stringify(jsonnodes))
 }

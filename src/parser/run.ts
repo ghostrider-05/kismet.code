@@ -16,5 +16,5 @@ if (!importPath || !exportPath) {
     await findClasses({
         importPath,
         exportPath
-    }, groupItems)
+    }, { groupItems })
 }
