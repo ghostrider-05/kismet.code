@@ -1,8 +1,8 @@
 {
   "name": "kismet.ts",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "description": "Make kismet from code",
-  "main": "./node/dist/index.js",
+  "main": "./src/dist/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,10 +11,10 @@
     "start": "node . —experimental-json-modules",
     "lint": "npx eslint . --ext .cjs,.ts,.tsx",
     "lint:fix": "npx eslint . --ext .cjs,.ts,.tsx --fix",
-    "parser:build": "node ./node/dist/parser/run.js"
+    "parser:build": "node ./src/dist/parser/run.js"
   },
   "bin": {
-    "create-custom-kismet-nodes": "node ./node/dist/parser/run.js"
+    "create-custom-kismet-nodes": "node ./src/dist/parser/run.js"
   },
   "keywords": [
     "udk",
