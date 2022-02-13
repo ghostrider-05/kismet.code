@@ -20,6 +20,12 @@ export interface ExportOptions {
     json?: boolean
 }
 
+export interface PathReadError {
+    code: string
+    path: string
+    syscall: string
+}
+
 export interface RawUnrealJsonConstant {
     name: string
     value: string

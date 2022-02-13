@@ -56,10 +56,10 @@ export class KismetFile {
     }
 
     public async copyKismet (): Promise<void> {
-        return await clipboard.write(this.toKismet())
+        return await clipboard.write(this.toString())
     }
 
-    public toKismet (): string {
-        return this.mainSequence.toKismet()
+    public toString (): string {
+        return this.mainSequence.toString()
     }
 }

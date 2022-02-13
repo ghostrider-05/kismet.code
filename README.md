@@ -43,7 +43,9 @@ More examples and guides can be found in the `docs` folder
 
 ## Roadmap
 
-For upcoming features take a look at the [roadmap](https://github.com/users/ghostrider-05/projects/2/views/1). Discussion and other questions can also be asked on [discord][discord]
+For upcoming features take a look at the [roadmap][roadmap]. Discussion and other questions can also be asked in [GitHub discussions][gh-discussions]
 
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
 [github]: https://github.com/ghostrider-05/kismet.code
+[gh-discussions]: https://github.com/ghostrider-05/kismet.code/discussions
+[roadmap]: https://github.com/users/ghostrider-05/projects/2/views/1

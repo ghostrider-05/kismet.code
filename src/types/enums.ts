@@ -1,7 +1,7 @@
 /**
  * Types of connections that can be made to a kismet node
  */
-export const enum ConnectionType {
+export enum ConnectionType {
     INPUT = 'input',
     OUTPUT = 'output',
     VARIABLE = 'variable'
@@ -10,7 +10,7 @@ export const enum ConnectionType {
 /**
  * Default input and output connection names when no other connections are present 
  */
-export const enum DefaultConnectionName {
+export enum DefaultConnectionName {
     IN = 'In',
     OUT = 'Out'
 }
@@ -18,7 +18,7 @@ export const enum DefaultConnectionName {
 /**
  * Kismet String representations for booleans
  */
-export const enum KismetBoolean {
+export enum KismetBoolean {
     True = 'True',
     False = 'False'
 }
@@ -28,7 +28,7 @@ export const enum KismetBoolean {
  * 
  * When the property is an array, only the name is present
  */
-export const enum NodeProperty {
+export enum NodeProperty {
     CATEGORY = 'ObjCategory',
     LINKS_INPUT = 'InputLinks',
     LINKS_OUTPUT = 'OutputLinks',
@@ -59,7 +59,7 @@ export enum NodeType {
  * 
  * @default 'default'
  */
-export const enum PositionStyleOption {
+export enum PositionStyleOption {
     DEFAULT = 'default',
     NONE = 'none',
     GRID = 'grid',
@@ -78,7 +78,7 @@ export const enum PositionStyleOption {
  * 
  * @default 'inherit'
  */
-export const enum VariablePositionStyleOption {
+export enum VariablePositionStyleOption {
     INHERIT = 'inherit',
     ATTACH = 'attach',
     GLOBAL = 'global',

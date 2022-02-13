@@ -27,7 +27,7 @@ export class SequencePositionManager {
         this.schema = schema
     }
 
-    public fillPositions (sequence: Sequence): Sequence {
+    public _validateOptions (sequence: Sequence): Sequence | null {
         const sequenceItems = sequence['items']
         const itemCount = sequenceItems.length
 
@@ -41,6 +41,16 @@ export class SequencePositionManager {
             return sequence
         }
 
+        return null
+    }
+
+    public fillPositions (sequence: Sequence): Sequence {
+        const sequenceItems = sequence['items']
+        const itemCount = sequenceItems.length
+
+        const returnSequence = this._validateOptions(sequence)
+        if (returnSequence) return returnSequence
+
         const { spaceBetween, startX, startY } = this.options
 
         for (let i = 0; i < itemCount; i++) {
@@ -51,7 +61,8 @@ export class SequencePositionManager {
             let position: [number, number] = [0, 0];
 
             switch (type) {
-                case NodeType.ACTIONS || NodeType.CONDITIONS:
+                case NodeType.ACTIONS:
+                case NodeType.CONDITIONS:
                 case NodeType.EVENTS:
                 case NodeType.VARIABLES:
                     // do something
