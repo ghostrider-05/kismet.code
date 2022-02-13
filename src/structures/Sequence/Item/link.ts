@@ -11,6 +11,7 @@ import type {
 } from '../../../types/index.js'
 
 export class BaseKismetConnection {
+    private baseConnection: boolean;
     protected readonly type: KismetConnectionType;
     protected kismet: BaseKismetConnectionOptions;
     protected input: string;
@@ -19,13 +20,15 @@ export class BaseKismetConnection {
     public connectionIndex = 0;
     
     public links: string[] | null = null;
+    public linkedIds: string[] = [];
     public bHidden: boolean;
 
     constructor (options: { 
         input: string, 
         type: KismetConnectionType, 
         index?: number,
-        kismetOptions?: BaseKismetConnectionOptions 
+        kismetOptions?: BaseKismetConnectionOptions,
+        extends?: boolean
     }) {
         const { input, type, kismetOptions, index } = options
 
@@ -37,6 +40,7 @@ export class BaseKismetConnection {
         this.bHidden = true
 
         this.type = type
+        this.baseConnection = !(options.extends ?? false)
         this.kismet = kismetOptions ?? {
             Draw: 0,
             OverrideDelta: 0
@@ -100,8 +104,21 @@ export class BaseKismetConnection {
         const link = this.type !== 'variable' ? `(LinkedOp=${linkId}${linkIndex})` : linkId
             
         this.links.push(link)
+        this.linkedIds.push(linkId)
 
         return this
+    }
+
+    public isBaseConnection (): this is BaseKismetConnection {
+        return this.baseConnection
+    }
+
+    public isItemConnection (): this is ItemConnection {
+        return !this.baseConnection && ItemConnection.isItemConnectionType(this.type)
+    }
+
+    public isVariableConnection (): this is VariableConnection {
+        return !this.baseConnection && this.type === Constants.ConnectionType.VARIABLE
     }
 
     public setHidden (hidden: boolean): this {
@@ -139,7 +156,8 @@ export class VariableConnection extends BaseKismetConnection {
         super({
             input,
             index,
-            type
+            type,
+            extends: true
         })
 
         const properties = BaseKismetConnection.convertInput(input)
@@ -202,7 +220,8 @@ export class ItemConnection extends BaseKismetConnection {
         super({
             input,
             type,
-            index
+            index,
+            extends: true
         })
 
         const properties = BaseKismetConnection.convertInput(input)
@@ -226,6 +245,15 @@ export class ItemConnection extends BaseKismetConnection {
         this.DrawY = t(DrawY) ?? 0;
     }
 
+    public static isItemConnectionType (type: string): boolean {
+        const validTypes = [
+            Constants.ConnectionType.INPUT,
+            Constants.ConnectionType.OUTPUT
+        ]
+
+        return validTypes.includes(<never>type)
+    }
+
     public setActivateDelay = (duration: number): this => {
         this.ActivateDelay = duration;
 
@@ -233,11 +261,11 @@ export class ItemConnection extends BaseKismetConnection {
     }
 
     public isInputLink (): boolean {
-        return this.type === 'input'
+        return this.type === Constants.ConnectionType.INPUT
     }
 
     public isOutputLink (): boolean {
-        return this.type === 'output'
+        return this.type === Constants.ConnectionType.OUTPUT
     }
 
     public override get value (): string {

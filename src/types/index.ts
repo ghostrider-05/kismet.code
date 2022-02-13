@@ -5,9 +5,19 @@ import {
     SequenceVariable
 } from '../structures/Sequence/index.js'
 
+import {
+    NodeType
+} from './enums.js'
+
 export * from './connectionLink.js'
 export * from './options.js'
 export * from './parser.js'
+
+export type ArrayUnion<T> = T | T[]
+
+export type Awaitable<T> = Promise<T> | T
+
+export type Enum<T extends string> = T | `${T}`
 
 export interface KismetVectorComponents {
     x: number,
@@ -15,13 +25,17 @@ export interface KismetVectorComponents {
     z: number
 }
 
+export type KismetPosition = Omit<KismetVectorComponents, 'z'>
+
 export type UDKSceneObject = string
 
 export type UDKContentBrowserObject = 'None' | string
 
+export type SchemaItemNames = ArrayUnion<Omit<SequenceItemTypeName, 'events' | 'conditions' | 'sequences'>>
+
 export type SequenceItemType = SequenceAction | SequenceCondition | SequenceVariable | SequenceEvent
 
-export type SequenceItemTypeName = 'actions' | 'events' | 'conditions' | 'variables'
+export type SequenceItemTypeName = Enum<NodeType>
 
 export type KismetVariablesType = string | number | boolean | null | undefined
 

@@ -29,9 +29,10 @@ export const ProcessManager = new class ProcessManager {
 
     public id (Class: string): ProcessId {
         const count = this.ids.get(Class)
+        const newCount = count != undefined ? (count + 1) : 0
 
-        this.ids.set(Class, count != undefined ? count + 1 : 0)
+        this.ids.set(Class, newCount)
 
-        return this.createId(`${Class}|${count ?? 0}`)
+        return this.createId(`${Class}|${newCount}`)
     }
 }

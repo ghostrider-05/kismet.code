@@ -1,6 +1,10 @@
 import { BaseSequenceItem } from './Item/base.js'
 
-import { addVariable, quote } from '../../shared/index.js'
+import { 
+    addVariable, 
+    Constants, 
+    quote 
+} from '../../shared/index.js'
 
 import type { 
     BaseKismetItemOptions, 
@@ -8,16 +12,16 @@ import type {
 } from '../../types/index.js'
 
 export class SequenceVariable extends BaseSequenceItem {
-    public name?: string | null;
+    public variableName?: string | null;
 
     constructor (options: KismetVariableOptions & BaseKismetItemOptions) {
-        super({ ...options, type: 'variables' })
+        super({ ...options, type: Constants.NodeType.VARIABLES })
 
-        this.name = options?.name ?? null
+        this.variableName = options?.name ?? null
     }
 
     public setName (name: string): this {
-        this.name = name
+        this.variableName = name
 
         return this
     }
@@ -25,7 +29,7 @@ export class SequenceVariable extends BaseSequenceItem {
     public override toString(): string {
         const kismet = super.toString()
 
-        return this.name ? addVariable(kismet, [['VarName', quote(this.name)]]) : kismet
+        return this.variableName ? addVariable(kismet, [['VarName', quote(this.variableName)]]) : kismet
     }
 
     /**

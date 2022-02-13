@@ -4,7 +4,7 @@ import {
     Comment,
     CommentFrame,
     Sequence 
-} from "./Sequence/index.js";
+} from "./Sequence/index.js"
 
 import {
     Variables,
@@ -13,37 +13,36 @@ import {
     Events 
 } from '../items/index.js'
 
-import { CustomNodesManager } from './managers/index.js';
+import { 
+    CustomNodesManager 
+} from './managers/index.js'
 
 import type { 
-    projectOptions
+    projectOptions,
+    SchemaItemNames,
+    SequencePositionOptions
 } from '../types/index.js'
 
 export class KismetFile {
     public mainSequence: Sequence;
-    public parser: CustomNodesManager;
+    public classParser: CustomNodesManager;
     public projectName: string;
-    public layoutOptions: { 
-        startPosition: { x: number; y?: number; }; 
-        space: number; 
-    };
+    public layout?: SequencePositionOptions<SchemaItemNames>
 
-    constructor (options: projectOptions) {
-        const { projectName } = options
+    constructor (options: projectOptions<SchemaItemNames>) {
+        const { projectName, layout } = options
 
         this.projectName = projectName
 
-        this.layoutOptions = {
-            startPosition: {
-                x: options?.layout?.startX ?? 500,
-                y: options?.layout?.startY ?? 500
-            },
-            space: options?.layout?.spaceBetween ?? 200
-        }
+        this.layout = layout
 
-        this.mainSequence = new Sequence('Main_Sequence')
+        this.mainSequence = new Sequence({ 
+            name: 'Main_Sequence',  
+            layout: this.layout,
+            mainSequence: true
+        })
 
-        this.parser = new CustomNodesManager('./src/test/')
+        this.classParser = new CustomNodesManager('./src/test/')
     }
 
     static Items = {
@@ -57,10 +56,10 @@ export class KismetFile {
     }
 
     public async copyKismet (): Promise<void> {
-        return await clipboard.write(this.toKismet())
+        return await clipboard.write(this.toString())
     }
 
-    public toKismet (): string {
-        return this.mainSequence.toKismet()
+    public toString (): string {
+        return this.mainSequence.toString()
     }
 }

@@ -1,38 +1,60 @@
 # Code to kismet
 
-Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intented for large .udk files to simplify the process of making kismet nodes
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.ts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.ts/context:javascript)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts)
+[![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.ts)][github]
+<!-- TODO: Add CI results badge -->
 
-## Getting started
+Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intended for large .udk files to simplify the process of making kismet nodes
 
-To test this repo, clone this repo and make a new file in `/node/`:
-```ts
-// udk.ts
+## Installation
 
-import { KismetFile } from './index.js'
+Node 16.6.0 or newer is required.
 
-const delayAction = new KismetFile.actions.Delay()
-    .setVariable('duration', 1000)
-
-const levelLoadedEvent = new KismetFile.events.levelLoaded()
-    .on({
-        name: 'loaded',
-        item: delayAction
-    })
-
-const kismet = new KismetFile({
-    projectName: 'Untitled_0'
-}).mainSequence
-    .addItems([levelLoadedEvent, delayAction])
-    .toKismet()
-
-// log the kismet nodes to stdout
-console.log(kismet)
+```txt
+npm install kismet.ts
 ```
 
-Run `npm start` to start the script
+<!-- Remove when published on NPM -->
+> Beta: install with `npm i ghostrider-05/kismet.ts` and generate the dist folder
 
-## State and roadmap
+### Links
 
-This repo is currently in alpha version for typescript. For upcoming features take a look at the open issues and roadmap project.
+- [Documentation][docs]
+<!-- Web editor -->
+<!-- Blender nodes -->
 
+## Example
+
+```ts
+import { KismetFile } from 'kismet.ts'
+
+const { Actions, Events, Variables } = KismetFile.Items
+
+const targets = new Variables.Player()
+    .setAllPlayers(true)
+
+const DrawText = new Actions.DrawText()
+    .setVariable('String', 'Hello world!')
+    .setVariable('Target', targets)
+
+const onMapLoaded = new Events.LevelLoaded()
+    .on({ name: 'Loaded and Visible', item: DrawText })
+
+const project = new KismetFile({ projectName: 'Untitled_0' })
+const sequence = project.mainSequence
+
+sequence.addItems([onMapLoaded, DrawText])
+
+console.log(sequence)
+```
+
+## Roadmap
+
+For upcoming features take a look at the [roadmap][roadmap]. Discussion and other questions can also be asked in [GitHub discussions][gh-discussions]
+
+[docs]: https://github.com/ghostrider-05/kismet.code/tree/master/docs
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
+[github]: https://github.com/ghostrider-05/kismet.code
+[gh-discussions]: https://github.com/ghostrider-05/kismet.code/discussions
+[roadmap]: https://github.com/users/ghostrider-05/projects/2/views/1

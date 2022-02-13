@@ -1,5 +1,15 @@
+import type { 
+    layoutOptions 
+} from '../../types/index.js'
+
 const KISMET_LINE_INDENT = '   '
 const MAIN_SEQUENCE = "Sequence'Main_Sequence'"
+
+const DefaultLayoutOptions: Required<layoutOptions> = {
+    startX: 500,
+    startY: 500,
+    spaceBetween: 200
+}
 
 const KISMET_CLASSES_PREFIXES = [
     {
@@ -26,11 +36,12 @@ const ObjInstanceVersions = new Map<string, number>()
     .set('SeqAct_DrawText', 3)
     .set('SeqAct_SetInt', 2)
 
-export * from '../types/enums.js'
+export * from '../../types/enums.js'
 export {
     KISMET_CLASSES_PREFIXES,
     KISMET_LINE_INDENT,
     KISMET_NODE_LINES,
     MAIN_SEQUENCE,
+    DefaultLayoutOptions,
     ObjInstanceVersions
 }

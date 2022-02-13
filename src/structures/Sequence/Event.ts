@@ -3,7 +3,8 @@ import { SequenceAction } from "./Action.js";
 
 import { 
     addVariable,
-    boolToKismet
+    boolToKismet,
+    Constants
 } from '../../shared/index.js';
 
 import type { 
@@ -19,7 +20,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     public enabled: boolean;
 
     constructor (options: KismetEventOptions<T> & BaseKismetItemOptions) {
-        super({ ...options, type: 'events' })
+        super({ ...options, type: Constants.NodeType.EVENTS })
 
         this.trigger = {
             maxCount: options?.maxTriggerCount ?? 0,

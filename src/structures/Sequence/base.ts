@@ -1,44 +1,81 @@
+import { BaseItem } from './Item/_base.js';
+
+import { 
+    ProcessManager,
+    ProcessId,
+    SequencePositionManager 
+} from '../managers/index.js'
+
 import { 
     boolToKismet, 
     Constants,
     filterEmptyLines, 
     parseVar 
-} from '../../shared/index.js';
+} from '../../shared/index.js'
 
 import type { 
-    KismetVariableInternalTypeList, 
     KismetVariablesType, 
-    SequenceItemType 
+    KismetVariableInternalTypeList, 
+    SequenceItemType, 
+    SequenceViewOptions,
+    SequenceOptions,
+    SequenceBaseConstructorOptions,
+    SchemaItemNames
 } from '../../types/index.js'
 
 const {
+    DefaultLayoutOptions,
     KISMET_NODE_LINES,
-    MAIN_SEQUENCE
+    MAIN_SEQUENCE,
+    NodeType
 } = Constants
 
-export class Sequence {
+export class Sequence extends BaseItem {
     public name: string;
     public subSequences: Sequence[];
+    public defaultView: Required<SequenceViewOptions>;
+
+    public readonly id: ProcessId;
 
     public enabled: boolean;
     public parentSequence: string;
 
     private items: (SequenceItemType | Sequence)[];
-    private kismet: { ObjPosX: number; ObjPosY: number; };
+    private kismet: { x: number; y: number; };
+    private positionManager: SequencePositionManager;
+    private mainSequence: boolean;
 
-    constructor (name?: string) {
+    constructor (options: SequenceBaseConstructorOptions<SchemaItemNames>) {
+        super(NodeType.SEQUENCES)
+
+        const { name, mainSequence, defaultView, layout } = options
+
         this.name = name ?? 'Sub_Sequence'
+        this.id = ProcessManager.id('Sequence')
         this.items = []
 
         this.subSequences = []
         this.parentSequence = MAIN_SEQUENCE
 
         this.enabled = true
+        this.mainSequence = mainSequence ?? false
 
         this.kismet = {
-            ObjPosX: 0,
-            ObjPosY: 0
+            x: 0,
+            y: 0
         }
+
+        this.defaultView = {
+            x: defaultView?.x ?? 0,
+            y: defaultView?.y ?? 0,
+            zoom: defaultView?.zoom ?? 1
+        }
+
+        this.positionManager = new SequencePositionManager({
+            layoutOptions: layout?.position ?? DefaultLayoutOptions,
+            style: layout?.style,
+            schema: layout?.schema
+        })
     }
 
     private get properties () {
@@ -73,9 +110,16 @@ export class Sequence {
         return this
     }
 
-    public addSubSequence (name: string, objects?: SequenceItemType[]): Sequence {
-        const subSequence = new Sequence(name)
-            .addItems(objects?.map(x => x.setSequence(name)) ?? [])
+    public addSubSequence ({ name, objects, layout, defaultView } : SequenceOptions<SequenceItemType, SchemaItemNames>): Sequence {
+        const subSequence = new Sequence({ 
+            layout: {
+                position: layout?.position ?? this.positionManager.options,
+                schema: layout?.schema,
+                style: layout?.style
+            },
+            name,
+            defaultView
+        }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
 
         this.subSequences.push(subSequence)
         this.items.push(subSequence)
@@ -85,8 +129,66 @@ export class Sequence {
         return subSequence
     }
 
-    public filterByClassName (className: string): (SequenceItemType | Sequence)[] {
-        return this.items.filter(n => n.linkId.split('\'')[0] === className)
+    public find (id: string): SequenceItemType | Sequence | null {
+        return this.items.find(n => n.id.equals(id)) ?? null
+    }
+
+    public findConnectedEvent (actionId: string, event: { id: string, connectioName?: string }): SequenceItemType | undefined {
+        const events = this.items.filter(n => {
+            if (n.isEvent() && n.linkId === event.id) {
+                const connectedItems = this.listConnectedItems(event.id)
+
+                return connectedItems.includes(actionId)
+            } else return false
+        })
+
+        return events.length > 0 ? <SequenceItemType>events[0] : undefined
+    }
+
+    public filterByClassName (item: SequenceItemType | Sequence): (SequenceItemType | Sequence)[] {
+        return this.items.filter(n => n.linkId.split('\'')[0] === item.linkId.split('\'')[0])
+    }
+
+    public listConnectedItems (itemId: string, outputConnection?: string): string[] {
+        const item = this.find(itemId)
+
+        if (item?.isSequenceItem()) {
+            const ids = item.connections?.output.flatMap(link => link.name === (outputConnection ?? link.name) ? link.linkedIds : [])
+            if (!ids || ids.length === 0) return []
+
+            let idsToFilter = ids
+
+            while (idsToFilter.length <= this.items.length) {
+                const cItems = idsToFilter.map(id => this.find(id)).filter(n => n)
+                const newIds: string[] = cItems.flatMap(i => i?.isSequenceItem() && !idsToFilter.includes(i.linkId) 
+                    ? i.connections?.output.flatMap(link => link.linkedIds) 
+                    : undefined
+                ).filter(n => n) as string[]
+
+                if (newIds.length > 0) {
+                    idsToFilter = idsToFilter.concat(newIds)
+                } else {
+                    break
+                }
+            }
+
+            return idsToFilter
+        } else return []
+    }
+
+    public indexOf (id: string): number {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return this.items.indexOf(this.items.find(i => i.linkId === id)!)
+    }
+
+    public replaceItem (linkId: string, newItem: (SequenceItemType | Sequence)): void {
+        const item = this.items.find(n => n.linkId === linkId)
+
+        if (!item) {
+            return console.warn(`Could not find replacement item with id: ${linkId}`)
+        }
+
+        this.items[this.items.indexOf(item)] = newItem
     }
 
     public setDisabled (): this {
@@ -101,6 +203,16 @@ export class Sequence {
         return this
     }
 
+    public setView (options: SequenceViewOptions): this {
+        const { x, y, zoom } = options
+
+        if (x) this.defaultView.x = x
+        if (y) this.defaultView.y = y
+        if (zoom) this.defaultView.zoom = zoom
+
+        return this
+    }
+
     public toJSON (): Record<string, KismetVariablesType> {
         const { 
             archetype, 
@@ -108,6 +220,8 @@ export class Sequence {
             DrawHeight, 
             DrawWidth 
         } = this.properties
+
+        this.items = this.positionManager.fillPositions(this)['items']
 
         const variables = this.items.map<[string, KismetVariablesType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
             .concat([
@@ -117,10 +231,13 @@ export class Sequence {
                 ['DrawWidth', DrawWidth],
                 ['DrawHeight', DrawHeight],
                 ['Name', this.name],
-                ['ObjPosX', this.kismet.ObjPosX],
-                ['ObjPosY', this.kismet.ObjPosY],
+                ['ObjPosX', this.kismet.x],
+                ['ObjPosY', this.kismet.y],
                 ['ParentSequence', this.parentSequence],
-                ['bEnabled', boolToKismet(this.enabled)]
+                ['bEnabled', boolToKismet(this.enabled)],
+                ['DefaultViewX', this.defaultView.x],
+                ['DefaultViewY', this.defaultView.y],
+                ['DefaultViewZoom', this.defaultView.zoom]
             ]) as KismetVariableInternalTypeList
 
         return variables.reduce((prev, curr) => ({
@@ -132,11 +249,13 @@ export class Sequence {
     public toString (): string {
         const json = this.toJSON()
 
-        const lines = [
+        const lines = !this.mainSequence ? [
             KISMET_NODE_LINES.begin(this.name, 'Sequence'),
             filterEmptyLines(this.items.map(i => i.toString())),
             filterEmptyLines(Object.keys(json).map(v => parseVar(v, json[v]))),
             KISMET_NODE_LINES.end
+        ] : [
+            filterEmptyLines(this.items.map(i => i.toString()))
         ]
 
         return lines.join('\n')
