@@ -18,7 +18,7 @@ If your use case is specified here, you do not need to add your local classes an
 This file can be separate from your main program and thus can be in any file location.
 
 ```ts
-import { KismetFile } from 'kismet.code'
+import { KismetFile } from 'kismet.ts'
 
 const { classParser } = new KismetFile({ projectName: 'Local_Classes' })
 

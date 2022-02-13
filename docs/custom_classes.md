@@ -4,7 +4,7 @@ Custom classes can be created by extending a base structure:
 
 ```ts
 // structures/MyAction.ts
-import { Structures } from 'kismet.code'
+import { Structures } from 'kismet.ts'
 
 export class MyAction extends Structures.SequenceAction {
     constructor (options: MyActionOptions) {

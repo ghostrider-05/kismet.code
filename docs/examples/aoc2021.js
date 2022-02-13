@@ -1,7 +1,7 @@
 // Generates kismet code for Advent of Code 2021, day 1 part 1
 
 import { readFile } from 'fs/promises'
-import { KismetFile } from 'kismet.code'
+import { KismetFile } from 'kismet.ts'
 
 import * as Items from 'my_item_path'
 

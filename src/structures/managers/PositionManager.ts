@@ -1,3 +1,5 @@
+import { Sequence } from '../Sequence/index.js'
+
 import { 
     Constants 
 } from '../../shared/index.js'
@@ -12,7 +14,6 @@ import type {
     SequenceSchemaOptions,
     SequenceSchemaVariableOptions
 } from '../../types/index.js'
-import { Sequence } from '../index.js'
 
 const { PositionStyleOption, VariablePositionStyleOption } = Constants
 
@@ -26,7 +27,7 @@ export class SequencePositionManager {
     constructor (options: SequencePositionManagerOptions<SchemaItemNames>) {
         const { layoutOptions, style, schema } = options
 
-        this.style = style ?? PositionStyleOption.GRID
+        this.style = style ?? PositionStyleOption.NONE
         this.options = layoutOptions
         this.schema = schema
     }
@@ -164,7 +165,7 @@ export class SequencePositionManager {
         let positions: KismetItemPosition[] = []
 
         if (!this.schema) {
-            positions = this.applyStyle(sequenceItems, {
+            if (this.style !== PositionStyleOption.NONE) positions = this.applyStyle(sequenceItems, {
                 style: this.style,
                 options: this.options
             })

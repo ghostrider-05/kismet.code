@@ -1,24 +1,33 @@
 # Code to kismet
 
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.code.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.code/context:javascript)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.code)
-[![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.code)][github]
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.ts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.ts/context:javascript)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts)
+[![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.ts)][github]
 <!-- TODO: Add CI results badge -->
 
-Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intented for large .udk files to simplify the process of making kismet nodes
+Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intended for large .udk files to simplify the process of making kismet nodes
 
 ## Installation
 
 Node 16.6.0 or newer is required.
 
 ```txt
-npm install kismet.code
+npm install kismet.ts
 ```
+
+<!-- Remove when published on NPM -->
+> Beta: install with `npm i ghostrider-05/kismet.ts` and generate the dist folder
+
+### Links
+
+- [Documentation][docs]
+<!-- Web editor -->
+<!-- Blender nodes -->
 
 ## Example
 
 ```ts
-import { KismetFile } from 'kismet.code'
+import { KismetFile } from 'kismet.ts'
 
 const { Actions, Events, Variables } = KismetFile.Items
 
@@ -37,15 +46,14 @@ const sequence = project.mainSequence
 
 sequence.addItems([onMapLoaded, DrawText])
 
-console.log(sequence.toKismet())
+console.log(sequence)
 ```
-
-More examples and guides can be found in the `docs` folder
 
 ## Roadmap
 
 For upcoming features take a look at the [roadmap][roadmap]. Discussion and other questions can also be asked in [GitHub discussions][gh-discussions]
 
+[docs]: https://github.com/ghostrider-05/kismet.code/tree/master/docs
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
 [github]: https://github.com/ghostrider-05/kismet.code
 [gh-discussions]: https://github.com/ghostrider-05/kismet.code/discussions
