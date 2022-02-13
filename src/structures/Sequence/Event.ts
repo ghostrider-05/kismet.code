@@ -35,7 +35,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     }
 
     public on<T extends SequenceAction> ({ name, item }: { name: string, item: T }): this {
-        const connection = this.getConnection('output', name) as ItemConnection;
+        const connection = this.getConnection('output', name) as ItemConnection
 
         if (connection) {
             connection.addLink(item.linkId, this.connections?.output.indexOf(connection))

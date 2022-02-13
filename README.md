@@ -1,8 +1,8 @@
 # Code to kismet
 
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.code.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.code/context:javascript)
-[![](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.code)]()
-[![Discord](https://img.shields.io/discord/766306679078780928?color=5856F2&label=discord&logo=discord&logoColor=FFF)][discord]
+[![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.code)][github]
+<!-- TODO: Add CI results badge -->
 
 Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intented for large .udk files to simplify the process of making kismet nodes
 
@@ -46,4 +46,4 @@ More examples and guides can be found in the `docs` folder
 For upcoming features take a look at the [roadmap](https://github.com/users/ghostrider-05/projects/2/views/1). Discussion and other questions can also be asked on [discord][discord]
 
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
-[discord]: https://discord.gg/BNe5DhJKC4
+[github]: https://github.com/ghostrider-05/kismet.code

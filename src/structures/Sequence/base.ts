@@ -166,7 +166,7 @@ export class Sequence {
         return this
     }
 
-    public toKismet(): string {
+    public toJSON (): Record<string, KismetVariablesType> {
         const { 
             archetype, 
             ObjInstanceVersion, 
@@ -193,15 +193,31 @@ export class Sequence {
                 ['DefaultViewZoom', this.defaultView.zoom]
             ]) as KismetVariableInternalTypeList
 
+        return variables.reduce((prev, curr) => ({
+            ...prev,
+            [curr[0]]: curr[1]
+        }), {})
+    }
+
+    public toString (): string {
+        const json = this.toJSON()
+
         const lines = !this.mainSequence ? [
             KISMET_NODE_LINES.begin(this.name, 'Sequence'),
-            filterEmptyLines(this.items.map(i => i.toKismet())),
-            filterEmptyLines(variables.map(v => parseVar(v[0], v[1]))),
+            filterEmptyLines(this.items.map(i => i.toString())),
+            filterEmptyLines(Object.keys(json).map(v => parseVar(v, json[v]))),
             KISMET_NODE_LINES.end
         ] : [
-            filterEmptyLines(this.items.map(i => i.toKismet()))
+            filterEmptyLines(this.items.map(i => i.toString()))
         ]
 
         return lines.join('\n')
+    }
+
+    /**
+     * @deprecated 
+     */
+    public toKismet(): string {
+        return this.toString()
     }
 }

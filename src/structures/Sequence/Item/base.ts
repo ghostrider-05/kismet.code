@@ -22,7 +22,8 @@ import type {
     BaseKismetItemDrawOptions,
     SequenceItemType,
     SequenceItemTypeName,
-    KismetVariablesType
+    KismetVariablesType,
+    KismetPosition
 } from '../../../types/index.js'
 
 const { 
@@ -151,6 +152,15 @@ export class BaseSequenceItem {
 
         return this
     }  
+
+    public setPosition (position: KismetPosition): this {
+        const { x, y } = position
+
+        this.kismet.x = x
+        this.kismet.y = y
+
+        return this
+    }
 
     public setSequence (sequence: string | Sequence): this {
         if (typeof sequence !== 'string') {
