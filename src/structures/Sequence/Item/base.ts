@@ -1,3 +1,4 @@
+import { BaseItem } from './_base.js';
 import { Sequence } from '../base.js';
 import { BaseKismetConnection, ItemConnection, VariableConnection } from './link.js';
 
@@ -32,7 +33,7 @@ const {
     ObjInstanceVersions
 } = Constants
 
-export class BaseSequenceItem {
+export class BaseSequenceItem extends BaseItem {
     public comment: string | null;
     public supressAutoComment: boolean | null;
     public outputCommentToScreen: boolean | null;
@@ -40,22 +41,20 @@ export class BaseSequenceItem {
     public connections: KismetConnections | null = null;
     public sequence: string | Sequence;
 
-    public readonly type: SequenceItemTypeName | null
     public readonly id: ProcessId;
 
     private kismet: BaseKismetItemDrawOptions;
 
     constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName }) {
+        super(options.type)
+
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
-
-        this.type = options.type ?? null
+        this.sequence = MAIN_SEQUENCE
 
         this._setConnections(options.inputs)
-
-        const [Class, defaultClass,] = options.ObjectArchetype.split("'")
-        const [Package, ] = defaultClass.split('.')
+        const { Class, Package } = this._readArchetype(options.ObjectArchetype)
 
         this.kismet = {
             x: 0,
@@ -73,8 +72,16 @@ export class BaseSequenceItem {
         }
 
         this.id = ProcessManager.id(this.kismet.class)
+    }
 
-        this.sequence = MAIN_SEQUENCE
+    private _readArchetype (archetype: string): Record<'Class' | 'Package', string> {
+        const [Class, defaultClass,] = archetype.split("'")
+        const [Package, ] = defaultClass.split('.')
+
+        return {
+            Class,
+            Package
+        }
     }
 
     private _setConnections (inputs: BaseKismetItemOptions['inputs']): void {

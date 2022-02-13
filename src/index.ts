@@ -1,4 +1,5 @@
 import { 
+    BaseItem as Base,
     BaseSequenceItem as BaseItem,
     SequenceNode as Item,
     KismetColor,
@@ -11,6 +12,7 @@ import {
 } from './structures/index.js'
 
 const Structures = {
+    Base,
     BaseItem,
     Item,
     Sequence,

@@ -10,7 +10,7 @@ export type KismetConnectionType = 'input' | 'variable' | 'output'
 export type KismetConnection = ItemConnection | VariableConnection
 
 // Cannot convert to interface
-export type KismetConnections  = {
+export type KismetConnections = {
     input: ItemConnection[],
     output: ItemConnection[],
     variable: VariableConnection[]

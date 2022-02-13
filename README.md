@@ -1,6 +1,7 @@
 # Code to kismet
 
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.code.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.code/context:javascript)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.code)
 [![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.code)][github]
 <!-- TODO: Add CI results badge -->
 

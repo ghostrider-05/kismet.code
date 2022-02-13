@@ -1,7 +1,14 @@
 import { writeFile as writeToFile } from "fs/promises"
 
-import { filterEmptyLines, groupByProperty, t } from "../../shared"
-import { JsonFile } from "../../types"
+import { 
+    filterEmptyLines, 
+    groupByProperty, 
+    t 
+} from "../../shared/index.js"
+
+import type { 
+    JsonFile 
+} from "../../types/index.js"
 
 export const writeFile = async (path: string, content: string): Promise<void> => {
     return await writeToFile(path, filterEmptyLines(content), { encoding: 'utf8' })

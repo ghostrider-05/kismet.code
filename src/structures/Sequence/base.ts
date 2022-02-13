@@ -1,3 +1,5 @@
+import { BaseItem } from './Item/_base.js';
+
 import { 
     ProcessManager,
     ProcessId,
@@ -18,23 +20,22 @@ import type {
     SequenceViewOptions,
     SequenceOptions,
     SequenceBaseConstructorOptions,
-    SchemaItemNames,
-    SequenceItemTypeName
+    SchemaItemNames
 } from '../../types/index.js'
 
 const {
     DefaultLayoutOptions,
     KISMET_NODE_LINES,
-    MAIN_SEQUENCE
+    MAIN_SEQUENCE,
+    NodeType
 } = Constants
 
-export class Sequence {
+export class Sequence extends BaseItem {
     public name: string;
     public subSequences: Sequence[];
     public defaultView: Required<SequenceViewOptions>;
 
     public readonly id: ProcessId;
-    public readonly type: SequenceItemTypeName = 'sequences'
 
     public enabled: boolean;
     public parentSequence: string;
@@ -45,6 +46,8 @@ export class Sequence {
     private mainSequence: boolean;
 
     constructor (options: SequenceBaseConstructorOptions<SchemaItemNames>) {
+        super(NodeType.SEQUENCES)
+
         const { name, mainSequence, defaultView, layout } = options
 
         this.name = name ?? 'Sub_Sequence'
