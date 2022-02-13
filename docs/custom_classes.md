@@ -13,6 +13,7 @@ export class MyAction extends Structures.SequenceAction {
             ObjectArchetype: 'SeqAct_MyAction\'Package.Default__SeqAct_MyAction\'',
 
             // Array of strings of the defaultproperties values for links
+            // Uses the same formatting as the class in the .uc file for the defaultproperties
             inputs: {
                 input: [],
                 output: [],

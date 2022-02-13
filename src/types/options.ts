@@ -12,13 +12,12 @@ import {
  * Options for layouts
  * 
  * - none: set no position
- * - default: apply only layoutOptions
- * - grid: place all nodes in a grid
+ * - grid: place all nodes in a grid. To have custom control over the grid placements, use Item#setPosition
  * - waterfall: place the next object in the sequence right and below the current object
  * - mountain: place the next object in the sequence right and above the current object
  * - schema: apply the options in the given schema
  * 
- * @default 'default'
+ * @default 'none'
  */
  export type PositionStyleOptions = PositionStyleOption
 
@@ -51,20 +50,24 @@ export interface projectOptions<S> {
     layout?: SequencePositionOptions<S>
 }
 
+export interface SequenceSchemaVariableOptions {
+    style: Omit<VariablePositionStyleOptions, 'schema' | 'none'>,
+    itemClass?: string,
+    globalOptions?: {
+        bounds: [number, number, number, number]
+    }
+}
 
 export interface SequenceSchemaOptions<T> {
     event?: {
-        name: string
+        id: string
         connectionName?: string
     },
     layout: {
-        type: T
-        style?: Omit<PositionStyleOptions, 'schema'>
-        variables?: {
-            style: Omit<VariablePositionStyleOptions, 'schema'>,
-            itemClass?: string
-        }[]
-        options?: layoutOptions
+        type?: T
+        style: Omit<PositionStyleOptions, 'schema' | 'none'>
+        variables?: SequenceSchemaVariableOptions[]
+        options: Required<layoutOptions>
     }[]
 }
 

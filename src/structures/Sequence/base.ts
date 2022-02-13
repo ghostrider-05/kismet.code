@@ -133,8 +133,52 @@ export class Sequence extends BaseItem {
         return this.items.find(n => n.id.equals(id)) ?? null
     }
 
+    public findConnectedEvent (actionId: string, event: { id: string, connectioName?: string }): SequenceItemType | undefined {
+        const events = this.items.filter(n => {
+            if (n.isEvent() && n.linkId === event.id) {
+                const connectedItems = this.listConnectedItems(event.id)
+
+                return connectedItems.includes(actionId)
+            } else return false
+        })
+
+        return events.length > 0 ? <SequenceItemType>events[0] : undefined
+    }
+
     public filterByClassName (item: SequenceItemType | Sequence): (SequenceItemType | Sequence)[] {
         return this.items.filter(n => n.linkId.split('\'')[0] === item.linkId.split('\'')[0])
+    }
+
+    public listConnectedItems (itemId: string, outputConnection?: string): string[] {
+        const item = this.find(itemId)
+
+        if (item?.isSequenceItem()) {
+            const ids = item.connections?.output.flatMap(link => link.name === (outputConnection ?? link.name) ? link.linkedIds : [])
+            if (!ids || ids.length === 0) return []
+
+            let idsToFilter = ids
+
+            while (idsToFilter.length <= this.items.length) {
+                const cItems = idsToFilter.map(id => this.find(id)).filter(n => n)
+                const newIds: string[] = cItems.flatMap(i => i?.isSequenceItem() && !idsToFilter.includes(i.linkId) 
+                    ? i.connections?.output.flatMap(link => link.linkedIds) 
+                    : undefined
+                ).filter(n => n) as string[]
+
+                if (newIds.length > 0) {
+                    idsToFilter = idsToFilter.concat(newIds)
+                } else {
+                    break
+                }
+            }
+
+            return idsToFilter
+        } else return []
+    }
+
+    public indexOf (id: string): number {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return this.items.indexOf(this.items.find(i => i.linkId === id)!)
     }
 
     public replaceItem (linkId: string, newItem: (SequenceItemType | Sequence)): void {
@@ -177,7 +221,7 @@ export class Sequence extends BaseItem {
             DrawWidth 
         } = this.properties
 
-        this.positionManager.fillPositions(this)
+        this.items = this.positionManager.fillPositions(this)['items']
 
         const variables = this.items.map<[string, KismetVariablesType]>((item, i) => [`SequenceObjects(${i})`, item.linkId])
             .concat([

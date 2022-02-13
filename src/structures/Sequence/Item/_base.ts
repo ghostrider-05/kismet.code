@@ -11,6 +11,7 @@ import {
 } from "../../../shared/index.js"
 
 import type { 
+    SequenceItemType,
     SequenceItemTypeName 
 } from "../../../types/index.js"
 
@@ -41,6 +42,14 @@ export class BaseItem {
 
     public isSequence (): this is Sequence {
         return this._checkType(NodeType.SEQUENCES)
+    }
+
+    public isSequenceItem (): this is SequenceItemType {
+        return !this.isSequence()
+    }
+
+    public isSequenceNode (): this is SequenceAction | SequenceCondition {
+        return this.isAction() || this.isCondition()
     }
 
     public isVariable (): this is SequenceVariable {

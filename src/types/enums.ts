@@ -51,16 +51,14 @@ export enum NodeType {
  * Options for layouts
  * 
  * - none: set no position
- * - default: apply only layoutOptions
- * - grid: place all nodes in a grid
+ * - grid: place all nodes in a grid. To have custom control over the grid placements, use Item#setPosition
  * - waterfall: place the next object in the sequence right and below the current object
  * - mountain: place the next object in the sequence right and above the current object
  * - schema: apply the options in the given schema
  * 
- * @default 'default'
+ * @default 'none'
  */
 export enum PositionStyleOption {
-    DEFAULT = 'default',
     NONE = 'none',
     GRID = 'grid',
     MOUNTAIN = 'mountain',

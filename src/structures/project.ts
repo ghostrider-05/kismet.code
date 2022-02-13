@@ -25,7 +25,7 @@ import type {
 
 export class KismetFile {
     public mainSequence: Sequence;
-    public parser: CustomNodesManager;
+    public classParser: CustomNodesManager;
     public projectName: string;
     public layout?: SequencePositionOptions<SchemaItemNames>
 
@@ -42,7 +42,7 @@ export class KismetFile {
             mainSequence: true
         })
 
-        this.parser = new CustomNodesManager('./src/test/')
+        this.classParser = new CustomNodesManager('./src/test/')
     }
 
     static Items = {
