@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions / discussion
+    url: https://github.com/ghostrider-05/kismet.ts/discussions/categories/questions
+    about: Discuss / ask questions in the discussions!
+  - name: Feature requests / suggestions
+    url: https://github.com/ghostrider-05/kismet.ts/discussions/categories/suggestions
+    about: Request a new feature or suggest your wild ideas!

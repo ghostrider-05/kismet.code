@@ -1,0 +1,59 @@
+name: Bug report
+description: Report incorrect or unexpected behavior
+labels: [bug]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Select the related subject of the issue
+      options:
+        - Editor (web)
+        - Class parser (also for bpy)
+        - Text parser (text to nodes)
+        - Image generation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue description
+      description: |
+        A description of the (reproduceable) issue. 
+        It can be resolved easier when the steps are clear.
+      placeholder: |
+        Steps to reproduce with below code sample:
+        1. do thing
+        2. do something else
+        3. ???
+        4. error or incorrect behavior
+    validations:
+      required: true
+  - type: textarea
+    id: codesample
+    attributes:
+      label: Code sample
+      description: Include a reproducible, minimal code sample
+      render: TypeScript
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Which version of are you using? (run `npm list kismet.ts` in your project directory)
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      description: |
+        Which version of Node.js (run `node --version` in your project directory) are you using? 
+        If the version is lower than the [minimum supported Node.js version](https://github.com/ghostrider-05/kismet.ts/blob/master/README.md), update Node.js and try to reproduce the issue.
+        If you are using TypeScript, please include its version (`npm list typescript`) as well.
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: Which OS does your application run on?

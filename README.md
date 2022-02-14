@@ -1,4 +1,4 @@
-# Code to kismet
+# Kismet.ts
 
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.ts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.ts/context:javascript)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts)

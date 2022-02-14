@@ -1,0 +1,21 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install node.js v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Compile
+        run: npm run build
+
+      - name: ESLint
+        run: npm run lint
+      # Add tests
