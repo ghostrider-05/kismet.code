@@ -6,7 +6,7 @@ export class KismetColor {
     public B: number
     public A: number
 
-    constructor (options?: { R: number, G: number, B: number, A: number}) {
+    constructor (options?: { R: number; G: number; B: number; A: number }) {
         this.MIN_COLOR_VALUE = 0
         this.MAX_COLOR_VALUE = 255
 
@@ -19,22 +19,30 @@ export class KismetColor {
     }
 
     private _validateNumber (value: number): void {
-        if (typeof value !== 'number') throw new Error('Expected number as color. Received value of type' + typeof value)
+        if (typeof value !== 'number')
+            throw new Error(
+                'Expected number as color. Received value of type' +
+                    typeof value
+            )
 
-        const isInvalid = value < this.MIN_COLOR_VALUE || value > this.MAX_COLOR_VALUE
+        const isInvalid =
+            value < this.MIN_COLOR_VALUE || value > this.MAX_COLOR_VALUE
 
-        if (isInvalid) throw new Error(`Invalid color value. Expected value between ${this.MIN_COLOR_VALUE} and ${this.MAX_COLOR_VALUE}. Received: ${value}`)
+        if (isInvalid)
+            throw new Error(
+                `Invalid color value. Expected value between ${this.MIN_COLOR_VALUE} and ${this.MAX_COLOR_VALUE}. Received: ${value}`
+            )
     }
 
     private _validateOptions (options: Record<string, number>): void {
         Object.keys(options).forEach(key => {
             const value = options[key]
-            
+
             this._validateNumber(value)
         })
     }
 
-    public setColor(type: 'R' | 'G' | 'B' | 'A', value: number): this {
+    public setColor (type: 'R' | 'G' | 'B' | 'A', value: number): this {
         this._validateNumber(value)
 
         if (type in this && !type.includes('_')) {

@@ -27,7 +27,7 @@ export class InterpData extends SequenceVariable {
         this.bakeAndPrune = options.bakeAndPrune ?? false
     }
 
-    public override toKismet(): string {
+    public override toKismet (): string {
         const kismet = super.toKismet()
 
         return addVariable(kismet, [

@@ -2,22 +2,21 @@ import { BaseSequenceItem } from './base.js'
 import { VariableConnection } from './link.js'
 import { SequenceVariable } from '../Variable.js'
 
-import {
-    addVariable,
-    boolToKismet
-} from '../../../shared/index.js'
+import { addVariable, boolToKismet } from '../../../shared/index.js'
 
-import type {   
+import type {
     BaseKismetItemOptions,
     KismetVariablesType,
     SequenceItemTypeName
 } from '../../../types/index.js'
 
 export class SequenceNode extends BaseSequenceItem {
-    public hasBreakpoint: boolean;
-    private variables: { name: string, value: string }[]
+    public hasBreakpoint: boolean
+    private variables: { name: string; value: string }[]
 
-    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName}) {
+    constructor (
+        options: BaseKismetItemOptions & { type?: SequenceItemTypeName }
+    ) {
         super(options)
 
         this.hasBreakpoint = false
@@ -32,11 +31,26 @@ export class SequenceNode extends BaseSequenceItem {
         return this
     }
 
-    public setVariable (variableName: string, value: SequenceVariable | string | number, hidden?: boolean): this {
-        const connection = this.getConnection('variable', variableName) as VariableConnection
+    public setVariable (
+        variableName: string,
+        value: SequenceVariable | string | number,
+        hidden?: boolean
+    ): this {
+        const connection = this.getConnection(
+            'variable',
+            variableName
+        ) as VariableConnection
 
-        if (connection && (typeof value !== 'string' && typeof value !== 'number')) {
-            connection.addLink(value.linkId, this.connections?.variable.indexOf(connection), hidden)
+        if (
+            connection &&
+            typeof value !== 'string' &&
+            typeof value !== 'number'
+        ) {
+            connection.addLink(
+                value.linkId,
+                this.connections?.variable.indexOf(connection),
+                hidden
+            )
         } else {
             if (!this.variables.some(n => n.name === variableName)) {
                 this.variables.push({
@@ -45,7 +59,8 @@ export class SequenceNode extends BaseSequenceItem {
                 })
             } else {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                this.variables.find(n => n.name === variableName)!.value = value as string
+                this.variables.find(n => n.name === variableName)!.value =
+                    value as string
             }
         }
 
@@ -53,14 +68,19 @@ export class SequenceNode extends BaseSequenceItem {
     }
 
     public override toJSON (): Record<string, KismetVariablesType> {
-        const breakpoint = this.hasBreakpoint ? {
-            'bIsBreakpointSet': this.hasBreakpoint
-        } : {}
+        const breakpoint = this.hasBreakpoint
+            ? {
+                  bIsBreakpointSet: this.hasBreakpoint
+              }
+            : {}
 
-        const variables = this.variables.reduce((prev, curr) => ({
-            ...prev,
-            [curr.name]: curr.value
-        }), {})
+        const variables = this.variables.reduce(
+            (prev, curr) => ({
+                ...prev,
+                [curr.name]: curr.value
+            }),
+            {}
+        )
 
         return {
             ...breakpoint,
@@ -72,7 +92,10 @@ export class SequenceNode extends BaseSequenceItem {
     public override toString (): string {
         const node = super.toString()
 
-        const properties: [string, string][] = this.variables.map(v => [v.name, v.value])
+        const properties: [string, string][] = this.variables.map(v => [
+            v.name,
+            v.value
+        ])
 
         return addVariable(node, properties)
     }

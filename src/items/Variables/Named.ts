@@ -27,7 +27,7 @@ export class NamedVariable extends SequenceVariable {
         return this
     }
 
-    public override toKismet(): string {
+    public override toKismet (): string {
         const kismet = super.toKismet()
 
         const variables = [

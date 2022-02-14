@@ -1,9 +1,9 @@
-import type { KismetConnectionType, UnrealJsonReadFile } from "../types";
+import type { KismetConnectionType, UnrealJsonReadFile } from '../types'
 
 const formatLinks = (links: Record<KismetConnectionType, string[]>): string => {
     const formatted = JSON.stringify(links, null, 4)
         .split('\n')
-        .map((n, i) => i > 0 ? `\t\t\t${n}` : n)
+        .map((n, i) => (i > 0 ? `\t\t\t${n}` : n))
         .join('\n')
 
     return formatted

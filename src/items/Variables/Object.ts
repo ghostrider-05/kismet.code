@@ -41,7 +41,7 @@ export class ObjectVariable extends SequenceVariable {
 export class ObjectListVariable extends ObjectVariable {
     public values: UDKContentBrowserObject[];
 
-    constructor(options?: KismetVariableOptions) {
+    constructor (options?: KismetVariableOptions) {
         super(options)
 
         this.values = []

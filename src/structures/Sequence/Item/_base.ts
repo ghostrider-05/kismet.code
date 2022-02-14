@@ -1,19 +1,17 @@
-import { 
-    SequenceAction, 
-    Sequence, 
-    SequenceCondition, 
-    SequenceEvent, 
-    SequenceVariable 
-} from "../index.js"
+import {
+    SequenceAction,
+    Sequence,
+    SequenceCondition,
+    SequenceEvent,
+    SequenceVariable
+} from '../index.js'
 
-import { 
-    Constants 
-} from "../../../shared/index.js"
+import { Constants } from '../../../shared/index.js'
 
-import type { 
+import type {
     SequenceItemType,
-    SequenceItemTypeName 
-} from "../../../types/index.js"
+    SequenceItemTypeName
+} from '../../../types/index.js'
 
 const { NodeType } = Constants
 
