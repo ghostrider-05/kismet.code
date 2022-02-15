@@ -43,10 +43,10 @@ const DrawText = new Actions.DrawText()
 const onMapLoaded = new Events.LevelLoaded()
     .on({ name: 'Loaded and Visible', item: DrawText })
 
-const project = new KismetFile({ projectName: 'Untitled_0' })
+const project = new KismetFile({ projectName: 'MyMap' })
 const sequence = project.mainSequence
 
-sequence.addItems([onMapLoaded, DrawText])
+sequence.addItems([targets, onMapLoaded, DrawText])
 
 console.log(sequence)
 ```
