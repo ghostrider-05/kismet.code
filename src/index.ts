@@ -1,4 +1,4 @@
-import { 
+import {
     BaseItem as Base,
     BaseSequenceItem as BaseItem,
     SequenceNode as Item,
@@ -22,12 +22,8 @@ const Structures = {
     SequenceVariable
 }
 
-const Util = new class Util {
+const Util = new (class Util {
     Color = KismetColor
-}
+})()
 
-export {
-    KismetFile,
-    Structures,
-    Util
-}
+export { KismetFile, Structures, Util }

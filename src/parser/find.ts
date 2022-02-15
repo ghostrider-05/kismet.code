@@ -1,22 +1,21 @@
-import * as fs from 'fs';
+import * as fs from 'fs'
 
 import { readNodeFile } from './read.js'
 
-
-import type { 
+import type {
     ExportOptions,
     JsonFile,
     PathInput,
     RawUnrealJsonFile
 } from '../types/index.js'
 
-import { 
-    _validatePackage, 
-    _validatePaths, 
-    _validateNodeInput 
-} from './utils/validate.js';
+import {
+    _validatePackage,
+    _validatePaths,
+    _validateNodeInput
+} from './utils/validate.js'
 
-import { writeNode, writePackages } from './utils/write.js';
+import { writeNode, writePackages } from './utils/write.js'
 
 const collectedClasses: Record<string, JsonFile[]> = {
     actions: [],
@@ -26,7 +25,10 @@ const collectedClasses: Record<string, JsonFile[]> = {
 
 const jsonnodes: Record<string, unknown>[] = []
 
-export async function findClasses (paths: PathInput, exportOptions?: ExportOptions): Promise<void> {
+export async function findClasses (
+    paths: PathInput,
+    exportOptions?: ExportOptions
+): Promise<void> {
     const { importPath, exportPath, packages } = paths
     let { groupItems, json } = exportOptions || {}
 
@@ -35,10 +37,11 @@ export async function findClasses (paths: PathInput, exportOptions?: ExportOptio
 
     if (!_validatePaths([importPath, exportPath])) return
 
-    const Packages = fs.readdirSync(importPath);
+    const Packages = fs.readdirSync(importPath)
 
     for await (const Package of Packages) {
-        const { kismetNodes, path } = _validatePackage(importPath, Package, packages) || {}
+        const { kismetNodes, path } =
+            _validatePackage(importPath, Package, packages) || {}
 
         if (!kismetNodes) {
             continue
@@ -49,7 +52,9 @@ export async function findClasses (paths: PathInput, exportOptions?: ExportOptio
             const fileJSON = JSON.parse(fileContent) as RawUnrealJsonFile
 
             if (!_validateNodeInput(fileJSON)) {
-                console.warn(`Invalid input for ${Package}.${file.split('.')[0]}`)
+                console.warn(
+                    `Invalid input for ${Package}.${file.split('.')[0]}`
+                )
                 continue
             }
 
@@ -58,10 +63,13 @@ export async function findClasses (paths: PathInput, exportOptions?: ExportOptio
             if (collectedClasses[node.type]?.some(n => n.name === node.name)) {
                 continue
             }
-                
-            const output = exportPath.concat(`/${node.type}/Classes/${node.name}.ts`)
 
-            const { jsonNode, Class } = await writeNode(output, node, { json, Package }) || {}
+            const output = exportPath.concat(
+                `/${node.type}/Classes/${node.name}.ts`
+            )
+
+            const { jsonNode, Class } =
+                (await writeNode(output, node, { json, Package })) || {}
 
             if (jsonNode) jsonnodes.push(jsonNode)
             if (Class) collectedClasses[node.type]?.push(Class)
@@ -69,5 +77,9 @@ export async function findClasses (paths: PathInput, exportOptions?: ExportOptio
     }
 
     // Generate export files to export all the classes
-    writePackages(exportPath, { classes: collectedClasses, json: jsonnodes, groupItems })
+    writePackages(exportPath, {
+        classes: collectedClasses,
+        json: jsonnodes,
+        groupItems
+    })
 }

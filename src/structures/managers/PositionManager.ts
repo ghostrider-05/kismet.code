@@ -1,10 +1,8 @@
 import { Sequence } from '../Sequence/index.js'
 
-import { 
-    Constants 
-} from '../../shared/index.js'
+import { Constants } from '../../shared/index.js'
 
-import type { 
+import type {
     KismetPosition,
     layoutOptions,
     PositionStyleOptions,
@@ -17,7 +15,7 @@ import type {
 
 const { PositionStyleOption, VariablePositionStyleOption } = Constants
 
-type KismetItemPosition = ({ id: string } & KismetPosition)
+type KismetItemPosition = { id: string } & KismetPosition
 
 export class SequencePositionManager {
     public readonly style: PositionStyleOptions
@@ -50,8 +48,8 @@ export class SequencePositionManager {
     }
 
     private variablePositions (
-        item: SequenceItemType, 
-        items: Sequence['items'], 
+        item: SequenceItemType,
+        items: Sequence['items'],
         positions: KismetItemPosition[],
         options: SequenceSchemaVariableOptions
     ) {
@@ -61,7 +59,12 @@ export class SequencePositionManager {
         const connectedVars = item.connections?.variable.flatMap(n => {
             return n.linkedIds.filter(n => !positions.some(k => k.id === n))
         })
-        if (!connectedVars || connectedVars.length === 0 || item['kismet'].class !== itemClass) return []
+        if (
+            !connectedVars ||
+            connectedVars.length === 0 ||
+            item['kismet'].class !== itemClass
+        )
+            return []
 
         const Vars = items.filter(n => {
             return connectedVars.includes(n.linkId)
@@ -78,12 +81,15 @@ export class SequencePositionManager {
                     x: itemPos.x + i * 200,
                     y: itemPos.y - 200
                 })
-            } else if (style === VariablePositionStyleOption.GLOBAL && options.globalOptions) {
+            } else if (
+                style === VariablePositionStyleOption.GLOBAL &&
+                options.globalOptions
+            ) {
                 const { bounds } = options.globalOptions
 
-                const width = bounds[2] - bounds[0], 
-                    height = bounds[3] - bounds[1], 
-                    ratio = width / height;
+                const width = bounds[2] - bounds[0],
+                    height = bounds[3] - bounds[1],
+                    ratio = width / height
 
                 const position = {
                     x: bounds[0] + ratio * (i % (Vars.length - 1)),
@@ -103,49 +109,65 @@ export class SequencePositionManager {
     ): KismetItemPosition[] {
         if (!schema) return []
 
-        const items = schema.event 
-            ? sequence.listConnectedItems(schema.event.id, schema.event.connectionName) 
+        const items = schema.event
+            ? sequence.listConnectedItems(
+                  schema.event.id,
+                  schema.event.connectionName
+              )
             : sequence['items'].map(n => n.linkId)
         if (items.length === 0) return []
 
         return schema.layout.flatMap(layout => {
-            return this.applyStyle(items.map(n => sequence.find(n) as SequenceItemType), layout)
+            return this.applyStyle(
+                items.map(n => sequence.find(n) as SequenceItemType),
+                layout
+            )
         })
     }
 
     protected applyStyle (
-        inputItems: Sequence['items'], 
+        inputItems: Sequence['items'],
         layout: SequenceSchemaOptions<SchemaItemNames>['layout'][0]
     ): KismetItemPosition[] {
         const output: KismetItemPosition[] = []
         const { options, style, type, variables } = layout
 
-        let lastPosition: KismetPosition = { x: options.startX, y: options.startY }
+        let lastPosition: KismetPosition = {
+            x: options.startX,
+            y: options.startY
+        }
         const multipliers: KismetPosition = {
             x: style === PositionStyleOption.GRID ? 1 : 0.75,
             y: style === PositionStyleOption.WATERFALL ? -1 : 1
         }
 
-        const items = type ? inputItems.filter(n => {
-            return type === 'actions' ? n.isAction() : (
-                type === 'variables' ? n.isVariable() : false
-            )
-        }) : inputItems
+        const items = type
+            ? inputItems.filter(n => {
+                  return type === 'actions'
+                      ? n.isAction()
+                      : type === 'variables'
+                      ? n.isVariable()
+                      : false
+              })
+            : inputItems
 
         for (const item of items) {
             if (item.isSequence()) {
-                item['items'] = item['positionManager'].fillPositions(item)['items']
+                item['items'] =
+                    item['positionManager'].fillPositions(item)['items']
             } else if (item.isSequenceItem()) {
                 const newPosition = {
-                    x: lastPosition.x + (multipliers.x * options.spaceBetween),
-                    y: lastPosition.y + (multipliers.y * options.spaceBetween)
+                    x: lastPosition.x + multipliers.x * options.spaceBetween,
+                    y: lastPosition.y + multipliers.y * options.spaceBetween
                 }
 
                 lastPosition = newPosition
 
                 if (variables) {
                     variables.forEach(Var => {
-                        output.push(...this.variablePositions(item, items, output, Var))
+                        output.push(
+                            ...this.variablePositions(item, items, output, Var)
+                        )
                     })
                 }
 
@@ -165,10 +187,11 @@ export class SequencePositionManager {
         let positions: KismetItemPosition[] = []
 
         if (!this.schema) {
-            if (this.style !== PositionStyleOption.NONE) positions = this.applyStyle(sequenceItems, {
-                style: this.style,
-                options: this.options
-            })
+            if (this.style !== PositionStyleOption.NONE)
+                positions = this.applyStyle(sequenceItems, {
+                    style: this.style,
+                    options: this.options
+                })
         } else {
             for (const schema of this.schema) {
                 positions.push(...this.applySchema(sequence, schema))
@@ -176,8 +199,8 @@ export class SequencePositionManager {
         }
 
         positions.forEach(pos => {
-            const idIndex = sequence.indexOf(pos.id);
-            (sequence['items'][idIndex] as SequenceItemType)?.setPosition(pos)
+            const idIndex = sequence.indexOf(pos.id)
+            ;(sequence['items'][idIndex] as SequenceItemType)?.setPosition(pos)
         })
 
         return sequence

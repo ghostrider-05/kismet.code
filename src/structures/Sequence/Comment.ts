@@ -1,14 +1,9 @@
-import { BaseSequenceItem } from "./Item/index.js";
-import { KismetColor } from "./misc/index.js";
+import { BaseSequenceItem } from './Item/index.js'
+import { KismetColor } from './misc/index.js'
 
-import { 
-    boolToKismet, 
-    parseVar
-} from "../../shared/index.js";
+import { boolToKismet, parseVar } from '../../shared/index.js'
 
-import { 
-    KismetVariablesType 
-} from "../../types/index.js";
+import { KismetVariablesType } from '../../types/index.js'
 
 const DEFAULT_COMMENT_FRAME_SIZE_X = 248
 const DEFAULT_COMMENT_FRAME_SIZE_Y = 184
@@ -16,15 +11,15 @@ const DEFAULT_COMMENT_FRAME_SIZE_Y = 184
 const DEFAULT_BORDER_WIDTH = 1
 
 export class Comment extends BaseSequenceItem {
-    public size: { x: number; y: number; };
-    public drawBox: boolean;
-    public filled: boolean;
-    public tileFill: boolean;
-    public borderColor: KismetColor;
-    public borderWidth: number;
-    public fillColor: KismetColor;
-    public fillMaterial: string | null;
-    public fillTexture: string | null;
+    public size: { x: number; y: number }
+    public drawBox: boolean
+    public filled: boolean
+    public tileFill: boolean
+    public borderColor: KismetColor
+    public borderWidth: number
+    public fillColor: KismetColor
+    public fillMaterial: string | null
+    public fillTexture: string | null
 
     constructor (comment?: string) {
         super({
@@ -43,12 +38,10 @@ export class Comment extends BaseSequenceItem {
         this.filled = false
         this.tileFill = false
 
-        this.borderColor = new KismetColor()
-            .setColors([0, 0, 0, 255])
+        this.borderColor = new KismetColor().setColors([0, 0, 0, 255])
         this.borderWidth = DEFAULT_BORDER_WIDTH
 
-        this.fillColor = new KismetColor()
-            .setColors([255, 255, 255, 16])
+        this.fillColor = new KismetColor().setColors([255, 255, 255, 16])
         this.fillMaterial = null
         this.fillTexture = null
     }
@@ -56,15 +49,15 @@ export class Comment extends BaseSequenceItem {
     public isCommentFrame (): boolean {
         return this.drawBox
     }
- 
-    public setBorder (options?: { width?: number, color?: KismetColor }): this {
+
+    public setBorder (options?: { width?: number; color?: KismetColor }): this {
         if (options) {
             if ('width' in options) {
-                this.borderWidth = (options.width ?? this.borderWidth)
+                this.borderWidth = options.width ?? this.borderWidth
             }
 
             if ('color' in options) {
-                this.borderColor = (options.color ?? this.borderColor)
+                this.borderColor = options.color ?? this.borderColor
             }
         }
 
@@ -73,27 +66,27 @@ export class Comment extends BaseSequenceItem {
         return this
     }
 
-    public setFilled (options?: { 
-        tileFill?: boolean, 
-        color?: KismetColor, 
-        material?: string, 
+    public setFilled (options?: {
+        tileFill?: boolean
+        color?: KismetColor
+        material?: string
         texture?: string
     }): this {
         if (options) {
             if ('tileFill' in options) {
-                this.tileFill = (options.tileFill ?? this.tileFill)
+                this.tileFill = options.tileFill ?? this.tileFill
             }
 
             if ('color' in options) {
-                this.fillColor = (options.color ?? this.fillColor)
+                this.fillColor = options.color ?? this.fillColor
             }
 
             if ('material' in options) {
-                this.fillMaterial = (options.material ?? this.fillMaterial)
+                this.fillMaterial = options.material ?? this.fillMaterial
             }
 
             if ('texture' in options) {
-                this.fillTexture = (options.texture ?? this.fillTexture)
+                this.fillTexture = options.texture ?? this.fillTexture
             }
         }
 
@@ -108,8 +101,7 @@ export class Comment extends BaseSequenceItem {
                 this.fillTexture = null
                 this.fillMaterial = null
 
-                const blackColor = new KismetColor()
-                    .setColors([0, 0, 0, 255])
+                const blackColor = new KismetColor().setColors([0, 0, 0, 255])
 
                 this.borderColor = blackColor
                 this.fillColor = blackColor
@@ -120,7 +112,7 @@ export class Comment extends BaseSequenceItem {
                 this.filled = this.isCommentFrame()
                 this.tileFill = false
 
-                break;
+                break
             }
 
             default:
@@ -130,7 +122,7 @@ export class Comment extends BaseSequenceItem {
         return this
     }
 
-    public override toJSON(): Record<string, KismetVariablesType> {
+    public override toJSON (): Record<string, KismetVariablesType> {
         const variables: [string, KismetVariablesType][] = [
             ['SizeX', this.size.x],
             ['SizeY', this.size.y],
@@ -144,10 +136,13 @@ export class Comment extends BaseSequenceItem {
             ['FillTexture', this.fillTexture ?? '']
         ]
 
-        const json = variables.reduce((prev, curr) => ({
-            ...prev,
-            [curr[0]]: curr[1]
-        }), {})
+        const json = variables.reduce(
+            (prev, curr) => ({
+                ...prev,
+                [curr[0]]: curr[1]
+            }),
+            {}
+        )
 
         return {
             ...json,
@@ -155,7 +150,7 @@ export class Comment extends BaseSequenceItem {
         }
     }
 
-    public override toString(): string {
+    public override toString (): string {
         const json = this.toJSON()
         const properties = Object.keys(json).map(n => parseVar(n, json[n]))
 
@@ -163,7 +158,7 @@ export class Comment extends BaseSequenceItem {
     }
 
     /**
-     * @deprecated 
+     * @deprecated
      */
     public override toKismet (): string {
         return this.toString()

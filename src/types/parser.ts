@@ -2,16 +2,16 @@ import { KismetBoolean } from './enums.js'
 
 import type { KismetConnectionType } from './connectionLink.js'
 
-export interface JsonFile extends Record<string, string>{ 
+export interface JsonFile extends Record<string, string> {
     name: string
     type: string
-    category: string 
+    category: string
     Package: string
 }
 
-export interface PathInput { 
+export interface PathInput {
     importPath: string
-    exportPath: string,
+    exportPath: string
     packages?: string[]
 }
 
@@ -33,14 +33,14 @@ export interface RawUnrealJsonConstant {
 
 export type RawUnrealJsonDefaultVariables = RawUnrealJsonConstant
 
-export interface RawUnrealJsonEnum { 
+export interface RawUnrealJsonEnum {
     [name: string]: string[]
 }
 
-export interface RawUnrealJsonStructure { 
-    name: string, 
-    properties: RawUnrealJsonVariable[] 
-} 
+export interface RawUnrealJsonStructure {
+    name: string
+    properties: RawUnrealJsonVariable[]
+}
 
 export interface RawUnrealJsonVariable {
     flags: string

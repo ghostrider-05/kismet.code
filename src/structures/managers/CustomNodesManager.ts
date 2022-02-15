@@ -1,17 +1,17 @@
-import { existsSync } from "fs"
-import { resolve } from "path"
+import { existsSync } from 'fs'
+import { resolve } from 'path'
 
-import { findClasses } from "../../parser/index.js"
+import { findClasses } from '../../parser/index.js'
 
-import { PathInput } from "../../types/index.js";
+import { PathInput } from '../../types/index.js'
 
 export class CustomNodesManager {
-    public groupExportItems: boolean;
-    public packages: string[] | undefined = undefined;
+    public groupExportItems: boolean
+    public packages: string[] | undefined = undefined
 
-    public importPath: string | null = null;
-    public exportPath: string;
-    public exportTypes: ('json')[] = []
+    public importPath: string | null = null
+    public exportPath: string
+    public exportTypes: 'json'[] = []
 
     constructor (relativeFilePath: string) {
         this.exportPath = relativeFilePath
@@ -43,7 +43,7 @@ export class CustomNodesManager {
             packages: this.packages
         }
 
-        return await findClasses(paths, { 
+        return await findClasses(paths, {
             groupItems: this.groupExportItems,
             json: this.exportTypes.includes('json')
         })
@@ -53,7 +53,10 @@ export class CustomNodesManager {
         return existsSync(resolve('.', this.exportPath))
     }
 
-    public setExportOptions (options: { groupExportItems: boolean, json: boolean }): this {
+    public setExportOptions (options: {
+        groupExportItems: boolean
+        json: boolean
+    }): this {
         const { groupExportItems, json } = options
 
         this.groupExportItems = groupExportItems

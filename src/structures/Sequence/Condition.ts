@@ -1,8 +1,8 @@
 import { SequenceAction } from './Action.js'
 
-import type { 
+import type {
     BaseKismetItemOptions,
-    KismetActionRequiredOptions 
+    KismetActionRequiredOptions
 } from '../../types/index.js'
 
 export class SequenceCondition extends SequenceAction {

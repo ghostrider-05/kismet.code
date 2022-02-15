@@ -1,6 +1,4 @@
-import type { 
-    layoutOptions 
-} from '../../types/index.js'
+import type { layoutOptions } from '../../types/index.js'
 
 const KISMET_LINE_INDENT = '   '
 const MAIN_SEQUENCE = "Sequence'Main_Sequence'"
@@ -27,7 +25,8 @@ const KISMET_CLASSES_PREFIXES = [
 ]
 
 const KISMET_NODE_LINES = {
-    begin: (name: string, Class: string): string => `Begin Object Class=${Class} Name=${name}`,
+    begin: (name: string, Class: string): string =>
+        `Begin Object Class=${Class} Name=${name}`,
     end: 'End Object'
 }
 

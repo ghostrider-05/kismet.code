@@ -1,32 +1,21 @@
 import clipboard from 'clipboardy'
 
-import { 
-    Comment,
-    CommentFrame,
-    Sequence 
-} from "./Sequence/index.js"
+import { Comment, CommentFrame, Sequence } from './Sequence/index.js'
 
-import {
-    Variables,
-    Actions,
-    Conditions,
-    Events 
-} from '../items/index.js'
+import { Variables, Actions, Conditions, Events } from '../items/index.js'
 
-import { 
-    CustomNodesManager 
-} from './managers/index.js'
+import { CustomNodesManager } from './managers/index.js'
 
-import type { 
+import type {
     projectOptions,
     SchemaItemNames,
     SequencePositionOptions
 } from '../types/index.js'
 
 export class KismetFile {
-    public mainSequence: Sequence;
-    public classParser: CustomNodesManager;
-    public projectName: string;
+    public mainSequence: Sequence
+    public classParser: CustomNodesManager
+    public projectName: string
     public layout?: SequencePositionOptions<SchemaItemNames>
 
     constructor (options: projectOptions<SchemaItemNames>) {
@@ -36,8 +25,8 @@ export class KismetFile {
 
         this.layout = layout
 
-        this.mainSequence = new Sequence({ 
-            name: 'Main_Sequence',  
+        this.mainSequence = new Sequence({
+            name: 'Main_Sequence',
             layout: this.layout,
             mainSequence: true
         })

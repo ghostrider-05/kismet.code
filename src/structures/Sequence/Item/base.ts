@@ -1,11 +1,12 @@
-import { BaseItem } from './_base.js';
-import { Sequence } from '../base.js';
-import { BaseKismetConnection, ItemConnection, VariableConnection } from './link.js';
-
+import { BaseItem } from './_base.js'
+import { Sequence } from '../base.js'
 import {
-    ProcessId,
-    ProcessManager
-} from '../../managers/index.js'
+    BaseKismetConnection,
+    ItemConnection,
+    VariableConnection
+} from './link.js'
+
+import { ProcessId, ProcessManager } from '../../managers/index.js'
 
 import {
     Constants,
@@ -15,7 +16,7 @@ import {
     quote
 } from '../../../shared/index.js'
 
-import type { 
+import type {
     BaseKismetItemOptions,
     KismetConnectionType,
     KismetConnection,
@@ -27,25 +28,23 @@ import type {
     KismetPosition
 } from '../../../types/index.js'
 
-const { 
-    KISMET_NODE_LINES,
-    MAIN_SEQUENCE,
-    ObjInstanceVersions
-} = Constants
+const { KISMET_NODE_LINES, MAIN_SEQUENCE, ObjInstanceVersions } = Constants
 
 export class BaseSequenceItem extends BaseItem {
-    public comment: string | null;
-    public supressAutoComment: boolean | null;
-    public outputCommentToScreen: boolean | null;
+    public comment: string | null
+    public supressAutoComment: boolean | null
+    public outputCommentToScreen: boolean | null
 
-    public connections: KismetConnections | null = null;
-    public sequence: string | Sequence;
+    public connections: KismetConnections | null = null
+    public sequence: string | Sequence
 
-    public readonly id: ProcessId;
+    public readonly id: ProcessId
 
-    private kismet: BaseKismetItemDrawOptions;
+    private kismet: BaseKismetItemDrawOptions
 
-    constructor (options: BaseKismetItemOptions & { type?: SequenceItemTypeName }) {
+    constructor (
+        options: BaseKismetItemOptions & { type?: SequenceItemTypeName }
+    ) {
         super(options.type)
 
         this.comment = null
@@ -74,9 +73,11 @@ export class BaseSequenceItem extends BaseItem {
         this.id = ProcessManager.id(this.kismet.class)
     }
 
-    private _readArchetype (archetype: string): Record<'Class' | 'Package', string> {
-        const [Class, defaultClass,] = archetype.split("'")
-        const [Package, ] = defaultClass.split('.')
+    private _readArchetype (
+        archetype: string
+    ): Record<'Class' | 'Package', string> {
+        const [Class, defaultClass] = archetype.split("'")
+        const [Package] = defaultClass.split('.')
 
         return {
             Class,
@@ -86,12 +87,16 @@ export class BaseSequenceItem extends BaseItem {
 
     private _setConnections (inputs: BaseKismetItemOptions['inputs']): void {
         try {
-            this.connections = ["input", "output", "variable"].map(key => {
-                const links = (inputs as Record<string, string[]>)[key]
+            this.connections = ['input', 'output', 'variable']
+                .map(key => {
+                    const links = (inputs as Record<string, string[]>)[key]
 
-                return this._groupConnections(links, key)
-            }).reduce((x, y) => ({ ...x, [y.key]: y.connections }), {}) as KismetConnections
-
+                    return this._groupConnections(links, key)
+                })
+                .reduce(
+                    (x, y) => ({ ...x, [y.key]: y.connections }),
+                    {}
+                ) as KismetConnections
         } catch (err) {
             console.log(err, this)
         }
@@ -101,40 +106,53 @@ export class BaseSequenceItem extends BaseItem {
         if (links.length === 0 && ['input', 'output'].includes(key)) {
             return {
                 key,
-                connections: this.type === 'events' && key === 'input' ? [] : [
-                    new BaseKismetConnection({
-                        input: key === 'input' ? 'In' : 'Out', 
-                        type: key as KismetConnectionType,
-                    })
-                ]
+                connections:
+                    this.type === 'events' && key === 'input'
+                        ? []
+                        : [
+                              new BaseKismetConnection({
+                                  input: key === 'input' ? 'In' : 'Out',
+                                  type: key as KismetConnectionType
+                              })
+                          ]
             }
-        } else return {
-            key,
-            connections: links.map(input => {
-                return BaseKismetConnection.convertLink(key as KismetConnectionType, input)
-            }).filter(n => n != undefined) as (ItemConnection | VariableConnection)[]
-        }
+        } else
+            return {
+                key,
+                connections: links
+                    .map(input => {
+                        return BaseKismetConnection.convertLink(
+                            key as KismetConnectionType,
+                            input
+                        )
+                    })
+                    .filter(n => n != undefined) as (
+                    | ItemConnection
+                    | VariableConnection
+                )[]
+            }
     }
 
     private _BasetoJSON () {
-        const { 
+        const {
             class: Class,
-            DrawConfig, 
+            DrawConfig,
             ObjectArchetype,
-            ObjInstanceVersion, 
+            ObjInstanceVersion,
             ParentSequence,
             x,
             y
         } = this.kismet
 
         const json: Record<string, KismetVariablesType> = {
-            'ObjInstanceVersion': ObjInstanceVersions.get(Class) ?? ObjInstanceVersion,
+            ObjInstanceVersion:
+                ObjInstanceVersions.get(Class) ?? ObjInstanceVersion,
             ParentSequence,
-            'ObjPosX': x,
-            'ObjPosY': y,
-            'DrawWidth': DrawConfig.width,
-            'MaxWidth': DrawConfig.maxWidth ?? null,
-            'DrawHeight': DrawConfig.height ?? null,
+            ObjPosX: x,
+            ObjPosY: y,
+            DrawWidth: DrawConfig.width,
+            MaxWidth: DrawConfig.maxWidth ?? null,
+            DrawHeight: DrawConfig.height ?? null,
             Name: quote(this.getKismetName()),
             ObjectArchetype
         }
@@ -149,19 +167,25 @@ export class BaseSequenceItem extends BaseItem {
 
     protected formatNode (properties: string[]): string {
         const item = [
-            KISMET_NODE_LINES.begin(quote(this.getKismetName()), this.kismet.class), 
-            filterEmptyLines(properties), 
+            KISMET_NODE_LINES.begin(
+                quote(this.getKismetName()),
+                this.kismet.class
+            ),
+            filterEmptyLines(properties),
             KISMET_NODE_LINES.end
         ]
 
         return item.join('\n')
     }
 
-    protected setKismetSetting<T> (type: keyof BaseKismetItemDrawOptions, value: T): this {
+    protected setKismetSetting<T> (
+        type: keyof BaseKismetItemDrawOptions,
+        value: T
+    ): this {
         this.kismet[type] = value as T as never
 
         if (type === 'ObjectArchetype') {
-            this.kismet.class = (value as unknown as string).split('\'')[0]
+            this.kismet.class = (value as unknown as string).split("'")[0]
         }
 
         return this
@@ -175,15 +199,24 @@ export class BaseSequenceItem extends BaseItem {
         return item.kismet?.ObjectArchetype === this.kismet.ObjectArchetype
     }
 
-    public getConnection (type: KismetConnectionType, connectionName: string): (BaseKismetConnection | KismetConnection) | null {
-        const connections = this.connections?.[type] as BaseKismetConnection[] | undefined
+    public getConnection (
+        type: KismetConnectionType,
+        connectionName: string
+    ): (BaseKismetConnection | KismetConnection) | null {
+        const connections = this.connections?.[type] as
+            | BaseKismetConnection[]
+            | undefined
 
         return connections?.find(c => c.name === connectionName) ?? null
     }
 
-    public setComment ({ comment, supressAutoComment, outputCommentToScreen }: {
-        comment?: string,
-        supressAutoComment?: boolean,
+    public setComment ({
+        comment,
+        supressAutoComment,
+        outputCommentToScreen
+    }: {
+        comment?: string
+        supressAutoComment?: boolean
         outputCommentToScreen?: boolean
     }): this {
         this.comment = comment ?? null
@@ -191,7 +224,7 @@ export class BaseSequenceItem extends BaseItem {
         this.outputCommentToScreen = outputCommentToScreen ?? null
 
         return this
-    }  
+    }
 
     public setPosition (position: KismetPosition): this {
         const { x, y } = position
@@ -216,14 +249,21 @@ export class BaseSequenceItem extends BaseItem {
     public toJSON (): Record<string, KismetVariablesType> {
         const json = this._BasetoJSON()
 
-        const connections = (this.connections as Record<string, BaseKismetConnection[]>) ?? {}
-        mapObjectKeys(connections, (c, i) => [c.prefix(i), c.value] as [string, string]).forEach(type => {
-            if (type.length > 0) type.forEach(link => json[link[0]] = link[1])
+        const connections =
+            (this.connections as Record<string, BaseKismetConnection[]>) ?? {}
+        mapObjectKeys(
+            connections,
+            (c, i) => [c.prefix(i), c.value] as [string, string]
+        ).forEach(type => {
+            if (type.length > 0) type.forEach(link => (json[link[0]] = link[1]))
         })
 
-        if (typeof this.comment === 'string') json['ObjComment'] = quote(this.comment)
-        if (this.supressAutoComment === false) json['bSuppressAutoComment'] = this.supressAutoComment
-        if (this.outputCommentToScreen) json['bOutputObjCommentToScreen'] = this.outputCommentToScreen
+        if (typeof this.comment === 'string')
+            json['ObjComment'] = quote(this.comment)
+        if (this.supressAutoComment === false)
+            json['bSuppressAutoComment'] = this.supressAutoComment
+        if (this.outputCommentToScreen)
+            json['bOutputObjCommentToScreen'] = this.outputCommentToScreen
 
         return json
     }

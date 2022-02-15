@@ -13,7 +13,7 @@ function message (key: keyof typeof Messages, ...args: string[]) {
 }
 
 export class KismetError {
-    public message: string 
+    public message: string
 
     constructor (key: string, args?: string[], error?: boolean) {
         this.message = message(key, ...(args ?? []))

@@ -8,8 +8,10 @@ module.exports = {
     extends: [
       'eslint:recommended',
       'plugin:@typescript-eslint/recommended',
+      'prettier'
     ],
     rules: {
-        "@typescript-eslint/ban-types": 0
+        "@typescript-eslint/ban-types": 0,
+        "space-before-function-paren": "error"
     }
 }
