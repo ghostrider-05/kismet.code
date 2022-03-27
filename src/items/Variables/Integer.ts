@@ -1,7 +1,7 @@
 import { SequenceVariable } from "../../structures/Sequence/Variable.js"
 
 import { 
-    addVariable 
+    addVariable, KismetError 
 } from "../../shared/index.js"
 
 import type { 
@@ -9,7 +9,7 @@ import type {
 } from "../../types/index.js"
 
 export class IntegerVariable extends SequenceVariable {
-    public value: number;
+    public value = 0
 
     constructor (options?: KismetVariableOptions) {
         super({
@@ -17,48 +17,67 @@ export class IntegerVariable extends SequenceVariable {
             ObjectArchetype: `SeqVar_Int'Engine.Default__SeqVar_Int'`,
             inputs: {}
         })
+    }
 
-        this.value = 0.0
+    protected _ValidateInt (value: number): void {
+        if (!Number.isInteger(value)) throw new KismetError('INTEGER_INPUT')
     }
 
     public setValue (value: number): this {
+        this._ValidateInt(value)
         this.value = value
 
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        return addVariable(super.toKismet(), [['IntValue', this.value.toString()]])
+        return this.toString()
+    }
+
+    public override toString (): string {
+        return addVariable(super.toString(), [['IntValue', this.value.toString()]])
     }
 }
 
 export class RandomIntegerVariable extends IntegerVariable {
-    public minValue: number;
-    public maxValue: number;
+    public minValue = 0
+    public maxValue = 100
 
     constructor (options?: KismetVariableOptions) {
         super(options)
-
-        this.minValue = 0
-        this.maxValue = 100
         
         this.setKismetSetting('ObjectArchetype', `SeqVar_RandomInt'Engine.Default__SeqVar_RandomInt'`)
     }
 
     public setMinValue (min: number): this {
+        this._ValidateInt(min)
+
         this.minValue = min
 
         return this
     }
 
     public setMaxValue (max: number): this {
+        this._ValidateInt(max)
+        if (max < this.minValue) throw new KismetError('RANGE_LOWER_MIN')
+
         this.maxValue = max
 
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        const kismet = super.toKismet()
+        return this.toString()
+    }
+
+    public override toString (): string {
+        const kismet = super.toString()
 
         return addVariable(kismet, [
             ['Min', this.minValue.toString()],

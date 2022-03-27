@@ -8,7 +8,7 @@ import type {
 } from '../../types/index.js'
 
 export class SequenceVariable extends BaseSequenceItem {
-    public variableName?: string | null
+    public variableName: string | null
 
     constructor (options: KismetVariableOptions & BaseKismetItemOptions) {
         super({ ...options, type: Constants.NodeType.VARIABLES })

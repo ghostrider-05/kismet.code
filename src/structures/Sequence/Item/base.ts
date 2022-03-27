@@ -89,7 +89,7 @@ export class BaseSequenceItem extends BaseItem {
         try {
             this.connections = ['input', 'output', 'variable']
                 .map(key => {
-                    const links = (inputs as Record<string, string[]>)[key]
+                    const links = inputs[key as keyof typeof inputs]
 
                     return this._groupConnections(links, key)
                 })
@@ -102,7 +102,13 @@ export class BaseSequenceItem extends BaseItem {
         }
     }
 
-    private _groupConnections (links: string[], key: string) {
+    private _groupConnections (links: string[] | undefined, key: string) {
+        if (!links)
+            return {
+                key,
+                connections: []
+            }
+
         if (links.length === 0 && ['input', 'output'].includes(key)) {
             return {
                 key,
@@ -235,12 +241,18 @@ export class BaseSequenceItem extends BaseItem {
         return this
     }
 
-    public setSequence (sequence: string | Sequence): this {
+    public setSequence (
+        sequence: string | Sequence,
+        addToSequence?: boolean
+    ): this {
         if (typeof sequence !== 'string') {
-            this.sequence = sequence
             this.kismet.ParentSequence = sequence.linkId
-        } else {
+
+            if (addToSequence ?? true) sequence.addItem(this, false)
+            this.sequence = sequence.linkId
+        } else if (typeof this.sequence === 'string') {
             this.kismet.ParentSequence = `Sequence'${sequence}'`
+            this.sequence = `Sequence'${sequence}'`
         }
 
         return this
@@ -276,6 +288,9 @@ export class BaseSequenceItem extends BaseItem {
         return this.formatNode(variables)
     }
 
+    /**
+     * @deprecated
+     */
     public toKismet (): string {
         return this.toString()
     }

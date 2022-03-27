@@ -12,7 +12,7 @@ export class NamedVariable extends SequenceVariable {
     public expectedType: string | null = null
     public searchVariableName: string | null = null
 
-    constructor (options: KismetVariableOptions) {
+    constructor (options?: KismetVariableOptions) {
         super ({
             ...options,
             ObjectArchetype: `SeqVar_Named'Engine.Default__SeqVar_Named'`,
@@ -27,8 +27,15 @@ export class NamedVariable extends SequenceVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        const kismet = super.toKismet()
+        return this.toString()
+    }
+
+    public override toString (): string {
+        const kismet = super.toString()
 
         const variables = [
             (this.expectedType ? ['ExpectedType', this.expectedType] : []),

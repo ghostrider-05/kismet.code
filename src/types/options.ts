@@ -1,7 +1,8 @@
 import {
+    ProcessId,
     SequenceAction,
     SequenceCondition
-} from '../structures/Sequence/index.js'
+} from '../structures/index.js'
 
 import { PositionStyleOption, VariablePositionStyleOption } from './enums.js'
 
@@ -44,6 +45,7 @@ export interface layoutOptions {
  */
 export interface projectOptions<S> {
     projectName: string
+    debug?: boolean
     layout?: SequencePositionOptions<S>
 }
 
@@ -91,6 +93,7 @@ export interface SequenceBaseConstructorOptions<S> {
     layout?: SequencePositionOptions<S>
     name?: string
     mainSequence?: boolean
+    project?: ProcessId
     defaultView?: Required<SequenceViewOptions>
 }
 

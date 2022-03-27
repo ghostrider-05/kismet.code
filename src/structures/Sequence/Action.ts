@@ -1,6 +1,6 @@
 import { ItemConnection, SequenceNode } from './Item/index.js'
 
-import { Constants } from '../../shared/index.js'
+import { Constants, KismetError } from '../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
@@ -10,8 +10,14 @@ import type {
 const { NodeType, ConnectionType } = Constants
 
 export class SequenceAction extends SequenceNode {
-    constructor (options: KismetActionRequiredOptions & BaseKismetItemOptions) {
-        super({ ...options, type: NodeType.ACTIONS })
+    constructor (
+        options: KismetActionRequiredOptions &
+            BaseKismetItemOptions & { isCondition?: boolean }
+    ) {
+        super({
+            ...options,
+            type: options.isCondition ? NodeType.CONDITIONS : NodeType.ACTIONS
+        })
     }
 
     public addConnection (
@@ -32,18 +38,16 @@ export class SequenceAction extends SequenceNode {
                     item.linkId,
                     item.connections?.input.indexOf(itemConnection)
                 )
-
-            if (typeof this.sequence !== 'string') {
-                this.sequence.replaceItem(this.linkId, this)
-            }
         } else if (!connection) {
-            console.warn(
-                `Could not find output connection for '${outputName}' on ${this['kismet']['class']}`
-            )
+            throw new KismetError('UNKNOWN_CONNECTION', [
+                outputName,
+                this['kismet']['class']
+            ])
         } else {
-            console.warn(
-                `Could not find input connection for '${inputName}' on ${item['kismet']['class']}`
-            )
+            throw new KismetError('UNKNOWN_CONNECTION', [
+                inputName,
+                this['kismet']['class']
+            ])
         }
 
         return this

@@ -1,4 +1,5 @@
 import {
+    BaseSequenceItem,
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
@@ -17,6 +18,10 @@ export type Awaitable<T> = Promise<T> | T
 
 export type Enum<T extends string> = T | `${T}`
 
+export type ClassConstructor<T = unknown, U extends unknown[] = []> = new (
+    ...args: U
+) => T
+
 export interface KismetVectorComponents {
     x: number
     y: number
@@ -34,6 +39,7 @@ export type SchemaItemNames = ArrayUnion<
 >
 
 export type SequenceItemType =
+    | BaseSequenceItem
     | SequenceAction
     | SequenceCondition
     | SequenceVariable

@@ -27,8 +27,15 @@ export class BoolVariable extends SequenceVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        return addVariable(super.toKismet(), [
+        return this.toString()
+    }
+
+    public override toString (): string {
+        return addVariable(super.toString(), [
             ['bValue', this.value ? '1' : '0']
         ])
     }

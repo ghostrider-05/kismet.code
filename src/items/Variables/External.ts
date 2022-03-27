@@ -12,7 +12,7 @@ export class ExternalVariable extends SequenceVariable {
     public expectedType: string | null = null
     public variableLabel: string | null = null
 
-    constructor (options: KismetVariableOptions) {
+    constructor (options?: KismetVariableOptions) {
         super({
             ...options,
             ObjectArchetype: `SeqVar_External'Engine.Default__SeqVar_External'`,
@@ -20,15 +20,22 @@ export class ExternalVariable extends SequenceVariable {
         })
     }
 
-    public setExternalVariable<T extends SequenceVariable> (options: { label?: string, type?: T }): this {
-        this.expectedType = options.type?.['kismet']['classType'] ?? null
-        this.variableLabel = options.label ?? null
+    public setExternalVariable<T extends SequenceVariable> (options?: { label?: string, type?: T }): this {
+        this.expectedType = options?.type?.['kismet']['classType'] ?? null
+        this.variableLabel = options?.label ?? null
 
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        const kismet = super.toKismet()
+        return this.toString()
+    }
+
+    public override toString (): string {
+        const kismet = super.toString()
 
         const variables = [
             (this.expectedType ? ['ExpectedType', this.expectedType] : []),

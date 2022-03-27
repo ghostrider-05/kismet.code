@@ -6,18 +6,12 @@ import { findClasses } from '../../parser/index.js'
 import { PathInput } from '../../types/index.js'
 
 export class CustomNodesManager {
-    public groupExportItems: boolean
+    public groupExportItems = false
     public packages: string[] | undefined = undefined
 
     public importPath: string | null = null
-    public exportPath: string
+    public exportPath: string | null = null
     public exportTypes: 'json'[] = []
-
-    constructor (relativeFilePath: string) {
-        this.exportPath = relativeFilePath
-
-        this.groupExportItems = false
-    }
 
     private isPath (inputPath: string): boolean {
         return existsSync(inputPath) || existsSync(resolve('.', inputPath))
@@ -36,10 +30,12 @@ export class CustomNodesManager {
         if (!this.importPath) {
             this.importPath = ''
         }
+        if (!this.hasCustomNodeFiles()) throw new Error('Invalid export path')
 
         const paths: PathInput = {
             importPath: this.importPath,
-            exportPath: this.exportPath,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            exportPath: this.exportPath!,
             packages: this.packages
         }
 
@@ -50,6 +46,8 @@ export class CustomNodesManager {
     }
 
     public hasCustomNodeFiles (): boolean {
+        if (!this.exportPath) throw new Error('Missing export path')
+
         return existsSync(resolve('.', this.exportPath))
     }
 

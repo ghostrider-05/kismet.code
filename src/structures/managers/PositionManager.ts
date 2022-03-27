@@ -119,7 +119,7 @@ export class SequencePositionManager {
 
         return schema.layout.flatMap(layout => {
             return this.applyStyle(
-                items.map(n => sequence.find(n) as SequenceItemType),
+                items.map(n => sequence.resolveId(n) as SequenceItemType),
                 layout
             )
         })
