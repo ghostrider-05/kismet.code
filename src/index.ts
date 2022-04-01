@@ -3,6 +3,7 @@ import {
     BaseSequenceItem as BaseItem,
     SequenceNode as Item,
     KismetColor,
+    Parsers,
     Sequence,
     SequenceAction,
     SequenceCondition,
@@ -10,6 +11,8 @@ import {
     SequenceVariable,
     KismetFile
 } from './structures/index.js'
+
+import { Constants, clipboard } from './shared/index.js'
 
 const Structures = {
     Base,
@@ -22,8 +25,9 @@ const Structures = {
     SequenceVariable
 }
 
-const Util = new (class Util {
-    Color = KismetColor
-})()
+const Util = class Util {
+    public static Color = KismetColor
+    public static clipboard = clipboard
+}
 
-export { KismetFile, Structures, Util }
+export { KismetFile, Parsers, Structures, Util, Constants }

@@ -10,7 +10,7 @@ import type {
 } from '../../types/index.js'
 
 export class InterpData extends SequenceVariable {
-    public bakeAndPrune: boolean
+    public bakeAndPrune = false
 
     constructor (options?: KismetVariableOptions) {
         super({
@@ -19,16 +19,23 @@ export class InterpData extends SequenceVariable {
             ObjectArchetype: `InterpData'Engine.Default__InterpData'`,
             inputs: {}
         })
-
-        this.bakeAndPrune = false
     }
 
-    public setBakeOptions (options: { bakeAndPrune?: boolean }) {
+    public setBakeOptions (options: { bakeAndPrune?: boolean }): this {
         this.bakeAndPrune = options.bakeAndPrune ?? false
+
+        return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        const kismet = super.toKismet()
+        return this.toString()
+    }
+
+    public override toString (): string {
+        const kismet = super.toString()
 
         return addVariable(kismet, [
             ['bShouldBakeAndPrune', boolToKismet(this.bakeAndPrune)]

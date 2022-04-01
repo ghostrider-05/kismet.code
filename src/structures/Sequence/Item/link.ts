@@ -164,7 +164,14 @@ export class BaseKismetConnection {
         return this.format()
     }
 
+    /**
+     * @deprecated
+     */
     public toKismet (index?: number): string {
+        return this.toString(index)
+    }
+
+    public toString (index?: number): string {
         return parseVar(this.prefix(index), this.value)
     }
 }
@@ -243,8 +250,15 @@ export class VariableConnection extends BaseKismetConnection {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (index?: number): string {
-        return super.toKismet(index)
+        return this.toString(index)
+    }
+
+    public override toString (index?: number): string {
+        return super.toString(index)
     }
 }
 
@@ -319,8 +333,15 @@ export class ItemConnection extends BaseKismetConnection {
         return super.format(delay)
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (index?: number): string {
-        const kismet = super.toKismet(index)
+        return this.toString(index)
+    }
+
+    public override toString (index?: number): string {
+        const kismet = super.toString(index)
 
         return kismet
     }

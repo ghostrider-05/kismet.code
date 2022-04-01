@@ -54,6 +54,8 @@ export class KismetColor {
 
     public setColors (colors: [number, number, number, number]): this {
         colors.forEach(color => this._validateNumber(color))
+        if (colors.length !== 4)
+            throw new Error('Invalid color lenght provided. Expected 4 values')
 
         this.R = colors[0]
         this.G = colors[1]
@@ -64,6 +66,10 @@ export class KismetColor {
     }
 
     public toString (): string {
-        return `(B=${this.B},G=${this.G},R=${this.R},A=${this.A})`
+        const { R, G, B, A } = this
+
+        this._validateOptions({ R, G, B, A })
+
+        return `(B=${B},G=${G},R=${R},A=${A})`
     }
 }

@@ -28,32 +28,32 @@ const { DefaultLayoutOptions, KISMET_NODE_LINES, MAIN_SEQUENCE, NodeType } =
 
 export class Sequence extends BaseItem {
     public name: string
-    public subSequences: Sequence[]
     public defaultView: Required<SequenceViewOptions>
 
     public readonly id: ProcessId
+    public readonly project?: ProcessId
 
-    public enabled: boolean
-    public parentSequence: string
+    public enabled = true
+    public parentSequence: string = MAIN_SEQUENCE
 
-    private items: (SequenceItemType | Sequence)[]
+    public items: (SequenceItemType | Sequence)[] = []
+    public subSequences: Sequence[] = []
+
     private kismet: { x: number; y: number }
     private positionManager: SequencePositionManager
-    private mainSequence: boolean
+    private readonly mainSequence: boolean
 
-    constructor (options: SequenceBaseConstructorOptions<SchemaItemNames>) {
+    constructor (options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
         super(NodeType.SEQUENCES)
 
-        const { name, mainSequence, defaultView, layout } = options
+        const { name, mainSequence, defaultView, layout, project } =
+            options ?? {}
 
         this.name = name ?? 'Sub_Sequence'
-        this.id = ProcessManager.id('Sequence')
-        this.items = []
+        this.id = ProcessManager.id('Sequence', { id: project })
 
-        this.subSequences = []
         this.parentSequence = MAIN_SEQUENCE
 
-        this.enabled = true
         this.mainSequence = mainSequence ?? false
 
         this.kismet = {
@@ -70,7 +70,8 @@ export class Sequence extends BaseItem {
         this.positionManager = new SequencePositionManager({
             layoutOptions: layout?.position ?? DefaultLayoutOptions,
             style: layout?.style,
-            schema: layout?.schema
+            schema: layout?.schema,
+            projectId: project
         })
     }
 
@@ -92,8 +93,8 @@ export class Sequence extends BaseItem {
         return `Sequence'${this.name}'`
     }
 
-    public addItem (item: SequenceItemType): this {
-        item.setSequence(this)
+    public addItem (item: SequenceItemType, overwriteSequence?: boolean): this {
+        if (overwriteSequence ?? true) item.setSequence(this, false)
 
         this.items.push(item)
 
@@ -111,7 +112,10 @@ export class Sequence extends BaseItem {
         objects,
         layout,
         defaultView
-    }: SequenceOptions<SequenceItemType, SchemaItemNames>): Sequence {
+    }: SequenceOptions<SequenceItemType, SchemaItemNames>): {
+        subSequence: Sequence
+        sequence: Sequence
+    } {
         const subSequence = new Sequence({
             layout: {
                 position: layout?.position ?? this.positionManager.options,
@@ -119,19 +123,19 @@ export class Sequence extends BaseItem {
                 style: layout?.style
             },
             name,
-            defaultView
+            defaultView,
+            project: this.project
         }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
+
+        subSequence.parentSequence = this.linkId
 
         this.subSequences.push(subSequence)
         this.items.push(subSequence)
 
-        subSequence.parentSequence = this.linkId
-
-        return subSequence
-    }
-
-    public find (id: string): SequenceItemType | Sequence | null {
-        return this.items.find(n => n.id.equals(id)) ?? null
+        return {
+            subSequence,
+            sequence: this
+        }
     }
 
     public findConnectedEvent (
@@ -161,7 +165,7 @@ export class Sequence extends BaseItem {
         itemId: string,
         outputConnection?: string
     ): string[] {
-        const item = this.find(itemId)
+        const item = this.resolveId(itemId)
 
         if (item?.isSequenceItem()) {
             const ids = item.connections?.output.flatMap(link =>
@@ -175,7 +179,7 @@ export class Sequence extends BaseItem {
 
             while (idsToFilter.length <= this.items.length) {
                 const cItems = idsToFilter
-                    .map(id => this.find(id))
+                    .map(id => this.resolveId(id))
                     .filter(n => n)
                 const newIds: string[] = cItems
                     .flatMap(i =>
@@ -216,6 +220,18 @@ export class Sequence extends BaseItem {
         }
 
         this.items[this.items.indexOf(item)] = newItem
+    }
+
+    public resolveId (
+        id: string | ProcessId
+    ): SequenceItemType | Sequence | null {
+        return (
+            this.items.find(n => {
+                return typeof id === 'string'
+                    ? n.id.equals(id) || n.linkId === id
+                    : n.id.equalIds(id)
+            }, null) ?? null
+        ) // TODO: TS doesn't type thisArg
     }
 
     public setDisabled (): this {

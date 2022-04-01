@@ -43,7 +43,7 @@ export class BaseItem {
     }
 
     public isSequenceItem (): this is SequenceItemType {
-        return !this.isSequence()
+        return this.type ? !this.isSequence() : false
     }
 
     public isSequenceNode (): this is SequenceAction | SequenceCondition {

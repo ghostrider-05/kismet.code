@@ -1,3 +1,5 @@
+import clipboardy from 'clipboardy'
+
 import { KismetError } from '../errors/index.js'
 
 export function filterEmptyLines (input: string | string[]): string {
@@ -75,7 +77,7 @@ export function isType (
             isValid = true
     }
 
-    if (!isValid) throw new KismetError('INVALID_TYPE', [t(input), type])
+    if (!isValid) throw new KismetError('INVALID_TYPE', [input, type])
     return isValid
 }
 
@@ -99,4 +101,14 @@ export function stringFirstCharUppercase (input: string): string | null {
 
 export function t<T> (input: unknown): T {
     return input as T
+}
+
+export const clipboard = class ClipboardUtil {
+    public static async read (): Promise<string> {
+        return await clipboardy.read()
+    }
+
+    public static async write (input: string): Promise<void> {
+        return await clipboardy.write(input)
+    }
 }

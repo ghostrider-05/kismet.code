@@ -29,12 +29,19 @@ export class ObjectVariable extends SequenceVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
+        return this.toString()
+    }
+
+    public override toString (): string {
         const properties: [string, string][] = [
             ['ObjValue', this.value === '' ? 'None' : this.value]
         ]
 
-        return addVariable(super.toKismet(), properties)
+        return addVariable(super.toString(), properties)
     }
 }
 
@@ -61,29 +68,34 @@ export class ObjectListVariable extends ObjectVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
+        return this.toString()
+    }
+
+    public override toString (): string {
         const values: [string, string][] = this.values.map((value, i) => [`ObjList(${i})`, value])
         
-        return addVariable(super.toKismet(), values)
+        return addVariable(super.toString(), values)
     }
 }
 
 export class ObjectVolumeVariable extends ObjectVariable {
-    public collidingOnly: boolean;
-    public excludeClasses: string[];
+    public collidingOnly = true;
+    public excludeClasses: string[] = [
+        `Class'Engine.Trigger'`,
+        `Class'Engine.Volume'`
+    ]
 
     constructor (options?: KismetVariableOptions) {
         super(options)
 
-        this.collidingOnly = true
-        this.excludeClasses = [
-            `Class'Engine.Trigger'`,
-            `Class'Engine.Volume'`
-        ]
-
         this.setKismetSetting('ObjectArchetype', `SeqVar_ObjectVolume'Engine.Default__SeqVar_ObjectVolume'`)
     }
 
+    //TODO: extract classtype from a given class
     public excludeClass (className: string, Package: string): this {
         this.excludeClasses.push(`Class'${Package}.${className}'`)
 
@@ -96,12 +108,22 @@ export class ObjectVolumeVariable extends ObjectVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
-        const classList: [string, string][] = this.excludeClasses.map((Class, i) => [`ExcludeClassList(${i})`, Class])
-        const properties = classList.concat([
+        return this.toString()
+    }
+
+    public override toString (): string {
+        const classList: [string, string][] = this.excludeClasses.map((Class, i) => {
+            return [`ExcludeClassList(${i})`, Class]
+        })
+        const properties:[string, string][] = [
+            ...classList,
             ['bCollidingOnly', boolToKismet(this.collidingOnly)]
-        ])
+        ]
         
-        return addVariable(super.toKismet(), properties)
+        return addVariable(super.toString(), properties)
     }
 }

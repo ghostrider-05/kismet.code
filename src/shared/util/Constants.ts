@@ -1,4 +1,4 @@
-import type { layoutOptions } from '../../types/index.js'
+import type { layoutOptions, SequenceViewOptions } from '../../types/index.js'
 
 const KISMET_LINE_INDENT = '   '
 const MAIN_SEQUENCE = "Sequence'Main_Sequence'"
@@ -7,6 +7,12 @@ const DefaultLayoutOptions: Required<layoutOptions> = {
     startX: 500,
     startY: 500,
     spaceBetween: 200
+}
+
+const DefaultSequenceViewOptions: Required<SequenceViewOptions> = {
+    x: 0,
+    y: 0,
+    zoom: 1
 }
 
 const KISMET_CLASSES_PREFIXES = [
@@ -42,5 +48,6 @@ export {
     KISMET_NODE_LINES,
     MAIN_SEQUENCE,
     DefaultLayoutOptions,
+    DefaultSequenceViewOptions,
     ObjInstanceVersions
 }

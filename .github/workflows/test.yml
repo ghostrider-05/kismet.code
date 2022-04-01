@@ -19,6 +19,17 @@ jobs:
       - name: Compile
         run: npm run build
 
-      - name: ESLint
-        run: npm run lint
-      # Add tests
+      - name: ESLint & Prettier
+        run: npm run format
+      
+      - name: Tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: npm test
+
+      - name: Upload coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: ${{github.workspace}}/src/dist/coverage/lcov.info:lcov

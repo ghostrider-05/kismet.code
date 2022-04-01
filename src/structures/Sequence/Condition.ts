@@ -7,6 +7,9 @@ import type {
 
 export class SequenceCondition extends SequenceAction {
     constructor (options: KismetActionRequiredOptions & BaseKismetItemOptions) {
-        super(options)
+        super({
+            ...options,
+            isCondition: true
+        })
     }
 }

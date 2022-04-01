@@ -32,10 +32,17 @@ export class VectorVariable extends SequenceVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
+        return this.toString()
+    }
+
+    public override toString (): string {
         const { x, y, z } = this.value
         const components = `(X=${x},Y=${y},Z=${z})`
 
-        return addVariable(super.toKismet(), [['VectValue', components]])
+        return addVariable(super.toString(), [['VectValue', components]])
     }
 }

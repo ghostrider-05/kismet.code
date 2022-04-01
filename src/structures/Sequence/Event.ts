@@ -1,7 +1,11 @@
 import { ItemConnection, SequenceNode } from './Item/index.js'
-import { SequenceAction } from './Action.js'
 
-import { addVariable, boolToKismet, Constants } from '../../shared/index.js'
+import {
+    addVariable,
+    boolToKismet,
+    Constants,
+    KismetError
+} from '../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
@@ -29,7 +33,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         this.clientSideOnly = options?.clientSideOnly ?? false
     }
 
-    public on<T extends SequenceAction> ({
+    public on<T extends SequenceNode> ({
         name,
         item
     }: {
@@ -38,15 +42,20 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     }): this {
         const connection = this.getConnection('output', name) as ItemConnection
 
+        if (!item.isSequenceNode()) {
+            new KismetError('INVALID_NODE_ARGUMENT')
+        }
+
         if (connection) {
             connection.addLink(
                 item.linkId,
                 this.connections?.output.indexOf(connection)
             )
         } else {
-            console.warn(
-                `Could not find output connection for '${name}' on ${this['kismet']['class']}`
-            )
+            new KismetError('UNKNOWN_CONNECTION', [
+                name,
+                this['kismet']['class']
+            ])
         }
 
         return this
@@ -65,11 +74,11 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         player?: boolean
         client?: boolean
     }): this {
-        if (player != null) {
+        if (player != undefined) {
             this.playerOnly = player
         }
 
-        if (client != null) {
+        if (client != undefined) {
             this.clientSideOnly = client
         }
 
@@ -77,11 +86,11 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
     }
 
     public setTrigger ({ max, delay }: { max?: number; delay?: number }): this {
-        if (max != null) {
+        if (max != undefined) {
             this.trigger.maxCount = max
         }
 
-        if (delay != null) {
+        if (delay != undefined) {
             this.trigger.delay = delay
         }
 

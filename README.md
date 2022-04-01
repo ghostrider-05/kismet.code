@@ -23,6 +23,7 @@ npm install kismet.ts
 ### Links
 
 - [Documentation][docs]
+- [Changelog][changelog]
 <!-- Web editor -->
 <!-- Blender nodes -->
 
@@ -56,6 +57,7 @@ console.log(sequence)
 For upcoming features take a look at the [roadmap][roadmap]. Discussion and other questions can also be asked in [GitHub discussions][gh-discussions]
 
 [docs]: https://github.com/ghostrider-05/kismet.code/tree/master/docs
+[changelog]: https://github.com/ghostrider-05/kismet.code/tree/master/CHANGELOG.md
 [kismetUserGuide]: https://docs.unrealengine.com/udk/Three/KismetUserGuide.html
 [github]: https://github.com/ghostrider-05/kismet.code
 [gh-discussions]: https://github.com/ghostrider-05/kismet.code/discussions

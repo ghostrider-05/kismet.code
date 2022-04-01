@@ -10,14 +10,11 @@ import type {
 } from "../../types/index.js"
 
 export class PlayerVariable extends ObjectVariable {
-    public allPlayers: boolean;
-    public playerIndex: number;
+    public allPlayers = true
+    public playerIndex = 0
 
     constructor (options?: KismetVariableOptions) {
         super(options)
-
-        this.allPlayers = true
-        this.playerIndex = 0
 
         this.setKismetSetting('ObjectArchetype', `SeqVar_Player'Engine.Default__SeqVar_Player'`)
     }
@@ -34,12 +31,19 @@ export class PlayerVariable extends ObjectVariable {
         return this
     }
 
+    /**
+     * @deprecated
+     */
     public override toKismet (): string {
+        return this.toString()
+    }
+
+    public override toString (): string {
         const properties: [string, string][] = [
             ['PlayerIdx', this.playerIndex.toString()],
             ['bAllPlayers', boolToKismet(this.allPlayers)]
         ]
 
-        return addVariable(super.toKismet(), properties)
+        return addVariable(super.toString(), properties)
     }
 }
