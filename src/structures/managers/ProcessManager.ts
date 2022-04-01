@@ -1,4 +1,4 @@
-import { KismetError } from "../../shared/index.js"
+import { KismetError } from '../../shared/index.js'
 
 export class ProcessId {
     private readonly id: string
@@ -40,7 +40,7 @@ export type ProjectProcessOptions = {
     debug?: boolean
 }
 
-type ProjectProcess = { 
+type ProjectProcess = {
     id: ProcessId
     name: string
     ids: Map<string, number>
@@ -48,39 +48,38 @@ type ProjectProcess = {
     options: ProjectProcessOptions
 }
 
-type ProcessIdOptions = { id?: ProcessId, index?: number }
+type ProcessIdOptions = { id?: ProcessId; index?: number }
 
 class ProcessIdManager {
     public ids: Map<string, number> = new Map()
     public overwrittenIds: Map<string, number[]> = new Map()
 
-    public processes: Record<
-        string, 
-        ProjectProcess
-    > = {}
+    public processes: Record<string, ProjectProcess> = {}
 
-    protected _getIds <T extends boolean = false> (id?: ProcessId, overwrittendIds?: T): Map<string, (T extends true ? number[] : number)> {
-        const base = (this.getProject(id) ?? this)
-        const property = overwrittendIds ? 'overwrittenIds' : 'ids' as const
+    protected _getIds<T extends boolean = false> (
+        id?: ProcessId,
+        overwrittendIds?: T
+    ): Map<string, T extends true ? number[] : number> {
+        const base = this.getProject(id) ?? this
+        const property = overwrittendIds ? 'overwrittenIds' : ('ids' as const)
 
-        return base[property] as Map<string, (T extends true ? number[] : number)>
+        return base[property] as Map<string, T extends true ? number[] : number>
     }
 
     protected _validateIndex (Class: string, options?: ProcessIdOptions) {
-        if (options?.index == undefined) return 
+        if (options?.index == undefined) return
         const { index, id } = options
 
-        const ids = this._getIds(id, true).get(Class);
-        console.log(options, ids)
+        const ids = this._getIds(id, true).get(Class)
 
-        if (ids?.includes(options.index) || this._getIds(id).get(Class) === options.index) {
+        if (
+            ids?.includes(options.index) ||
+            this._getIds(id).get(Class) === options.index
+        ) {
             new KismetError('INDEX_DEFINED')
         }
 
-        this._getIds(id, true).set(Class, [
-            ...(ids ?? []), 
-            index
-        ])
+        this._getIds(id, true).set(Class, [...(ids ?? []), index])
     }
 
     protected createId (id: string) {
@@ -92,12 +91,21 @@ class ProcessIdManager {
     protected getProject (id?: ProcessId): ProjectProcess | undefined {
         const projectName = id?.resolveId().split('|')[1]
 
-        return this.processes[projectName ?? ''] ?? (Object.keys(this.processes).length > 0 ? this.processes[Object.keys(this.processes)[0]] : undefined) ?? undefined
+        return (
+            this.processes[projectName ?? ''] ??
+            (Object.keys(this.processes).length > 0
+                ? this.processes[Object.keys(this.processes)[0]]
+                : undefined) ??
+            undefined
+        )
     }
 }
 
 class ProcessDataManager extends ProcessIdManager {
-    public attachProject (name: string, options?: ProjectProcessOptions): ProcessId {
+    public attachProject (
+        name: string,
+        options?: ProjectProcessOptions
+    ): ProcessId {
         const id = this.createId(`project|${name}`)
         if (this.processes[name]) new KismetError('PROJECT_DEFINED')
 
@@ -112,13 +120,20 @@ class ProcessDataManager extends ProcessIdManager {
         return id
     }
 
+    /**
+     * Debug information
+     * @param input The string input
+     * @param id The project id of the sequence / item
+     * @returns If succeeded, whether the attached project was found or not
+     */
     public debug (input: string, id?: ProcessId): void | boolean {
         if (!this.getProject(id)?.options.debug) return
 
         const prefix = this.getProject(id)?.name
         const content = prefix ? `[${prefix}]` : '' + input
 
-        return console.log(content)
+        console.log(content)
+        return !!prefix
     }
 
     public id (Class: string, options?: ProcessIdOptions): ProcessId {

@@ -2,15 +2,13 @@ import { Comment, CommentFrame, Sequence } from './Sequence/index.js'
 
 import { Variables, Actions, Conditions, Events } from '../items/index.js'
 
-import { 
+import {
     CustomNodesManager,
     ProcessManager,
     ProcessId
 } from './managers/index.js'
 
-import { 
-    clipboard 
-} from '../shared/index.js'
+import { clipboard } from '../shared/index.js'
 
 import type {
     projectOptions,
@@ -58,7 +56,13 @@ export class KismetFile {
         CommentFrame
     }
 
-    public async copy (item: SequenceItemType): Promise<void> {
+    public static listItems (
+        input: Record<string, SequenceItemType[]>
+    ): SequenceItemType[] {
+        return Object.keys(input).flatMap(key => input[key])
+    }
+
+    public static async copy (item: SequenceItemType): Promise<void> {
         const input = item.toString()
 
         return await clipboard.write(input)

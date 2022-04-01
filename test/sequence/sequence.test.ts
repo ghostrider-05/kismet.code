@@ -65,8 +65,12 @@ describe('item sequence', () => {
 
     test('sequence find item', () => {
         const item = nodeBuilder()
-        expect(sequenceBuilder().addItem(item).resolveId(item.id)?.linkId).toEqual(item.linkId)
-        expect(sequenceBuilder().addItem(item).resolveId(item.linkId)?.linkId).toEqual(item.linkId)
+        expect(
+            sequenceBuilder().addItem(item).resolveId(item.id)?.linkId
+        ).toEqual(item.linkId)
+        expect(
+            sequenceBuilder().addItem(item).resolveId(item.linkId)?.linkId
+        ).toEqual(item.linkId)
     })
 
     test('sequence string', () => {

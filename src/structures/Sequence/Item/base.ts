@@ -36,7 +36,7 @@ export class BaseSequenceItem extends BaseItem {
     public outputCommentToScreen: boolean | null
 
     public connections: KismetConnections | null = null
-    public sequence: string | Sequence
+    public sequence: string
 
     public readonly id: ProcessId
 

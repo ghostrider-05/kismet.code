@@ -2,6 +2,7 @@ import { KismetFile, Util } from '../src/index.js'
 import { ProcessManager } from '../src/structures/index.js'
 import { builders } from '../src/structures/builders/index.js'
 
+// Keep old clipboard value from before tests
 let clipboardValue = ''
 
 beforeAll(async () => {
@@ -24,6 +25,22 @@ describe('main project', () => {
         expect(ProcessManager.processes['test_1'].options.debug).toBe(true)
     })
 
+    test('list project items', () => {
+        const items = {
+            Actions: [
+                builders.actionBuilder(),
+                builders.actionBuilder(),
+                builders.actionBuilder()
+            ],
+            Events: [builders.eventBuilder()]
+        }
+
+        expect(KismetFile.listItems(items)).toEqual([
+            ...items.Actions,
+            ...items.Events
+        ])
+    })
+
     test('project export options', () => {
         expect(baseProject.toString()).toEqual('')
 
@@ -36,7 +53,7 @@ describe('main project', () => {
     test('item copy to clipboard', async () => {
         const action = builders.actionBuilder()
 
-        return baseProject.copy(action).then(async () => {
+        return KismetFile.copy(action).then(async () => {
             return Util.clipboard.read().then(content => {
                 expect(content).toEqual(action.toString())
             })

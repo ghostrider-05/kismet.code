@@ -46,10 +46,11 @@ export class Sequence extends BaseItem {
     constructor (options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
         super(NodeType.SEQUENCES)
 
-        const { name, mainSequence, defaultView, layout } = options ?? {}
+        const { name, mainSequence, defaultView, layout, project } =
+            options ?? {}
 
         this.name = name ?? 'Sub_Sequence'
-        this.id = ProcessManager.id('Sequence')
+        this.id = ProcessManager.id('Sequence', { id: project })
 
         this.parentSequence = MAIN_SEQUENCE
 
@@ -69,7 +70,8 @@ export class Sequence extends BaseItem {
         this.positionManager = new SequencePositionManager({
             layoutOptions: layout?.position ?? DefaultLayoutOptions,
             style: layout?.style,
-            schema: layout?.schema
+            schema: layout?.schema,
+            projectId: project
         })
     }
 
@@ -110,7 +112,10 @@ export class Sequence extends BaseItem {
         objects,
         layout,
         defaultView
-    }: SequenceOptions<SequenceItemType, SchemaItemNames>): { subSequence: Sequence, sequence: Sequence } {
+    }: SequenceOptions<SequenceItemType, SchemaItemNames>): {
+        subSequence: Sequence
+        sequence: Sequence
+    } {
         const subSequence = new Sequence({
             layout: {
                 position: layout?.position ?? this.positionManager.options,

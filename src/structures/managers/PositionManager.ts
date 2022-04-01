@@ -1,3 +1,4 @@
+import { ProcessId, ProcessManager } from './ProcessManager.js'
 import { Sequence } from '../Sequence/index.js'
 
 import { Constants } from '../../shared/index.js'
@@ -19,13 +20,16 @@ type KismetItemPosition = { id: string } & KismetPosition
 
 export class SequencePositionManager {
     public readonly style: PositionStyleOptions
+    public readonly projectId?: ProcessId
+
     public options: Required<layoutOptions>
     public schema?: SequenceSchemaOptions<SchemaItemNames>[]
 
     constructor (options: SequencePositionManagerOptions<SchemaItemNames>) {
-        const { layoutOptions, style, schema } = options
+        const { layoutOptions, style, schema, projectId } = options
 
         this.style = style ?? PositionStyleOption.NONE
+        this.projectId = projectId
         this.options = layoutOptions
         this.schema = schema
     }
@@ -35,11 +39,17 @@ export class SequencePositionManager {
         const itemCount = sequenceItems.length
 
         if (itemCount === 0) {
-            console.log(`Sequence '${sequence.name}' is empty`)
+            ProcessManager.debug(
+                `Sequence '${sequence.name}' is empty`,
+                this.projectId
+            )
 
             return sequence
         } else if (this.style === PositionStyleOption.NONE) {
-            console.log('No positions were set for sequence:' + sequence.name)
+            ProcessManager.debug(
+                'No positions were set for sequence:' + sequence.name,
+                this.projectId
+            )
 
             return sequence
         }

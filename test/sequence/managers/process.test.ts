@@ -29,18 +29,26 @@ describe('process manager', () => {
         const id = ProcessManager.id('test_process_3')
         const { count } = ProcessId.readResolvedId(id.resolveId())
 
-        expect(() => ProcessManager.id('test_process_3', { index: count + 1 })).not.toThrowError()
-        expect(() => ProcessManager.id('test_process_3', { index: count })).toThrowError()
+        expect(() =>
+            ProcessManager.id('test_process_3', { index: count + 1 })
+        ).not.toThrowError()
+        expect(() =>
+            ProcessManager.id('test_process_3', { index: count })
+        ).toThrowError()
     })
 
     test('debug', () => {
         expect(ProcessManager.debug('test')).toBeUndefined()
 
-        const id = ProcessManager.attachProject('test_process_4', { debug: true })
-        expect(ProcessManager.debug('test')).toBeUndefined()
+        const id = ProcessManager.attachProject('test_process_4', {
+            debug: true
+        })
+        expect(ProcessManager.processes['test_process_4']).toBeTruthy()
+
+        expect(ProcessManager.debug('test')).not.toBeUndefined()
         expect(() => ProcessManager.debug('test')).not.toThrowError()
 
-        expect(ProcessManager.debug('test', id)).toBeUndefined()
+        expect(ProcessManager.debug('test', id)).not.toBeUndefined()
         expect(() => ProcessManager.debug('test', id)).not.toThrowError()
     })
 })

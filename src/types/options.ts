@@ -72,6 +72,7 @@ export interface SequenceSchemaOptions<T> {
 
 export interface SequencePositionManagerOptions<S> {
     layoutOptions: Required<layoutOptions>
+    projectId?: ProcessId
     style?: PositionStyleOptions
     schema?: SequenceSchemaOptions<S>[]
 }

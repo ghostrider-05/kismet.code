@@ -30,10 +30,4 @@ const Util = class Util {
     public static clipboard = clipboard
 }
 
-export { 
-    KismetFile, 
-    Parsers,
-    Structures, 
-    Util, 
-    Constants 
-}
+export { KismetFile, Parsers, Structures, Util, Constants }

@@ -5,6 +5,8 @@ export const Messages = {
         Remove an object with this id or choose a differen index`,
     INTEGER_INPUT: 'Value is an float, not a integer',
     INVALID_COLORS_INPUT: 'Invalid color lenght provided. Expected 4 values',
+    INVALID_NODE_ARGUMENT:
+        'Invalid item: expected a node (action or condition)',
     INVALID_TYPE: (input: unknown, type: string) =>
         `Expected typeof ${type}, received ${typeof input}: ${input}`,
     PROJECT_DEFINED: 'A project file with this name is already defined',

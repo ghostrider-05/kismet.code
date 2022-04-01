@@ -12,6 +12,8 @@ const {
     variableBuilder
 } = builders
 
+// TODO: improve string / JSON tests
+
 describe('Sequence item', () => {
     test('base item type guards', () => {
         const baseItem = new Structures.Base()

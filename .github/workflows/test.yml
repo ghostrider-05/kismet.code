@@ -24,7 +24,8 @@ jobs:
       
       - name: Tests
         uses: GabrielBB/xvfb-action@v1
-        run: npm test
+        with:
+          run: npm test
 
       - name: Upload coverage
         uses: paambaati/codeclimate-action@v3.0.0

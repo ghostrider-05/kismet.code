@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file.
 - types: `SequenceItemType` includes BaseItem
 - license: remove license extension
 
-## Features
+### Features
 
 - tests: add tests
 - export `Constants` (with `DefaultSequenceViewOptions`)
@@ -28,9 +28,11 @@ All notable changes to this project will be documented in this file.
 - **BaseItem**: add `addToSequence` option to `setSequence`
 - **KismetFile**: option to show debug information
 - **KismetFile**: `copy` item to the clipboard
+- **KismetFile**: add `listItems` method
 - **Util**: add `clipboard`
 
-## Breaking changes
+### Breaking changes
 
 - **Sequence**: removed `find` method in favour of the new `resolveId`
 - **Sequence**: `addSubsequence` returns both the sequence and the new subsequence
+- **BaseSequenceItem**: `sequence` is now only the id of the linked sequence
