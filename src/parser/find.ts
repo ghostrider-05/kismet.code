@@ -6,16 +6,19 @@ import type {
     ExportOptions,
     JsonFile,
     PathInput,
-    RawUnrealJsonFile
+    RawUnrealJsonFile,
+    UnrealJsonReadFileNode
 } from '../types/index.js'
 
 import {
     _validatePackage,
     _validatePaths,
-    _validateNodeInput
+    _validateNodeInput,
+    _validateSubPaths
 } from './utils/validate.js'
 
 import { writeNode, writePackages } from './utils/write.js'
+import { BlenderAddonGenerator } from './blender/parser.js'
 
 const collectedClasses: Record<string, JsonFile[]> = {
     actions: [],
@@ -23,19 +26,21 @@ const collectedClasses: Record<string, JsonFile[]> = {
     conditions: []
 }
 
-const jsonnodes: Record<string, unknown>[] = []
+const jsonnodes: UnrealJsonReadFileNode[] = []
 
 export async function findClasses (
     paths: PathInput,
     exportOptions?: ExportOptions
 ): Promise<void> {
     const { importPath, exportPath, packages } = paths
-    let { groupItems, json } = exportOptions || {}
+    // eslint-disable-next-line prefer-const
+    let { groupItems, json, blenderPath } = exportOptions || {}
 
     groupItems ??= true
     json ??= false
 
     if (!_validatePaths([importPath, exportPath])) return
+    await _validateSubPaths(exportPath, ['actions', 'conditions', 'events'])
 
     const Packages = fs.readdirSync(importPath)
 
@@ -69,17 +74,29 @@ export async function findClasses (
             )
 
             const { jsonNode, Class } =
-                (await writeNode(output, node, { json, Package })) || {}
+                (await writeNode(output, node, { 
+                    json: json || (blenderPath != undefined), 
+                    Package 
+                })) || {}
 
             if (jsonNode) jsonnodes.push(jsonNode)
             if (Class) collectedClasses[node.type]?.push(Class)
         }
     }
 
+    console.log('Blender: ' + blenderPath)
+    if (blenderPath != undefined) {
+        const addon = BlenderAddonGenerator.create(jsonnodes)
+        const stream = fs.createWriteStream(blenderPath!, {
+            flags: 'a'
+        })
+        stream.write(addon)
+    }
+
     // Generate export files to export all the classes
     writePackages(exportPath, {
         classes: collectedClasses,
-        json: jsonnodes,
+        json: json ? jsonnodes : [],
         groupItems
     })
 }

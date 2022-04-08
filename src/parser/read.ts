@@ -1,10 +1,12 @@
 import { Constants, stringFirstCharUppercase } from '../shared/index.js'
 
 import type {
+    RawUnrealJsonConstant,
     RawUnrealJsonDefaultVariables,
     RawUnrealJsonFile,
     RawUnrealJsonVariable,
-    UnrealJsonReadFile
+    UnrealJsonReadFile,
+    UnrealJsonReadFileNode
 } from '../types/index.js'
 
 const { KISMET_CLASSES_PREFIXES, NodeProperty } = Constants
@@ -58,9 +60,8 @@ const nodeLinkDescriptions = (links: string[]) =>
         name: link.match(/(?<=LinkDesc=)(.*?)(?=,)/g)?.[0] as string
     }))
 
-const nodeLinkVariables = (links: string[]) =>
-    links.map(link => ({
-        ...nodeLinkDescriptions([link]),
+const nodeLinkVariables = (links: string[]) => links.map(link => ({
+        name: nodeLinkDescriptions([link])[0].name,
         expectedType: link.match(/(?<=ExpectedType=)(.*?)(?=,)/g)?.[0] as string
     }))
 
@@ -88,6 +89,8 @@ export function readNodeFile (
         variables,
         category,
         defaultproperties,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
         type:
             KISMET_CLASSES_PREFIXES.find(n => Class.startsWith(n.prefix))
                 ?.type ?? '',
@@ -111,7 +114,7 @@ const isDefaultProperty = (name: string): boolean => {
     )
 }
 
-export function nodeToJSON (node: UnrealJsonReadFile): Record<string, unknown> {
+export function nodeToJSON (node: UnrealJsonReadFile): UnrealJsonReadFileNode {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { staticProperties, defaultproperties, links, ...json } = node
 
@@ -125,7 +128,7 @@ export function nodeToJSON (node: UnrealJsonReadFile): Record<string, unknown> {
 
             return isDefaultProperty(name) || !value ? null : prop
         })
-        .filter(n => n)
+        .filter(n => n) as RawUnrealJsonConstant[]
 
     const displayName = defaultproperties.find(
         x => x?.name === Constants.NodeProperty.NAME

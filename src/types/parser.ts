@@ -1,4 +1,4 @@
-import { KismetBoolean } from './enums.js'
+import { KismetBoolean, NodeType } from './enums.js'
 
 import type { KismetConnectionType } from './connectionLink.js'
 
@@ -18,6 +18,7 @@ export interface PathInput {
 export interface ExportOptions {
     groupItems?: boolean
     json?: boolean
+    blenderPath?: string
 }
 
 export interface PathReadError {
@@ -74,6 +75,11 @@ export interface UnrealJsonReadFile {
     name: string
     category: string
     staticProperties: string
-    type: string
+    type: NodeType
     variables: RawUnrealJsonVariable[]
+}
+
+export type UnrealJsonReadFileNode = Omit<UnrealJsonReadFile, 'links' | 'staticProperties'> & {
+    displayName?: string
+    links: Record<KismetConnectionType, { name: string, expectedType?: string }[]>
 }

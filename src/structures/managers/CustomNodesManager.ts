@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 import { findClasses } from '../../parser/index.js'
 
-import { PathInput } from '../../types/index.js'
+import { ExportOptions, PathInput } from '../../types/index.js'
 
 export class CustomNodesManager {
     public groupExportItems = false
@@ -11,6 +11,8 @@ export class CustomNodesManager {
 
     public importPath: string | null = null
     public exportPath: string | null = null
+
+    public blenderPath: string | null = null
     public exportTypes: 'json'[] = []
 
     private isPath (inputPath: string): boolean {
@@ -41,23 +43,23 @@ export class CustomNodesManager {
 
         return await findClasses(paths, {
             groupItems: this.groupExportItems,
-            json: this.exportTypes.includes('json')
+            json: this.exportTypes.includes('json'),
+            blenderPath: this.blenderPath ?? undefined
         })
     }
 
     public hasCustomNodeFiles (): boolean {
-        if (!this.exportPath) throw new Error('Missing export path')
+        if (!this.exportPath) throw new Error('Missing or invalid export path')
 
         return existsSync(resolve('.', this.exportPath))
     }
 
-    public setExportOptions (options: {
-        groupExportItems: boolean
-        json: boolean
-    }): this {
-        const { groupExportItems, json } = options
+    public setExportOptions (options: ExportOptions): this {
+        const { groupItems, json, blenderPath } = options
 
-        this.groupExportItems = groupExportItems
+        this.groupExportItems = groupItems ?? false
+
+        if (blenderPath) this.blenderPath = this.resolvePath(blenderPath)
         if (json) this.addExportType(<never>'json')
 
         return this

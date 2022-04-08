@@ -1,5 +1,7 @@
 import { existsSync, readdirSync } from 'fs'
-import { isType } from '../../shared/index.js'
+import { mkdir } from 'fs/promises'
+import { resolve } from 'path'
+import { arrayUnionInput, isType } from '../../shared/index.js'
 
 export function _validateNodeInput (json: Record<string, unknown>): boolean {
     return (
@@ -18,13 +20,29 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
     )
 }
 
-export function _validatePaths (paths: string[]): boolean {
+export function _validatePaths (paths: (string | undefined)[]): boolean {
+    if (paths.filter(n => n != undefined).length === 0) return false
+
     return paths.every(path => {
         const isValid = path && existsSync(path)
         if (!isValid) console.warn(`Could not find path: ${path}`)
 
         return isValid
     })
+}
+
+async function _validateSubPath (path: string, key: string): Promise<void> {
+    const createPath = (end?: string) => resolve('.', './' + path.concat(end ?? ''))
+
+    if (!existsSync(createPath())) await mkdir(createPath())
+    if (!existsSync(createPath(`./${key}/`))) await mkdir(createPath(`./${key}/`))
+    if (!existsSync(createPath(`./${key}/Classes/`))) await mkdir(createPath(`./${key}/Classes/`))
+}
+
+export async function _validateSubPaths (path: string, key: string | string[]): Promise<void[]> {
+    const keys = arrayUnionInput(key)
+
+    return await Promise.all(keys.map(async k => await _validateSubPath(path, k)))
 }
 
 export function _validatePackage (
@@ -46,7 +64,7 @@ export function _validatePackage (
         )
     })
 
-    if ((packageList?.length ?? 0) > 0 && !packageList?.includes(name)) {
+    if ((packageList?.length ?? 0) > 0 ? !packageList?.includes(name) : false) {
         return null
     }
 

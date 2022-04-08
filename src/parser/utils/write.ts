@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import { mkdirSync, existsSync } from 'fs'
 
 import { getExportFile, writeFile } from './files.js'
 import { actions, conditions, events } from '../templates.js'
@@ -9,7 +10,8 @@ import { Constants } from '../../shared/index.js'
 import type {
     JsonFile,
     PathReadError,
-    UnrealJsonReadFile
+    UnrealJsonReadFile,
+    UnrealJsonReadFileNode
 } from '../../types/index.js'
 
 const { NodeType } = Constants
@@ -43,17 +45,18 @@ export const writeNode = async (
         Package: string
     }
 ): Promise<
-    { jsonNode?: Record<string, unknown>; Class?: JsonFile } | undefined
+    { jsonNode?: UnrealJsonReadFileNode; Class?: JsonFile } | undefined
 > => {
     const { name, category, type } = node
 
-    const output: { jsonNode?: Record<string, unknown>; Class?: JsonFile } = {
+    const output: { jsonNode?: UnrealJsonReadFileNode; Class?: JsonFile } = {
         jsonNode: undefined,
         Class: undefined
     }
 
     try {
         const nodeContent = _fileContent(node)
+        if (!nodeContent) return
         await writeFile(resolve('.', path), <string>nodeContent)
 
         if (options.json && !!nodeContent) {
@@ -81,17 +84,19 @@ export function writePackages (
     exportPath: string,
     files: {
         classes: Record<string, JsonFile[]>
-        json: Record<string, unknown>[]
+        json: UnrealJsonReadFileNode[]
         groupItems: boolean
     }
 ): void {
     const exportedPaths: [string, string][] = []
+    const createPath = (end?: string) => resolve('.', './' + exportPath.concat(end ?? ''))
 
     Object.keys(files.classes).forEach(key => {
         const content = getExportFile(
             files.classes[key],
             <boolean>files.groupItems
         )
+
         const path = resolve('.', './' + exportPath.concat(`/${key}/index.ts`))
 
         exportedPaths.push([`./${key}/index.js`, key])
