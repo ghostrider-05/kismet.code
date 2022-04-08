@@ -4,8 +4,8 @@
 ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ghostrider-05/kismet.ts/Tests?label=tests)][github]
 [![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.ts)][github]
+![Code Climate coverage](https://img.shields.io/codeclimate/coverage/ghostrider-05/kismet.ts)
 <!-- TODO: Add documentation ping badge -->
-<!-- TODO: Add test coverage badge -->
 
 Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intended for large .udk files to simplify the process of making kismet nodes
 
