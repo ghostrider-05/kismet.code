@@ -8,6 +8,7 @@ import { ConstraintBroken } from './Classes/ConstraintBroken.js'
 import { Death } from './Classes/Death.js'
 import { Destroyed } from './Classes/Destroyed.js'
 import { HitWall } from './Classes/HitWall.js'
+import { Key_ButtonPressed } from './Classes/Key_ButtonPressed.js'
 import { LevelBeginning } from './Classes/LevelBeginning.js'
 import { LevelLoaded } from './Classes/LevelLoaded.js'
 import { LevelStartup } from './Classes/LevelStartup.js'
@@ -67,6 +68,7 @@ export {
 	Death,
 	Destroyed,
 	HitWall,
+	Key_ButtonPressed,
 	LevelBeginning,
 	LevelLoaded,
 	LevelStartup,
@@ -129,6 +131,7 @@ export const Engine = {
 	Death,
 	Destroyed,
 	HitWall,
+	Key_ButtonPressed,
 	LevelBeginning,
 	LevelLoaded,
 	LevelStartup,

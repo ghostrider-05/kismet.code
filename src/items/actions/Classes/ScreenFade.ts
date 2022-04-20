@@ -5,7 +5,7 @@ export class ScreenFade extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjectArchetype: "SeqAct_ScreenFade'TAGame.Default__SeqAct_ScreenFade'",
+            ObjectArchetype: "SeqAct_ScreenFade_TA'TAGame.Default__SeqAct_ScreenFade_TA'",
             inputs: {
 			    "input": [
 			        "(LinkDesc=\"Enable\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)",

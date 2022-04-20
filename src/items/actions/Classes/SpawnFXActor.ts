@@ -21,6 +21,7 @@ export class SpawnFXActor extends SequenceAction {
     static Variables = {
     	VfTable_FTickableObject:'VfTable_FTickableObject',
 		FXActor:'FXActor',
+		Product:'Product',
 		Transform:'Transform',
 		Location:'Location',
 		Rotation:'Rotation',
