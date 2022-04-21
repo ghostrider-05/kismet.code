@@ -42,7 +42,9 @@ export class BlenderAddonGenerator {
                 paperclip: options?.copy ?? true,
                 log: options?.logSequence ?? true
             }),
-            registerTemplate(categories)
+            registerTemplate(categories, {
+                register: options?.register ?? true
+            })
         ].join('\n\n')
 
         //https://stackoverflow.com/questions/21817453/replace-multiple-blank-lines-in-text-using-javascript

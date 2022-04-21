@@ -1,33 +1,10 @@
 import { nodeCategories, nodeCategoryClasses } from '../category.js'
 
-export const registerTemplate = (categories: Record<string, string[]>) => `
-### Node Categories ###
-# Node categories are a python system for automatically
-# extending the Add menu, toolbar panels and search operator.
-# For more examples see release/scripts/startup/nodeitems_builtins.py
+interface RegisterOptions {
+    register: boolean
+}
 
-import nodeitems_utils
-from nodeitems_utils import NodeCategory, NodeItem
-
-# our own base class with an appropriate poll function,
-# so the categories only show up in our own tree type
-
-
-class KismetNodeCategory(NodeCategory):
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'KismetTreeType'
-
-node_categories = [
-${nodeCategories(categories)}
-]
-
-classes = (
-    KismetNodeTree,
-    NODE_OT_export_kismet,
-${nodeCategoryClasses(categories)}
-)
-
+const registorFunction = (enabled: boolean) => !enabled ? '' : `
 def register():
     from bpy.utils import register_class
     for cls in classes:
@@ -50,4 +27,26 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+`
+
+export const registerTemplate = (categories: Record<string, string[]>, options: RegisterOptions) => `
+import nodeitems_utils
+from nodeitems_utils import NodeCategory, NodeItem
+
+class KismetNodeCategory(NodeCategory):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'KismetTreeType'
+
+node_categories = [
+${nodeCategories(categories)}
+]
+
+classes = (
+    KismetNodeTree,
+    NODE_OT_export_kismet,
+${nodeCategoryClasses(categories)}
+)
+
+${registorFunction(options.register)}
 `

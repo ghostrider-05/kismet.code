@@ -148,6 +148,7 @@ export class ClassManager {
             externalClasses: this.externalClasses,
             classes: this.collectedClasses,
             json: this.options?.json || this.options?.blender ? this.json : [],
+            blenderOptions: this.options?.blenderOptions,
             groupItems: this.options?.groupItems ?? false,
             blender: this.options?.blender ?? false
         })

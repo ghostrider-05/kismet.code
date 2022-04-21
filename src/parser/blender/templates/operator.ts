@@ -21,10 +21,37 @@ def find_index (name, items):
     index = 0
 
     for item in items:
-        if name === item[2]
+        if name == item[2]:
             index = item[1]
 
     return index
+
+def generate_indexes (nodes):
+    indexes = []
+
+    for node in nodes:
+        has_node = False
+
+        for index in indexes:
+            if not has_node and index[0] == node.ObjectArchetype:
+                indexes.append([node.ObjectArchetype, index[1] + 1, node.name])
+                has_node = True
+
+        if not has_node:
+            indexes.append([node.ObjectArchetype, 0, node.name])
+
+    return indexes
+
+def format_list (items):
+    output = ''
+
+    for item in items:
+        output += item
+
+        if items.index(item) < (len(items) - 1): 
+            output += ','
+    
+    return output
 
 class NODE_OT_export_kismet(bpy.types.Operator):
     bl_idname = "udk.export_active_kismet"
@@ -40,22 +67,11 @@ class NODE_OT_export_kismet(bpy.types.Operator):
         sequence_name = 'Main_Sequence' if node_tree.name == 'NodeTree' else node_tree.name
         sequence_text = ''
 
-        indexes = []
+        indexes = generate_indexes(node_tree.nodes)
 
         for node in node_tree.nodes:
-            has_node = False
-            node_index = 0
+            node_index = find_index(node.name, indexes)
             node_text = ''
-
-            for index in indexes:
-                if not has_node and index[0] == node.ObjectArchetype:
-                    indexes[indexes.index(index)] = [node.ObjectArchetype, index[1] + 1, node.name]
-                    
-                    node_index = index[1]
-                    has_node = True
-
-            if not has_node:
-                indexes.append([node.ObjectArchetype, 1])
 
             node_variables = [
                 f"ObjInstanceVersion={node.ObjInstanceVersion}",
@@ -70,6 +86,64 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
             if node_colors:
                 node_variables.append(f"ObjColor={node_colors}")
+
+            for connection_index, connection in enumerate(node.outputs):
+                connected_items = []
+
+                # Check if connection is not variable
+                if len(connection.links) > 0 and connection.display_shape != 'SQUARE':
+                    for link in connection.links:
+                        to_class = link.to_node.bl_idname
+                        to_index = find_index(link.to_node.name, indexes)
+
+                        link_text = f"(LinkedOp={to_class}'{to_class}_{to_index}'"
+                        socket_index = link.to_node.inputs[:].index(link.to_socket)
+
+                        if socket_index > 0:
+                            link_text += f",InputLinkIdx={socket_index}"
+                        link_text += ')'
+
+                        print(link_text)
+                        connected_items.append(link_text)
+                
+                    linked_items_text = ''
+                    if len(connected_items) > 0:
+                        linked_items_text += f"Links=({format_list(connected_items)}),"
+                    
+                    node_variables.append(
+                        f"OutputLinks({connection_index})=({linked_items_text}DrawY=0,OverrideDelta=0)"
+                    )
+            
+            if len(node.inputs) > 0:
+                variable_inputs = [link for link in node.inputs if link.display_shape == 'SQUARE']
+                normal_inputs = [link for link in node.inputs if link.display_shape != 'SQUARE']
+
+                if len(normal_inputs) > 0:
+                    for input in normal_inputs:
+                        node_variables.append(
+                            f"InputLinks({normal_inputs.index(input)})=(DrawY=0,OverrideDelta=0)"
+                        )
+
+                if len(variable_inputs) > 0:
+                    for variable in variable_inputs:
+                        linked_variables = []
+                        variable_index = variable_inputs.index(variable)
+
+                        for link in variable.links:
+                            var_class = link.from_node.bl_idname
+                            var_index = find_index(link.from_node.name, indexes)
+
+                            linked_variables.append(
+                                f"{var_class}'{var_class}_{var_index}'"
+                            )
+                        
+                        linked_variables_text = ''
+                        if len(linked_variables) > 0:
+                            linked_variables_text += f"LinkedVariables=({format_list(linked_variables)}),"
+
+                        node_variables.append(
+                            f"VariableLinks({variable_index})=({linked_variables_text}DrawX=0,OverrideDelta=0)"
+                        )
 
             node_text += f"Begin Object Class={node.bl_idname} Name={node.bl_idname}_{node_index}\\n"
 
@@ -88,5 +162,6 @@ ${options.log ? '        print(sequence_text.rstrip())' : ''}
         return { 'FINISHED' }
 
 def draw_export_button(self, context):
-    self.layout.operator(NODE_OT_export_kismet.bl_idname)
+    if context.space_data.tree_type == 'KismetTreeType':
+        self.layout.operator(NODE_OT_export_kismet.bl_idname)
 `
