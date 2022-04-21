@@ -2,12 +2,21 @@
 import { KismetError } from '../src/shared/index.js'
 
 test('kismet error', () => {
+    // Invalid key
+
     //@ts-expect-error
     expect(() => new KismetError('INVALID_TEST_KEY')).toThrowError()
+    //@ts-expect-error
+    expect(() => new KismetError(0)).toThrowError()
+
+    // Errors
+
     expect(
         () => new KismetError('SEQUENCE_EMPTY', ['test_sequence'])
     ).toThrowError()
     expect(() => new KismetError('INVALID_COLORS_INPUT')).toThrowError()
+
+    // Do not throw
 
     expect(
         () =>
@@ -15,6 +24,13 @@ test('kismet error', () => {
                 error: false
             })
     ).not.toThrowError()
+    expect(
+        new KismetError('SEQUENCE_EMPTY', ['test_sequence'], {
+            error: false
+        })
+    ).toBeDefined()
+
+    // Options
 
     expect(
         () =>

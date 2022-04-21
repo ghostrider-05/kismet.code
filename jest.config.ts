@@ -8,7 +8,9 @@ export default {
         '!src/items/conditions/Classes/*.{js,ts}',
         '!src/items/events/Classes/*.{js,ts}',
         '!src/structures/builders/*.{js,ts}',
+        '!src/parser/run.{js,ts}',
         '!src/types/*.{js,ts}',
+        '!src/test/**/*.{js,ts}',
         '!test/**/*.js'
     ],
     coverageDirectory: 'coverage',

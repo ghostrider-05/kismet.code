@@ -38,6 +38,7 @@ describe('process manager', () => {
     })
 
     test('debug', () => {
+        // No project found
         expect(ProcessManager.debug('test')).toBeUndefined()
 
         const id = ProcessManager.attachProject('test_process_4', {
@@ -45,10 +46,28 @@ describe('process manager', () => {
         })
         expect(ProcessManager.processes['test_process_4']).toBeTruthy()
 
+        // duplicate process name
+        expect(() =>
+            ProcessManager.attachProject('test_process_4')
+        ).toThrowError()
+
+        // project options
+        ProcessManager.attachProject('test_process_5')
+        expect(ProcessManager.processes['test_process_4'].options).toEqual({
+            debug: true
+        })
+        expect(ProcessManager.processes['test_process_5'].options).toEqual({})
+
+        // debug
+
+        // Debugs using the first project
         expect(ProcessManager.debug('test')).not.toBeUndefined()
         expect(() => ProcessManager.debug('test')).not.toThrowError()
+        expect(ProcessManager.debug('test', id)?.content).toBe(
+            '[test_process_4] test'
+        )
 
-        expect(ProcessManager.debug('test', id)).not.toBeUndefined()
+        expect(ProcessManager.debug('test', id)?.completed).toBe(true)
         expect(() => ProcessManager.debug('test', id)).not.toThrowError()
     })
 })

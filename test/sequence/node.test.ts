@@ -28,11 +28,33 @@ describe('item node and constructors', () => {
             'bIsBreakpointSet'
         )
         expect(nodeBuilder().toString()).not.toContain('bIsBreakpointSet')
+    })
+
+    test('node item set variable', () => {
+        const { SpawnTransform } = AddGameBall.Variables
 
         expect(
-            new AddGameBall().setVariable('SpawnTransform', 'test').toString()
-        ).toContain('SpawnTransform')
+            new AddGameBall().setVariable(SpawnTransform, 'test').toString()
+        ).toContain('SpawnTransform=test')
 
+        expect(
+            new AddGameBall()
+                .setVariable(SpawnTransform, 'test')
+                .setVariable(SpawnTransform, 'test2')
+                .toString()
+        ).toContain('SpawnTransform=test2')
+
+        expect(
+            new AddGameBall().setVariable('variable', 'test').toString()
+        ).toContain('variable=test')
+
+        const variable = variableBuilder()
+        expect(
+            new AddGameBall().setVariable(SpawnTransform, variable).toString()
+        ).toContain(variable.linkId)
+    })
+
+    test('node item string', () => {
         const node = nodeBuilder()
         /** @deprecated */
         expect(node.toKismet()).toEqual(node.toString())
