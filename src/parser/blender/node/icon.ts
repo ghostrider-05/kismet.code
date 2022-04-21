@@ -1,6 +1,8 @@
-import { Constants } from "../../../shared/index.js";
+import { Constants } from '../../../shared/index.js'
 
-export const getIcon = (type: typeof Constants.NodeType[keyof typeof Constants.NodeType]) => {
+export const getIcon = (
+    type: typeof Constants.NodeType[keyof typeof Constants.NodeType]
+) => {
     let icon = ''
 
     switch (type) {

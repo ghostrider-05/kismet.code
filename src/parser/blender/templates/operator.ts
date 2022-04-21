@@ -1,4 +1,31 @@
-export const operatorTemplate = `
+export const operatorTemplate = (options: {
+    paperclip: boolean
+    log: boolean
+}) => `
+def export_colors (inputs, ignore_empty):
+    output = '('
+    empty = 0
+
+    for index, color in enumerate(inputs):
+        if color != 0.6079999804496765:
+            empty += 1
+
+        output += ['R', 'G', 'B'][index] + '=' + int(color * 255).__str__() + ','
+    
+    if ignore_empty and empty == 0:
+        return False
+
+    return output + 'A=255)'
+
+def find_index (name, items):
+    index = 0
+
+    for item in items:
+        if name === item[2]
+            index = item[1]
+
+    return index
+
 class NODE_OT_export_kismet(bpy.types.Operator):
     bl_idname = "udk.export_active_kismet"
     bl_label = "Copy kismet"
@@ -22,10 +49,11 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
             for index in indexes:
                 if not has_node and index[0] == node.ObjectArchetype:
-                    indexes[indexes.index(index)] = [node.ObjectArchetype, index[1] + 1]
+                    indexes[indexes.index(index)] = [node.ObjectArchetype, index[1] + 1, node.name]
                     
                     node_index = index[1]
                     has_node = True
+
             if not has_node:
                 indexes.append([node.ObjectArchetype, 1])
 
@@ -38,6 +66,11 @@ class NODE_OT_export_kismet(bpy.types.Operator):
                 f"ObjectArchetype={node.ObjectArchetype}"
             ]
 
+            node_colors = export_colors(node.color, True)
+
+            if node_colors:
+                node_variables.append(f"ObjColor={node_colors}")
+
             node_text += f"Begin Object Class={node.bl_idname} Name={node.bl_idname}_{node_index}\\n"
 
             for node_variable in node_variables:
@@ -47,7 +80,8 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
             sequence_text += node_text
 
-        paperclip.copy(sequence_text.rstrip())
+${options.paperclip ? '        paperclip.copy(sequence_text.rstrip())' : ''}
+${options.log ? '        print(sequence_text.rstrip())' : ''}
 
         self.report({ 'INFO' }, 'Copied kismet nodes')
 

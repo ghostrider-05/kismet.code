@@ -1,7 +1,7 @@
-export const baseTemplate = `
+export const baseTemplate = (paperclip: boolean) => `
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
-import paperclip
+${paperclip ? 'import paperclip' : ''}
 
 # Implementation of custom nodes from Python
 
