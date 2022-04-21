@@ -1,6 +1,8 @@
 import { KismetBoolean, NodeType } from './enums.js'
 
+import type { Enum, If } from './index.js'
 import type { KismetConnectionType } from './connectionLink.js'
+import type { BlenderAddonGeneratorOptions } from '../parser/blender/parser.js'
 
 export interface JsonFile extends Record<string, string> {
     name: string
@@ -15,10 +17,23 @@ export interface PathInput {
     packages?: string[]
 }
 
-export interface ExportOptions {
+interface _ExportOptions<T extends boolean = true>
+    extends Record<string, unknown> {
+    debug?: boolean
     groupItems?: boolean
     json?: boolean
-    blenderPath?: string
+    blender?: T
+    blenderOptions: If<T, BlenderAddonGeneratorOptions> | undefined
+    types?: Enum<Exclude<NodeType, NodeType.SEQUENCES>>[]
+    classes?: boolean
+}
+
+export type ExportOptions<T extends boolean = boolean> = Partial<
+    _ExportOptions<T>
+>
+
+export interface PathCreateOptions {
+    check?: boolean
 }
 
 export interface PathReadError {
@@ -79,7 +94,13 @@ export interface UnrealJsonReadFile {
     variables: RawUnrealJsonVariable[]
 }
 
-export type UnrealJsonReadFileNode = Omit<UnrealJsonReadFile, 'links' | 'staticProperties'> & {
+export type UnrealJsonReadFileNode = Omit<
+    UnrealJsonReadFile,
+    'links' | 'staticProperties'
+> & {
     displayName?: string
-    links: Record<KismetConnectionType, { name: string, expectedType?: string }[]>
+    links: Record<
+        KismetConnectionType,
+        { name: string; expectedType?: string }[]
+    >
 }

@@ -211,6 +211,8 @@ export class VariableConnection extends BaseKismetConnection {
             bModifiesLinkedObject
         } = properties
 
+        this.name = t(PropertyName)
+
         this.expectedType = t(ExpectedType)
         this.PropertyName = t(PropertyName)
         this.bAllowAnyType = t(bAllowAnyType) ?? false

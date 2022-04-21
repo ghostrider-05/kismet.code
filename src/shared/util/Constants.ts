@@ -1,4 +1,19 @@
-import type { layoutOptions, SequenceViewOptions } from '../../types/index.js'
+import type {
+    ExportOptions,
+    layoutOptions,
+    SequenceViewOptions
+} from '../../types/index.js'
+
+const defaultClassParserOptions: Required<
+    Omit<ExportOptions<false>, 'blenderOptions'>
+> = {
+    debug: false,
+    blender: false,
+    classes: false,
+    groupItems: true,
+    json: false,
+    types: ['actions', 'conditions', 'events'] // TODO: add variables
+}
 
 const KISMET_LINE_INDENT = '   '
 const MAIN_SEQUENCE = "Sequence'Main_Sequence'"
@@ -47,6 +62,7 @@ export {
     KISMET_LINE_INDENT,
     KISMET_NODE_LINES,
     MAIN_SEQUENCE,
+    defaultClassParserOptions,
     DefaultLayoutOptions,
     DefaultSequenceViewOptions,
     ObjInstanceVersions
