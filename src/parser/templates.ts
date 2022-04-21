@@ -22,7 +22,7 @@ export class ${node.name} extends SequenceAction {
             inputs: ${formatLinks(node.links)}
         })
     }
-${node.staticProperties ?? ''}
+${node.staticProperties}
 }`
 
 export const conditions = (node: UnrealJsonReadFile): string => `
@@ -38,7 +38,7 @@ export class ${node.name} extends SequenceCondition {
                 inputs: ${formatLinks(node.links)}
             })
         }
-        ${node.staticProperties ?? ''}
+        ${node.staticProperties}
 }`
 
 export const events = (node: UnrealJsonReadFile): string => `

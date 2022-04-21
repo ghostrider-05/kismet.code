@@ -60,7 +60,8 @@ const nodeLinkDescriptions = (links: string[]) =>
         name: link.match(/(?<=LinkDesc=)(.*?)(?=,)/g)?.[0] as string
     }))
 
-const nodeLinkVariables = (links: string[]) => links.map(link => ({
+const nodeLinkVariables = (links: string[]) =>
+    links.map(link => ({
         name: nodeLinkDescriptions([link])[0].name,
         expectedType: link.match(/(?<=ExpectedType=)(.*?)(?=,)/g)?.[0] as string
     }))
@@ -82,8 +83,12 @@ export function readNodeFile (
 
     return {
         name:
-            name?.replaceAll('"', '').split(' ').join('').replace('?', '') ??
-            Class,
+            name
+                ?.replaceAll('"', '')
+                .split(' ')
+                .join('')
+                .replace('?', '')
+                .replace(/\\|\//, '_') ?? Class,
         Class,
         Package,
         variables,
