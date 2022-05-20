@@ -57,3 +57,20 @@ export class ${node.name} extends SequenceEvent {
     }
 }
 `
+
+export const variables = (node: UnrealJsonReadFile): string => `
+/* eslint-disable no-mixed-spaces-and-tabs */
+import { SequenceVariable } from "../../../structures/Sequence/index.js";
+import { KismetVariableOptions, BaseKismetItemOptions } from "../../../types/index.js";
+
+export class ${node.name} extends SequenceVariable {
+    constructor (options?: KismetVariableOptions & BaseKismetItemOptions) {
+        super({
+            ObjInstanceVersion: 3,
+            ObjectArchetype: ${node.archetype},
+            inputs: {},
+            ...options
+        })
+    }
+}
+`

@@ -7,7 +7,7 @@ export const defaultOptions: Required<ExportOptions> = {
     json: false,
     blenderOptions: {},
     classes: false,
-    types: ['actions', 'conditions', 'events'] // TODO: add variables
+    types: ['actions', 'conditions', 'events', 'variables']
 }
 
 export const _defaultExportOptions = (

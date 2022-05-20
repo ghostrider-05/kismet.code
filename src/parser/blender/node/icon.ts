@@ -12,6 +12,10 @@ export const getIcon = (
             break
         case Constants.NodeType.EVENTS:
             icon = 'OUTLINER'
+            break
+        case Constants.NodeType.VARIABLES:
+            icon = 'EVENT_V'
+            break
     }
 
     return icon

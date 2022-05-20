@@ -1,4 +1,4 @@
-import { Constants, KismetError } from '../../../shared/index.js'
+import { Constants, KismetError, quote } from '../../../shared/index.js'
 
 import {
     UnrealJsonReadFileNode,
@@ -46,7 +46,13 @@ const getKeyValue = (key: string, type: string, links?: { name: string }[]) => {
     return defaultKeyValue(key)
 }
 
-const getConnections = (node: UnrealJsonReadFileNode) => {
+const getConnections = (node: UnrealJsonReadFileNode): UnrealJsonReadFileNode['links'] => {
+    if (node.type === Constants.NodeType.VARIABLES) return {
+        variable: [{ name: 'Out' }],
+        input: [],
+        output: []
+    }
+
     return Object.keys(node.links)
         .map(key => {
             return {
@@ -85,7 +91,7 @@ export const formatConnections = (node: UnrealJsonReadFileNode) => {
             return connections[key as KismetConnectionType].length === 0
         })
     ) {
-        return `    print('No connections on ${node.Class}')`
+        return `        print('No connections on ${node.Class}')`
     }
 
     return Object.keys(connections)
@@ -105,15 +111,15 @@ export const formatConnections = (node: UnrealJsonReadFileNode) => {
             }
 
             return connections[key as KismetConnectionType]
-                .map(node => {
+                .map(connection => {
                     const finalPrefix =
-                        node.name === `"Instigator"` ? 'self.outputs' : prefix
-                    const socketName = nodeSocketName(node.name)
+                        connection.name === `"Instigator"` || node.type === Constants.NodeType.VARIABLES ? 'self.outputs' : prefix
+                    const socketName = nodeSocketName(connection.name)
 
                     return `        ${socketName} = ${finalPrefix}.new('${
-                        variableBlenderType(node.expectedType).socket
+                        variableBlenderType(connection.expectedType).socket
                     }', ${
-                        node.name
+                        node.type === Constants.NodeType.VARIABLES ? quote(connection.name) : connection.name
                     })\n        ${socketName}.display_shape = '${linkIcon(
                         key
                     )}'\n        ${socketName}.link_limit = 250\n`

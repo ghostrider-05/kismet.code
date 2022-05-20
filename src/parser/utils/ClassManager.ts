@@ -94,7 +94,8 @@ export class ClassManager {
     public collectedClasses: Record<string, JsonFile[]> = {
         actions: [],
         events: [],
-        conditions: []
+        conditions: [],
+        variables: []
     }
     public json: UnrealJsonReadFileNode[] = []
     public externalClasses: Partial<UnrealJsonReadFile>[] = []

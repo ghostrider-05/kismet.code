@@ -42,6 +42,10 @@ const KISMET_CLASSES_PREFIXES = [
     {
         prefix: 'SeqEvent_',
         type: 'events'
+    },
+    {
+        prefix: 'SeqVar_',
+        type: 'variables'
     }
 ]
 
