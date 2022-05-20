@@ -2,6 +2,7 @@ import {
     defaultNodeVariables,
     getIcon,
     formatVariables,
+    formatVariableNames,
     formatConnections,
     formatVariableSockets
 } from '../node/index.js'
@@ -23,6 +24,7 @@ class ${node.Class}(Node, KismetNodeTreeNode):
     ObjInstanceVersion = ${Constants.ObjInstanceVersions.get(node.Class) ?? 1}
     ObjectArchetype = ${node.archetype}
     KismetType = '${node.type}'
+${formatVariableNames(node)}
 
 ${defaultNodeVariables(node.type)}
 

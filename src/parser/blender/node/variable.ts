@@ -38,7 +38,9 @@ export const variableBlenderType = (type?: string) => {
     }
 }
 
-export const formatVariables = (node: UnrealJsonReadFileNode) => {
+export const formatVariables = (node: UnrealJsonReadFileNode, returnNames?: boolean) => {
+    const names: string[] = []
+
     const staticVariables = node.variables
         .map(variable => {
             const { Class } = variableBlenderType(variable.type)
@@ -73,11 +75,25 @@ export const formatVariables = (node: UnrealJsonReadFileNode) => {
                   }`
                 : ''
 
+            names.push(variable.name)
+
             return `    ${variable.name}: bpy.props.${Class}(name="${variable.name}"${defaultString})`
         })
         .join('\n')
 
-    return staticVariables
+    return returnNames ? names : staticVariables
+}
+
+export const formatVariableNames = (node: UnrealJsonReadFileNode) => {
+    const nodeNames = <string[]>formatVariables(node, true)
+    const { event, varName } = defaultVariables()
+    const defaultNodeNames = defaultNodeVariables(node.type, false)
+    const defaultNames = [varName[0], ...event.map(n => n[0])]
+        .filter(n => defaultNodeNames.some(m => m[0] === n))
+
+    const names = nodeNames.concat(defaultNames)
+    if (names.length === 0) return ''
+    else return `    _SequenceItemVariableNames = [${names.map(quote).join(', ')}]`
 }
 
 export const formatVariableSockets = (node: UnrealJsonReadFileNode) => {

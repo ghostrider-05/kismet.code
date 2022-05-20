@@ -1,7 +1,7 @@
 import { resolve } from 'path'
 
 import { catchFileWriteError, getExportFile, writeFile } from './files.js'
-import { actions, conditions, events } from '../templates.js'
+import * as classTemplate from '../templates.js'
 import { nodeToJSON } from '../read.js'
 
 import {
@@ -29,13 +29,16 @@ function _fileContent (node: UnrealJsonReadFile) {
 
     switch (node.type) {
         case NodeType.ACTIONS:
-            content = actions(node)
+            content = classTemplate.actions(node)
             break
         case NodeType.CONDITIONS:
-            content = conditions(node)
+            content = classTemplate.conditions(node)
             break
         case NodeType.EVENTS:
-            content = events(node)
+            content = classTemplate.events(node)
+            break
+        case NodeType.VARIABLES:
+            content = classTemplate.variables(node)
             break
         default:
             console.log('Invalid type for class:' + node.Class)
@@ -121,13 +124,23 @@ async function writeCategory<T extends boolean = true> (
     )} from './${key}/index.js'`
 }
 
+function setup (path: string) {
+    return async function writeData (items: unknown[], file: string, data?: string) {
+        if (items.length > 0) {
+            await writeFile(
+                createPath(path + file),
+                data ?? JSON.stringify(items)
+            )
+        }
+    }
+}
+
 export async function writePackages<T extends boolean = true> (
     options: PackageWriteOptions<T>
 ): Promise<void> {
     const exportedPaths: string[] = []
     const {
         classes,
-        exportPath,
         json,
         blender,
         blenderOptions,
@@ -140,26 +153,11 @@ export async function writePackages<T extends boolean = true> (
         exportedPaths.push(categoryPath)
     }
 
-    if (exportedPaths.length > 0)
-        await writeFile(
-            createPath(exportPath, './index.ts'),
-            // TODO: remove variables?
-            exportedPaths
-                .concat("export * as Variables from './Variables/index.js'")
-                .join('\n')
-        )
+    const writer = setup(options.exportPath)
 
-    if (json.length > 0)
-        await writeFile(
-            createPath(exportPath, `/${FileName.JSON}.json`),
-            JSON.stringify(json)
-        )
-
-    if (externalClasses.length > 0)
-        await writeFile(
-            createPath(exportPath, `/${FileName.Classes}.json`),
-            JSON.stringify(externalClasses)
-        )
+    await writer(exportedPaths, './index.ts', exportedPaths.join('\n'))
+    await writer(json, `/${FileName.JSON}.json`)
+    await writer(externalClasses, `/${FileName.Classes}.json`)
 
     if (blender)
         await BlenderAddonGenerator.write(
