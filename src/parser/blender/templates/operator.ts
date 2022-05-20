@@ -1,3 +1,5 @@
+import { linkIcon } from "../node/index.js"
+
 export const operatorTemplate = (options: {
     paperclip: boolean
     log: boolean
@@ -53,6 +55,17 @@ def format_list (items):
     
     return output
 
+def validate_sockets (link):
+    from_icon = link.from_socket.display_shape
+    to_icon = link.to_socket.display_shape
+
+    is_var_link = from_icon == '${linkIcon('variables')}' or to_icon == '${linkIcon('variables')}'
+
+    if is_var_link:
+        return from_icon == '${linkIcon('variables')}' and to_icon == '${linkIcon('variables')}'
+    else:
+        return True
+
 class NODE_OT_export_kismet(bpy.types.Operator):
     bl_idname = "udk.export_active_kismet"
     bl_label = "Copy kismet"
@@ -66,6 +79,10 @@ class NODE_OT_export_kismet(bpy.types.Operator):
         node_tree = context.space_data.edit_tree
         sequence_name = 'Main_Sequence' if node_tree.name == 'NodeTree' else node_tree.name
         sequence_text = ''
+
+        if len(node_tree.nodes) == 0:
+            self.report({ 'ERROR' }, 'No kismet nodes found in this sequence...')
+            return { 'CANCELLED' }
 
         indexes = generate_indexes(node_tree.nodes)
 
@@ -87,6 +104,13 @@ class NODE_OT_export_kismet(bpy.types.Operator):
             if node_colors:
                 node_variables.append(f"ObjColor={node_colors}")
 
+            if 'breakpoint' in node and node.breakpoint:
+                node_variables.append("bIsBreakpointSet=True")
+
+            if '_SequenceItemVariableNames' in node and node._SequenceItemVariableNames is not None:
+                for _item_name in node._SequenceItemVariableNames:
+                    node_variables.append(f"{_item_name}={node[_item_name]}")
+
             for connection_index, connection in enumerate(node.outputs):
                 connected_items = []
 
@@ -95,6 +119,9 @@ class NODE_OT_export_kismet(bpy.types.Operator):
                     for link in connection.links:
                         to_class = link.to_node.bl_idname
                         to_index = find_index(link.to_node.name, indexes)
+
+                        if not validate_sockets(link):
+                            self.report({ 'WARNING' }, f'Invalid variable connection made between {link.from_node} and {link.to_node}')
 
                         link_text = f"(LinkedOp={to_class}'{to_class}_{to_index}'"
                         socket_index = link.to_node.inputs[:].index(link.to_socket)
@@ -120,6 +147,10 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
                 if len(normal_inputs) > 0:
                     for input in normal_inputs:
+                        for link in input.links:
+                            if not validate_sockets(link):
+                                self.report({ 'WARNING' }, f'Invalid variable connection made between {link.from_node} and {link.to_node}')
+
                         node_variables.append(
                             f"InputLinks({normal_inputs.index(input)})=(DrawY=0,OverrideDelta=0)"
                         )
@@ -130,6 +161,9 @@ class NODE_OT_export_kismet(bpy.types.Operator):
                         variable_index = variable_inputs.index(variable)
 
                         for link in variable.links:
+                            if not validate_sockets(link):
+                                self.report({ 'WARNING' }, f'Invalid variable connection made between {link.from_node} and {link.to_node}')
+
                             var_class = link.from_node.bl_idname
                             var_index = find_index(link.from_node.name, indexes)
 

@@ -19,7 +19,7 @@ export function filterEmptyLines (input: string | string[]): string {
 
 export function groupByProperty<T extends Record<string, unknown>> (
     input: T[],
-    propertyName: string
+    propertyName: keyof T
 ): T[][] {
     const output: T[][] = []
     const propertyNames: string[] = []

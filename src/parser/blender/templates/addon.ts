@@ -25,7 +25,7 @@ class KismetNodeTree(NodeTree):
     # Label for nice name display
     bl_label = "Kismet Sequence editor"
     # Icon identifier
-    bl_icon = 'NODETREE'
+    bl_icon = 'EVENT_K'
 
     name = "Kismet Sequence"
 
