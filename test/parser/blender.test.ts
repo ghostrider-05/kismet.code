@@ -26,17 +26,17 @@ describe('blender addon generator', () => {
 
         expect(baseTemplate(false)).not.toContain('import paperclip')
 
-        expect(classTemplate(JSONnode as UnrealJsonReadFileNode)).toBeTruthy()
-        expect(classTemplate(JSONnode as UnrealJsonReadFileNode)).toContain(
+        expect(classTemplate(JSONnode as UnrealJsonReadFileNode, [])).toBeTruthy()
+        expect(classTemplate(JSONnode as UnrealJsonReadFileNode, [])).toContain(
             JSONnode.Class
         )
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { displayName, ...node } = JSONnode
-        expect(classTemplate(JSONnode as UnrealJsonReadFileNode)).toContain(
+        expect(classTemplate(JSONnode as UnrealJsonReadFileNode, [])).toContain(
             JSONnode.Class
         )
-        expect(classTemplate(node as UnrealJsonReadFileNode)).toContain(
+        expect(classTemplate(node as UnrealJsonReadFileNode, [])).toContain(
             JSONnode.Class
         )
     })
@@ -51,11 +51,11 @@ describe('blender addon generator', () => {
     })
 
     test('template variable formatting', () => {
-        expect(variableBlenderType('bool')).toHaveProperty(['socket'])
-        expect(variableBlenderType('string')).toHaveProperty(['Class'])
+        expect(variableBlenderType([], 'bool')).toHaveProperty(['socket'])
+        expect(variableBlenderType([], 'string')).toHaveProperty(['Class'])
     })
 
     test('template generation', () => {
-        expect(BlenderAddonGenerator.create([])).toBeTruthy()
+        expect(BlenderAddonGenerator.create([], [])).toBeTruthy()
     })
 })

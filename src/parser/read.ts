@@ -1,78 +1,31 @@
 import { Constants, stringFirstCharUppercase } from '../shared/index.js'
 
+import { getStaticProperties, NodeProperties, nodeLinks } from './utils/read.js'
+
 import type {
     RawUnrealJsonConstant,
-    RawUnrealJsonDefaultVariables,
     RawUnrealJsonFile,
-    RawUnrealJsonVariable,
     UnrealJsonReadFile,
     UnrealJsonReadFileNode
 } from '../types/index.js'
 
 const { KISMET_CLASSES_PREFIXES, NodeProperty } = Constants
 
-const propertyMap = class {
-    private properties: RawUnrealJsonDefaultVariables[]
-
-    constructor (properties: RawUnrealJsonDefaultVariables[]) {
-        this.properties = properties
-    }
-
-    get (name: string) {
-        return this.properties.find(prop => prop.name === name)?.value ?? ''
-    }
-
-    filter (startString: string) {
-        return this.properties
-            .filter(prop => prop.name.startsWith(`${startString}(`))
-            .map(x => x.value)
-    }
-}
-
-function getStaticProperties (variables: RawUnrealJsonVariable[]) {
-    const enums = {
-        // TODO: add remaining connections
-        variables:
-            variables.length > 0
-                ? [
-                      'static Variables = {',
-                      variables
-                          .map(
-                              (v, i) =>
-                                  `${i > 0 ? '\t' : ''}\t${v.name}:'${v.name}'`
-                          )
-                          .join(',\n'),
-                      '}'
-                  ]
-                : []
-    }
-
-    const staticProperties =
-        enums.variables.length > 0
-            ? enums.variables.map(c => `    ${c}`).join('\n')
-            : ''
-
-    return staticProperties
-}
-
-const nodeLinkDescriptions = (links: string[]) =>
-    links.map(link => ({
-        name: link.match(/(?<=LinkDesc=)(.*?)(?=,)/g)?.[0] as string
-    }))
-
-const nodeLinkVariables = (links: string[]) =>
-    links.map(link => ({
-        name: nodeLinkDescriptions([link])[0].name,
-        expectedType: link.match(/(?<=ExpectedType=)(.*?)(?=,)/g)?.[0] as string
-    }))
-
 export function readNodeFile (
     json: RawUnrealJsonFile,
     Package: string
 ): UnrealJsonReadFile {
-    const { name: Class, variables, defaultproperties } = json
+    const { 
+        name: Class, 
+        extends: Extends,
+        structs: structures, 
+        variables, 
+        defaultproperties, 
+        placeable,
+        enums
+    } = json
 
-    const defaultProperties = new propertyMap(defaultproperties)
+    const defaultProperties = new NodeProperties(defaultproperties)
 
     const name = stringFirstCharUppercase(
         defaultProperties.get(NodeProperty.NAME)
@@ -90,7 +43,11 @@ export function readNodeFile (
                 .replace('?', '')
                 .replace(/\\|\//, '_') ?? Class,
         Class,
+        Extends,
+        structures,
         Package,
+        placeable,
+        enums,
         variables,
         category,
         defaultproperties,
@@ -109,29 +66,19 @@ export function readNodeFile (
     }
 }
 
-const isDefaultProperty = (name: string): boolean => {
-    return (
-        name.includes(Constants.NodeProperty.LINKS_INPUT) ||
-        name.includes(Constants.NodeProperty.LINKS_OUTPUT) ||
-        name.includes(Constants.NodeProperty.LINKS_VARIABLE) ||
-        name === Constants.NodeProperty.NAME ||
-        name === Constants.NodeProperty.CATEGORY
-    )
-}
-
 export function nodeToJSON (node: UnrealJsonReadFile): UnrealJsonReadFileNode {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { staticProperties, defaultproperties, links, ...json } = node
 
-    const inputLinks = nodeLinkDescriptions(links.input),
-        outputLinks = nodeLinkDescriptions(links.output),
-        variableLinks = nodeLinkVariables(links.variable)
+    const inputLinks = nodeLinks.node(links.input),
+        outputLinks = nodeLinks.node(links.output),
+        variableLinks = nodeLinks.variable(links.variable)
 
     const props = defaultproperties
         .map(prop => {
             const { name, value } = prop
 
-            return isDefaultProperty(name) || !value ? null : prop
+            return NodeProperties.isDefault(name) || !value ? null : prop
         })
         .filter(n => n) as RawUnrealJsonConstant[]
 
@@ -149,4 +96,19 @@ export function nodeToJSON (node: UnrealJsonReadFile): UnrealJsonReadFileNode {
             variable: variableLinks
         }
     }
+}
+
+export function destructureDefaultProperty (input: string) {
+    return input
+        .slice(1, -1)
+        .match(/(?<=,|^)(.*?=.*?)(?=,|$)/gm)
+        ?.map((i,_, a) => {
+            return i.includes('(') 
+                ? [i, a[_+1]].join(',').slice(0, ([i, a[_+1]].join(',')).indexOf('),') + 1)  
+                : i.includes(')') 
+                    ? i.slice(i.indexOf(')') + 2) 
+                    : i
+        })
+        .filter(n => n)
+        .map(n => n.split('=') as [string, string])
 }

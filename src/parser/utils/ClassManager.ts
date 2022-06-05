@@ -64,12 +64,15 @@ async function readPackage (
             classes
         })
         if (!kismetNode) continue
-        if (<string>kismetNode.node.type === '') {
+        if (!externalClasses.some(x => x.Class === kismetNode.node.Class)) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { staticProperties, links, type, category, ...nodeClass } =
                 kismetNode.node
             externalClasses.push(nodeClass)
-            continue
+
+            if (<string>kismetNode.node.type === '') {
+                continue
+            }
         }
 
         const { node, nodePath } = kismetNode
@@ -87,6 +90,31 @@ async function readPackage (
     }
 
     return { items, externalClasses }
+}
+
+function getSuperClasses (name: string, items: Partial<UnrealJsonReadFile>[]) {
+    const Extends = items.find(i => i.name === name)?.Extends
+    const Classes = [name]
+    let latests: string | undefined = Extends
+
+    const isExtending = (name?: string) => name != undefined && name !== 'Object'
+    const extendingClasses = (list: string[]) => list.concat(latests ? [latests] : [])
+
+    if (!isExtending(Extends)) return extendingClasses(Classes)
+
+    while (isExtending(latests)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Classes.push(latests!)
+
+        latests = items.find(i => i.name === latests)?.Extends
+    }
+
+    return extendingClasses(Classes)
+}
+
+export function isPlaceableClass (name: string, items: Partial<UnrealJsonReadFile>[]) {
+    return getSuperClasses(name, items)
+        .some(n => items.find(i => i.name === n)?.placeable)
 }
 
 //Internal wrapper for reading / writing packages
@@ -151,7 +179,8 @@ export class ClassManager {
             json: this.options?.json || this.options?.blender ? this.json : [],
             blenderOptions: this.options?.blenderOptions,
             groupItems: this.options?.groupItems ?? false,
-            blender: this.options?.blender ?? false
+            blender: this.options?.blender ?? false,
+            isMainFolder: exportPath === './src/items/'
         })
     }
 }

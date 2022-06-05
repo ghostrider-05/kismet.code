@@ -2,7 +2,9 @@ import { createWriteStream } from 'fs'
 import { writeFile } from 'fs/promises'
 
 import { groupByProperty } from '../../shared/index.js'
-import { UnrealJsonReadFileNode } from '../../types/index.js'
+import { UnrealJsonReadFile, UnrealJsonReadFileNode } from '../../types/index.js'
+import { formatStructure } from './node/structures.js'
+import { variableBlenderType } from './node/variable.js'
 import {
     baseTemplate,
     classTemplate,
@@ -29,15 +31,17 @@ const createCategories = (nodes: UnrealJsonReadFileNode[]) => {
 export class BlenderAddonGenerator {
     static create (
         nodes: UnrealJsonReadFileNode[],
+        classes: Partial<UnrealJsonReadFile>[],
         options?: BlenderAddonGeneratorOptions
     ) {
         console.log('Blender nodes: ' + nodes.length)
 
         const categories = createCategories(nodes)
 
+        const nodeTemplate = (node: UnrealJsonReadFileNode) => classTemplate(node, classes)
         const content = [
             baseTemplate(options?.copy ?? true),
-            ...nodes.map(classTemplate),
+            ...nodes.map(nodeTemplate),
             operatorTemplate({
                 paperclip: options?.copy ?? true,
                 log: options?.logSequence ?? true

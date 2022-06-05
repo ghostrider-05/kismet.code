@@ -1,6 +1,7 @@
+import { defaultNodeVariables, defaultVariables } from './defaultVariable.js'
 import { quote, Constants } from '../../../shared/index.js'
 
-import type { Enum, If, UnrealJsonReadFileNode } from '../../../types/index.js'
+import type { UnrealJsonReadFile, UnrealJsonReadFileNode } from '../../../types/index.js'
 
 const variableTypes: [[string, string, string], [string, string]][] = [
     [
@@ -16,6 +17,10 @@ const variableTypes: [[string, string, string], [string, string]][] = [
         ['NodeSocketBool', 'BoolProperty']
     ],
     [
+        ["Class'Engine.SeqVar_Object'", "class'SeqVar_Object'", 'Object'],
+        ['NodeSocketObject', 'PointerProperty']
+    ],
+    [
         ["Class'Engine.SeqVar_Vector'", "class'SeqVar_Vector'", 'Vector'],
         [
             'NodeSocketVector',
@@ -24,31 +29,48 @@ const variableTypes: [[string, string, string], [string, string]][] = [
     ]
 ]
 
-const defaultVariable = ['NodeSocketString', 'StringProperty']
+const defaultVariable = ['NodeSocketString', 'StringProperty', undefined]
 
-export const variableBlenderType = (type?: string) => {
-    const [socket, Class] =
+export const variableBlenderType = (classes: Partial<UnrealJsonReadFile>[], type?: string) => {
+    const formatEnum = (type: string) => {
+        const enumName = type.split('.')[1]
+        const values = classes.find(x => x.enums?.[enumName])?.enums?.[enumName]
+            ?? classes.find(x => x.name === type.split('.')[0])?.enums?.[enumName]
+
+        const value = values?.filter(n => !n.endsWith('_MAX')).map(name => `('${enumName}.${name}', "${name}", "")`)?.join(',')
+        return values ? `${enumName}Enum = (${value})` : ''
+    }
+
+    const [socket, Class, list] =
         variableTypes.find(variable => {
             return variable[0].some(t => t === type)
-        })?.[1] ?? defaultVariable
+        })?.[1] ?? (type?.includes('.') 
+            // Likely an enum property
+            ? ['NodeSocketString', 'EnumProperty', formatEnum(type)]
+            : undefined
+        ) ?? defaultVariable
 
     return {
         socket,
-        Class
+        Class,
+        list
     }
 }
 
-export const formatVariables = (node: UnrealJsonReadFileNode, returnNames?: boolean) => {
+export const formatVariables = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[], returnNames?: boolean) => {
     const names: string[] = []
 
     const staticVariables = node.variables
+        .filter(n => n.category !== null)
         .map(variable => {
-            const { Class } = variableBlenderType(variable.type)
+            if (node.type === Constants.NodeType.EVENTS && variable.name === 'Instigator') return ''
+
+            const { Class, list } = variableBlenderType(classes, variable.type)
             const defaultValue = node.defaultproperties.find(
                 prop => prop.name === variable.name
             )?.value
 
-            const defaultString = defaultValue
+            const defaultString = defaultValue && !list && Class !== 'VectorProperty'// TODO: Update
                 ? `,default=${
                       defaultValue.startsWith('(') || defaultValue.includes('.')
                           ? Class === defaultVariable[1]
@@ -75,17 +97,22 @@ export const formatVariables = (node: UnrealJsonReadFileNode, returnNames?: bool
                   }`
                 : ''
 
-            names.push(variable.name)
+                names.push(variable.name)
 
-            return `    ${variable.name}: bpy.props.${Class}(name="${variable.name}"${defaultString})`
+            const type = Class === 'PointerProperty' ? ',type=bpy.types.Object' : ''
+            const items = list ? `,items=${variable.type.split('.')[1]}Enum` : ''
+            return (
+                list ? `    ${list}\n` : ''
+            ) + `    ${variable.name}: bpy.props.${Class}(name="${variable.name}"${defaultString}${type}${items})`
+                 
         })
         .join('\n')
 
     return returnNames ? names : staticVariables
 }
 
-export const formatVariableNames = (node: UnrealJsonReadFileNode) => {
-    const nodeNames = <string[]>formatVariables(node, true)
+export const formatVariableNames = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[]) => {
+    const nodeNames = <string[]>formatVariables(node, classes, true)
     const { event, varName } = defaultVariables()
     const defaultNodeNames = defaultNodeVariables(node.type, false)
     const defaultNames = [varName[0], ...event.map(n => n[0])]
@@ -114,70 +141,4 @@ export const formatVariableSockets = (node: UnrealJsonReadFileNode) => {
     )
 
     return `    def draw_buttons_ext(self, context, layout):\n${variableSockets}`
-}
-
-const defaultType = (value: string) => {
-    if (['True', 'False'].includes(value)) return 'BoolProperty'
-    else if (!isNaN(parseInt(value))) {
-        return value.includes('.') ? 'FloatProperty' : 'IntProperty'
-    } else return 'StringProperty'
-}
-
-const defaultVariables = () => {
-    const base: [string, string][] = [
-        ['ObjComment', `''`],
-        ['bOutputObjCommentToScreen', 'False'],
-        ['bSuppressAutoComment', 'True']
-    ]
-
-    const breakpoint: [string, string] = ['breakpoint', 'False']
-    const varName: [string, string] = ['Varname', `''`]
-    const event: [string, string][] = [
-        ['MaxTriggerCount', '0'],
-        ['ReTriggerDelay', '0.00'],
-        ['bEnabled', 'True'],
-        ['Priority', '0'],
-        ['bPlayerOnly', 'True'],
-        ['bClientsideOnly', 'False']
-    ]
-
-    return {
-        base,
-        breakpoint,
-        event,
-        varName
-    }
-}
-
-export const defaultNodeVariables = <T extends boolean = true>(
-    type: Enum<Constants.NodeType>,
-    format?: T
-): If<T, string, [string, string][]> => {
-    const { base, breakpoint, event, varName } = defaultVariables()
-    const output = base
-
-    switch (type) {
-        // Add targets
-        case Constants.NodeType.ACTIONS:
-        case Constants.NodeType.CONDITIONS:
-            output.push(breakpoint)
-            break
-        case Constants.NodeType.VARIABLES:
-            output.push(varName)
-            break
-        case Constants.NodeType.EVENTS:
-            output.push(...event)
-    }
-
-    return (
-        format ?? true
-            ? output
-                  .map(n => {
-                      return `    ${n[0]}: bpy.props.${defaultType(
-                          n[1]
-                      )}(name='${n[0]}', default=${n[1]})\n`
-                  })
-                  .join('')
-            : output
-    ) as If<T, string, [string, string][]>
 }

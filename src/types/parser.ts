@@ -63,11 +63,13 @@ export interface RawUnrealJsonVariable {
     name: string
     type: string
     replicated: KismetBoolean
+    category: string | null
 }
 
 export interface RawUnrealJsonFile extends Record<string, unknown> {
     name: string
     extends: string
+    placeable: boolean
     extendswithin: string | 'Object'
     constants: RawUnrealJsonConstant[]
     structs: RawUnrealJsonStructure[]
@@ -85,6 +87,10 @@ export interface UnrealJsonReadFile {
     archetype: string
     Class: string
     Package: string
+    Extends: string
+    placeable: boolean
+    enums: RawUnrealJsonEnum
+    structures: RawUnrealJsonStructure[]
     defaultproperties: RawUnrealJsonConstant[]
     links: Record<KismetConnectionType, string[]>
     name: string
@@ -101,6 +107,6 @@ export type UnrealJsonReadFileNode = Omit<
     displayName?: string
     links: Record<
         KismetConnectionType,
-        { name: string; expectedType?: string }[]
+        { name: string; expectedType?: string, isOutput?: boolean }[]
     >
 }

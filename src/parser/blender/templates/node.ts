@@ -7,14 +7,18 @@ import {
     formatVariableSockets
 } from '../node/index.js'
 
-import type { UnrealJsonReadFileNode } from '../../../types/index.js'
 import { Constants } from '../../../shared/index.js'
+
+import type { 
+    UnrealJsonReadFile,
+    UnrealJsonReadFileNode 
+} from '../../../types/index.js'
 
 const displayName = (node: UnrealJsonReadFileNode) => {
     return node.displayName ?? `"${node.Class}"`
 }
 
-export const classTemplate = (node: UnrealJsonReadFileNode) => `
+export const classTemplate = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[]) => `
 class ${node.Class}(Node, KismetNodeTreeNode):
     '''${node.Package}/${node.Class}'''
     bl_idname = '${node.Class}'
@@ -24,14 +28,14 @@ class ${node.Class}(Node, KismetNodeTreeNode):
     ObjInstanceVersion = ${Constants.ObjInstanceVersions.get(node.Class) ?? 1}
     ObjectArchetype = ${node.archetype}
     KismetType = '${node.type}'
-${formatVariableNames(node)}
+${formatVariableNames(node, classes)}
 
 ${defaultNodeVariables(node.type)}
 
-${formatVariables(node)}
+${formatVariables(node, classes)}
 
     def init(self, context):
-${formatConnections(node)}
+${formatConnections(node, classes)}
     def copy(self, node):
         print("Copying from node ", node)
 

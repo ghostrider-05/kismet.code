@@ -2,18 +2,24 @@ export const JSONnode = {
     name: 'WaitforLevelstobevisible',
     Class: 'SeqAct_WaitForLevelsVisible',
     Package: 'Engine',
+    placeable: false,
+    Extends: 'SequenceAction',
+    enums: {},
+    structures: [],
     variables: [
         {
             flags: '',
             name: 'LevelNames',
             type: 'array<name>',
-            replicated: 'False'
+            replicated: 'False',
+            category: ''
         },
         {
             flags: '',
             name: 'bShouldBlockOnLoad',
             type: 'bool',
-            replicated: 'False'
+            replicated: 'False',
+            category: ''
         }
     ],
     category: '"Engine"',

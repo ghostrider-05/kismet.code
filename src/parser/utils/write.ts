@@ -61,6 +61,7 @@ export interface PackageWriteOptions<T extends boolean = true> {
     json: UnrealJsonReadFileNode[]
     groupItems: boolean
     blender: T
+    isMainFolder: boolean
     blenderOptions?: If<T, BlenderAddonGeneratorOptions>
 }
 
@@ -162,6 +163,6 @@ export async function writePackages<T extends boolean = true> (
     if (blender)
         await BlenderAddonGenerator.write(
             createPath(options.exportPath, `/${FileName.Blender}.py`),
-            BlenderAddonGenerator.create(json, blenderOptions)
+            BlenderAddonGenerator.create(json, externalClasses, blenderOptions)
         )
 }

@@ -28,6 +28,18 @@ def find_index (name, items):
 
     return index
 
+def find_objectnum_from_scene (scene, obj_name):
+    storage = scene.numberStorage
+
+    if storage is None:
+        return None
+
+    for obj in storage[:]:
+        if obj.objName  == obj_name:
+            return obj.number
+
+    return None
+
 def generate_indexes (nodes):
     indexes = []
 
@@ -86,6 +98,22 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
         indexes = generate_indexes(node_tree.nodes)
 
+        default_keys = [
+            'breakpoint',
+            'ObjInstanceVersion',
+            'ObjColor'
+        ]
+
+        default_key_matches = [
+            'Enum',
+            'Comment',
+            'bl_'
+        ]
+
+        if len(node_tree.nodes) == 0:
+            self.report({ 'INFO' }, 'No kismet nodes to copy in this sequence...')
+            return
+
         for node in node_tree.nodes:
             node_index = find_index(node.name, indexes)
             node_text = ''
@@ -104,12 +132,22 @@ class NODE_OT_export_kismet(bpy.types.Operator):
             if node_colors:
                 node_variables.append(f"ObjColor={node_colors}")
 
-            if 'breakpoint' in node and node.breakpoint:
-                node_variables.append("bIsBreakpointSet=True")
-
             if '_SequenceItemVariableNames' in node and node._SequenceItemVariableNames is not None:
                 for _item_name in node._SequenceItemVariableNames:
                     node_variables.append(f"{_item_name}={node[_item_name]}")
+
+            # TODO: check when variables required quotes, StringProperty?
+            if node.ObjComment != '':
+                node_variables.append(f"ObjComment=\\"{node.ObjComment}\\"")
+            
+            if node.bOutputObjCommentToScreen:
+                node_variables.append(f"bOutputObjCommentToScreen={node.bOutputObjCommentToScreen}")
+
+            if node.bSuppressAutoComment is not False:
+                node_variables.append(f"bSuppressAutoComment={node.bSuppressAutoComment}")
+
+            if node.breakpoint:
+                node_variables.append(f"bIsBreakpointSet=True")
 
             for connection_index, connection in enumerate(node.outputs):
                 connected_items = []
@@ -179,6 +217,20 @@ class NODE_OT_export_kismet(bpy.types.Operator):
                             f"VariableLinks({variable_index})=({linked_variables_text}DrawX=0,OverrideDelta=0)"
                         )
 
+            unknown_keys = []
+            for key in node.keys():
+                if key in default_keys:
+                    continue
+
+                for match in default_key_matches:
+                    if match in key:
+                        continue
+
+                unknown_keys.append(key)
+
+                node_variables.append(f"{key}={node[key]}")
+            print(unknown_keys)
+
             node_text += f"Begin Object Class={node.bl_idname} Name={node.bl_idname}_{node_index}\\n"
 
             for node_variable in node_variables:
@@ -191,7 +243,7 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 ${options.paperclip ? '        paperclip.copy(sequence_text.rstrip())' : ''}
 ${options.log ? '        print(sequence_text.rstrip())' : ''}
 
-        self.report({ 'INFO' }, 'Copied kismet nodes')
+        self.report({ 'INFO' }, ${options.paperclip ? 'Copied kismet nodes' : 'Logged kismet nodes to console'})
 
         return { 'FINISHED' }
 

@@ -2,7 +2,8 @@ import { Constants, KismetError, quote } from '../../../shared/index.js'
 
 import {
     UnrealJsonReadFileNode,
-    KismetConnectionType
+    KismetConnectionType,
+    UnrealJsonReadFile
 } from '../../../types/index.js'
 import { linkIcon } from './icon.js'
 import { variableBlenderType } from './variable.js'
@@ -83,7 +84,7 @@ const nodeSocketName = (name: string) =>
         .replaceAll(/>/g, '2')
         .replaceAll(/!/g, '3')}Socket`
 
-export const formatConnections = (node: UnrealJsonReadFileNode) => {
+export const formatConnections = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[]) => {
     const connections = getConnections(node)
 
     if (
@@ -112,12 +113,13 @@ export const formatConnections = (node: UnrealJsonReadFileNode) => {
 
             return connections[key as KismetConnectionType]
                 .map(connection => {
+                    if (node.name === `"Instigator"` && node.type !== 'events') return ''
                     const finalPrefix =
                         connection.name === `"Instigator"` || node.type === Constants.NodeType.VARIABLES ? 'self.outputs' : prefix
                     const socketName = nodeSocketName(connection.name)
 
                     return `        ${socketName} = ${finalPrefix}.new('${
-                        variableBlenderType(connection.expectedType).socket
+                        variableBlenderType(classes, connection.expectedType).socket
                     }', ${
                         node.type === Constants.NodeType.VARIABLES ? quote(connection.name) : connection.name
                     })\n        ${socketName}.display_shape = '${linkIcon(
