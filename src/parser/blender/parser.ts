@@ -3,8 +3,7 @@ import { writeFile } from 'fs/promises'
 
 import { groupByProperty } from '../../shared/index.js'
 import { UnrealJsonReadFile, UnrealJsonReadFileNode } from '../../types/index.js'
-import { formatStructure } from './node/structures.js'
-import { variableBlenderType } from './node/variable.js'
+
 import {
     baseTemplate,
     classTemplate,

@@ -9,7 +9,6 @@ node_modules
 src/dist/
 src/test*/
 nodes.json
-!src/items/nodes.json
 
 # Other
 *.cs
