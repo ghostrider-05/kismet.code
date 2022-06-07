@@ -3,14 +3,14 @@ import {
     Sequence,
     SequenceCondition,
     SequenceEvent,
-    SequenceVariable
+    SequenceVariable,
 } from '../index.js'
 
 import { Constants } from '../../../shared/index.js'
 
 import type {
     SequenceItemType,
-    SequenceItemTypeName
+    SequenceItemTypeName,
 } from '../../../types/index.js'
 
 const { NodeType } = Constants

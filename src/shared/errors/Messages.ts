@@ -7,6 +7,7 @@ export const Messages = {
     INVALID_COLORS_INPUT: 'Invalid color lenght provided. Expected 4 values',
     INVALID_NODE_ARGUMENT:
         'Invalid item: expected a node (action or condition)',
+    INVALID_PATH: (path: string) => `Could not find path: ${path}`,
     INVALID_TYPE: (input: unknown, type: string) =>
         `Expected typeof ${type}, received ${typeof input}: ${input}`,
     PROJECT_DEFINED: 'A project file with this name is already defined',
@@ -16,7 +17,7 @@ export const Messages = {
         Overwrite the sequence by provide a new sequence structure`,
     SEQUENCE_EMPTY: (name: string) => `Sequence '${name}' is empty`,
     UNKNOWN_CONNECTION: (name: string, obj: string) =>
-        `Could not find output connection for '${name}' on ${obj}`
+        `Could not find output connection for '${name}' on ${obj}`,
 }
 
 export type MessageKey = keyof typeof Messages

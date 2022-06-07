@@ -30,4 +30,5 @@ const Util = class Util {
     public static clipboard = clipboard
 }
 
+export * from './types/index.js'
 export { KismetFile, Parsers, Structures, Util, Constants }

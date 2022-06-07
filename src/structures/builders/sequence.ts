@@ -1,12 +1,14 @@
 import {
     BaseKismetConnection,
     BaseSequenceItem,
+    ItemConnection,
     Sequence,
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
     SequenceNode,
-    SequenceVariable
+    SequenceVariable,
+    VariableConnection,
 } from '../index.js'
 
 import type { ClassConstructor } from '../../types/index.js'
@@ -20,7 +22,7 @@ const baseBuilderData = {
     Package: 'Package',
     Class: 'Archetype',
     Name: 'test',
-    Index: 0
+    Index: 0,
 }
 
 const baseBuilderArchetype =
@@ -34,7 +36,7 @@ const itemBuilderOptions = (
     return {
         ObjectArchetype: options?.ObjectArchetype ?? baseBuilderArchetype,
         inputs: options?.inputs ?? {},
-        ...options
+        ...options,
     }
 }
 
@@ -42,6 +44,18 @@ const baseConnectionBuilder = (
     options: ConstructorParameters<typeof BaseKismetConnection>[0]
 ) => {
     return new BaseKismetConnection(options)
+}
+
+const itemConnectionBuilder = (
+    ...options: ConstructorParameters<typeof ItemConnection>
+) => {
+    return new ItemConnection(...options)
+}
+
+const variableConnectionBuilder = (
+    ...options: ConstructorParameters<typeof VariableConnection>
+) => {
+    return new VariableConnection(...options)
 }
 
 const actionBuilder = (options?: builderOptions<typeof SequenceAction>) => {
@@ -75,10 +89,12 @@ export default {
     baseBuilderData,
     baseBuilderClassType,
     baseConnectionBuilder,
+    itemConnectionBuilder,
+    variableConnectionBuilder,
     actionBuilder,
     conditionBuilder,
     eventBuilder,
     nodeBuilder,
     sequenceBuilder,
-    variableBuilder
+    variableBuilder,
 }

@@ -1,6 +1,8 @@
-import { KismetBoolean } from './enums.js'
+import { KismetBoolean, NodeType } from './enums.js'
 
+import type { Enum, If } from './index.js'
 import type { KismetConnectionType } from './connectionLink.js'
+import type { BlenderAddonGeneratorOptions } from '../parser/blender/parser.js'
 
 export interface JsonFile extends Record<string, string> {
     name: string
@@ -15,9 +17,24 @@ export interface PathInput {
     packages?: string[]
 }
 
-export interface ExportOptions {
+interface _ExportOptions<T extends boolean = true>
+    extends Record<string, unknown> {
+    debug?: boolean
     groupItems?: boolean
     json?: boolean
+    blender?: T
+    blenderOptions: If<T, BlenderAddonGeneratorOptions> | undefined
+    types?: Enum<Exclude<NodeType, NodeType.SEQUENCES>>[]
+    classes?: boolean
+    //sort?: 'package' | 'name' TODO: implement
+}
+
+export type ExportOptions<T extends boolean = boolean> = Partial<
+    _ExportOptions<T>
+>
+
+export interface PathCreateOptions {
+    check?: boolean
 }
 
 export interface PathReadError {
@@ -47,11 +64,13 @@ export interface RawUnrealJsonVariable {
     name: string
     type: string
     replicated: KismetBoolean
+    category: string | null
 }
 
 export interface RawUnrealJsonFile extends Record<string, unknown> {
     name: string
     extends: string
+    placeable: boolean
     extendswithin: string | 'Object'
     constants: RawUnrealJsonConstant[]
     structs: RawUnrealJsonStructure[]
@@ -69,11 +88,26 @@ export interface UnrealJsonReadFile {
     archetype: string
     Class: string
     Package: string
+    Extends: string
+    placeable: boolean
+    enums: RawUnrealJsonEnum
+    structures: RawUnrealJsonStructure[]
     defaultproperties: RawUnrealJsonConstant[]
     links: Record<KismetConnectionType, string[]>
     name: string
     category: string
     staticProperties: string
-    type: string
+    type: NodeType
     variables: RawUnrealJsonVariable[]
+}
+
+export type UnrealJsonReadFileNode = Omit<
+    UnrealJsonReadFile,
+    'links' | 'staticProperties'
+> & {
+    displayName?: string
+    links: Record<
+        KismetConnectionType,
+        { name: string; expectedType?: string; isOutput?: boolean }[]
+    >
 }

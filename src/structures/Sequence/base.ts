@@ -3,14 +3,14 @@ import { BaseItem } from './Item/_base.js'
 import {
     ProcessManager,
     ProcessId,
-    SequencePositionManager
+    SequencePositionManager,
 } from '../managers/index.js'
 
 import {
     boolToKismet,
     Constants,
     filterEmptyLines,
-    parseVar
+    parseVar,
 } from '../../shared/index.js'
 
 import type {
@@ -20,7 +20,7 @@ import type {
     SequenceViewOptions,
     SequenceOptions,
     SequenceBaseConstructorOptions,
-    SchemaItemNames
+    SchemaItemNames,
 } from '../../types/index.js'
 
 const { DefaultLayoutOptions, KISMET_NODE_LINES, MAIN_SEQUENCE, NodeType } =
@@ -58,20 +58,20 @@ export class Sequence extends BaseItem {
 
         this.kismet = {
             x: 0,
-            y: 0
+            y: 0,
         }
 
         this.defaultView = {
             x: defaultView?.x ?? 0,
             y: defaultView?.y ?? 0,
-            zoom: defaultView?.zoom ?? 1
+            zoom: defaultView?.zoom ?? 1,
         }
 
         this.positionManager = new SequencePositionManager({
             layoutOptions: layout?.position ?? DefaultLayoutOptions,
             style: layout?.style,
             schema: layout?.schema,
-            projectId: project
+            projectId: project,
         })
     }
 
@@ -85,7 +85,7 @@ export class Sequence extends BaseItem {
             archetype,
             ObjInstanceVersion,
             DrawHeight,
-            DrawWidth
+            DrawWidth,
         }
     }
 
@@ -111,7 +111,7 @@ export class Sequence extends BaseItem {
         name,
         objects,
         layout,
-        defaultView
+        defaultView,
     }: SequenceOptions<SequenceItemType, SchemaItemNames>): {
         subSequence: Sequence
         sequence: Sequence
@@ -120,11 +120,11 @@ export class Sequence extends BaseItem {
             layout: {
                 position: layout?.position ?? this.positionManager.options,
                 schema: layout?.schema,
-                style: layout?.style
+                style: layout?.style,
             },
             name,
             defaultView,
-            project: this.project
+            project: this.project,
         }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
 
         subSequence.parentSequence = this.linkId
@@ -134,7 +134,7 @@ export class Sequence extends BaseItem {
 
         return {
             subSequence,
-            sequence: this
+            sequence: this,
         }
     }
 
@@ -265,7 +265,7 @@ export class Sequence extends BaseItem {
         const variables = this.items
             .map<[string, KismetVariablesType]>((item, i) => [
                 `SequenceObjects(${i})`,
-                item.linkId
+                item.linkId,
             ])
             .concat([
                 ['ObjectArchetype', archetype],
@@ -280,13 +280,13 @@ export class Sequence extends BaseItem {
                 ['bEnabled', boolToKismet(this.enabled)],
                 ['DefaultViewX', this.defaultView.x],
                 ['DefaultViewY', this.defaultView.y],
-                ['DefaultViewZoom', this.defaultView.zoom]
+                ['DefaultViewZoom', this.defaultView.zoom],
             ]) as KismetVariableInternalTypeList
 
         return variables.reduce(
             (prev, curr) => ({
                 ...prev,
-                [curr[0]]: curr[1]
+                [curr[0]]: curr[1],
             }),
             {}
         )
@@ -302,7 +302,7 @@ export class Sequence extends BaseItem {
                   filterEmptyLines(
                       Object.keys(json).map(v => parseVar(v, json[v]))
                   ),
-                  KISMET_NODE_LINES.end
+                  KISMET_NODE_LINES.end,
               ]
             : [filterEmptyLines(this.items.map(i => i.toString()))]
 

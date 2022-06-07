@@ -1,11 +1,16 @@
-import { Comment, CommentFrame, Sequence } from './Sequence/index.js'
+import {
+    BaseSequenceItem,
+    Comment,
+    CommentFrame,
+    Sequence,
+} from './Sequence/index.js'
 
 import { Variables, Actions, Conditions, Events } from '../items/index.js'
 
 import {
     CustomNodesManager,
     ProcessManager,
-    ProcessId
+    ProcessId,
 } from './managers/index.js'
 
 import { clipboard } from '../shared/index.js'
@@ -14,7 +19,7 @@ import type {
     projectOptions,
     SchemaItemNames,
     SequenceItemType,
-    SequencePositionOptions
+    SequencePositionOptions,
 } from '../types/index.js'
 
 export class KismetFile {
@@ -40,7 +45,7 @@ export class KismetFile {
             name: 'Main_Sequence',
             layout: this.layout,
             mainSequence: true,
-            project: this.id
+            project: this.id,
         })
 
         this.classParser = new CustomNodesManager()
@@ -53,13 +58,46 @@ export class KismetFile {
         Events,
 
         Comment,
-        CommentFrame
+        CommentFrame,
+    }
+
+    public static listDefaultItems () {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { Comment, CommentFrame, ...input } = KismetFile.Items
+
+        return KismetFile.listItems(<never>input)
     }
 
     public static listItems (
-        input: Record<string, SequenceItemType[]>
+        input: Record<
+            Exclude<
+                keyof typeof KismetFile['Items'],
+                'Comment' | 'CommentFrame'
+            >,
+            Record<string, SequenceItemType | Record<string, SequenceItemType>>
+        >
     ): SequenceItemType[] {
-        return Object.keys(input).flatMap(key => input[key])
+        const items = Object.keys(input).flatMap(key => {
+            const category = input[key as keyof typeof input]
+
+            const classes = Object.keys(category)
+                .filter(cKey => {
+                    const Class = category[cKey as keyof typeof category] as
+                        | BaseSequenceItem
+                        | Record<string, BaseSequenceItem>
+                    return Class instanceof BaseSequenceItem
+                })
+                .map(
+                    name =>
+                        category[
+                            name as keyof typeof category
+                        ] as SequenceItemType
+                )
+
+            return classes
+        })
+
+        return items
     }
 
     public static async copy (item: SequenceItemType): Promise<void> {

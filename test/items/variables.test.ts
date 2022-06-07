@@ -12,7 +12,7 @@ import {
     RandomFloat,
     RandomInteger,
     String,
-    Vector
+    Vector,
 } from '../../src/items/Variables/index.js'
 
 import { builders } from '../../src/structures/builders/index.js'
@@ -257,7 +257,7 @@ describe('default sequence variables', () => {
         expect(new Vector().setValue({ x: 1, y: 1, z: 2 }).value).toEqual({
             x: 1,
             y: 1,
-            z: 2
+            z: 2,
         })
 
         expect(new Vector().toString()).toContain('VectValue')

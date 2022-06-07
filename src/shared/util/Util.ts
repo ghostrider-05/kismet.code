@@ -2,7 +2,14 @@ import clipboardy from 'clipboardy'
 
 import { KismetError } from '../errors/index.js'
 
+import { ArrayUnion } from '../../types/index.js'
+
+export function arrayUnionInput<T> (input: ArrayUnion<T>): T[] {
+    return Array.isArray(input) ? input : [input]
+}
+
 export function filterEmptyLines (input: string | string[]): string {
+    if (!input) return ''
     const output = (Array.isArray(input) ? input : input.split('\n'))
         .filter(line => line.trim() !== '')
         .join('\n')
@@ -12,7 +19,7 @@ export function filterEmptyLines (input: string | string[]): string {
 
 export function groupByProperty<T extends Record<string, unknown>> (
     input: T[],
-    propertyName: string
+    propertyName: keyof T
 ): T[][] {
     const output: T[][] = []
     const propertyNames: string[] = []

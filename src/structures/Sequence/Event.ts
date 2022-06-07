@@ -4,13 +4,13 @@ import {
     addVariable,
     boolToKismet,
     Constants,
-    KismetError
+    KismetError,
 } from '../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
     KismetEventOptions,
-    KismetVariablesType
+    KismetVariablesType,
 } from '../../types/index.js'
 
 export class SequenceEvent<T extends {} = {}> extends SequenceNode {
@@ -24,7 +24,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
         this.trigger = {
             maxCount: options?.maxTriggerCount ?? 0,
-            delay: options?.triggerDelay ?? 0.008
+            delay: options?.triggerDelay ?? 0.008,
         }
 
         this.enabled = options?.enabled ?? true
@@ -35,7 +35,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
     public on<T extends SequenceNode> ({
         name,
-        item
+        item,
     }: {
         name: string
         item: T
@@ -54,7 +54,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         } else {
             new KismetError('UNKNOWN_CONNECTION', [
                 name,
-                this['kismet']['class']
+                this['kismet']['class'],
             ])
         }
 
@@ -69,7 +69,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
     public setDisplay ({
         player,
-        client
+        client,
     }: {
         player?: boolean
         client?: boolean
@@ -103,18 +103,18 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
             ['ReTriggerDelay', this.trigger.delay],
             ['bEnabled', boolToKismet(this.enabled)],
             ['bPlayerOnly', boolToKismet(this.playerOnly)],
-            ['bClientSideOnly', boolToKismet(this.clientSideOnly)]
+            ['bClientSideOnly', boolToKismet(this.clientSideOnly)],
         ].reduce(
             (prev, curr) => ({
                 ...prev,
-                [curr[0]]: curr[1]
+                [curr[0]]: curr[1],
             }),
             {}
         )
 
         return {
             ...variables,
-            ...super.toJSON()
+            ...super.toJSON(),
         }
     }
 

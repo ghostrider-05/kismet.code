@@ -3,7 +3,7 @@ import {
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
-    SequenceVariable
+    SequenceVariable,
 } from '../structures/Sequence/index.js'
 
 import { NodeType } from './enums.js'
@@ -17,6 +17,8 @@ export type ArrayUnion<T> = T | T[]
 export type Awaitable<T> = Promise<T> | T
 
 export type Enum<T extends string> = T | `${T}`
+
+export type If<T extends boolean, U, P = undefined> = T extends true ? U : P
 
 export type ClassConstructor<T = unknown, U extends unknown[] = []> = new (
     ...args: U

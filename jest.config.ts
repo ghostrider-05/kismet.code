@@ -8,8 +8,10 @@ export default {
         '!src/items/conditions/Classes/*.{js,ts}',
         '!src/items/events/Classes/*.{js,ts}',
         '!src/structures/builders/*.{js,ts}',
+        '!src/parser/run.{js,ts}',
         '!src/types/*.{js,ts}',
-        '!test/**/*.js'
+        '!src/test/**/*.{js,ts}',
+        '!test/**/*.js',
     ],
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
@@ -17,15 +19,15 @@ export default {
         global: {
             branches: 70,
             lines: 70,
-            statements: 70
-        }
+            statements: 70,
+        },
     },
     rootDir: './',
     roots: ['./src/', './test/'],
     testMatch: [
         '**/__tests__/**/*.[jt]s?(x)',
-        '**/?(*.)+(spec|test).[tj]s?(x)'
+        '**/?(*.)+(spec|test).[tj]s?(x)',
     ],
     transform: {},
-    verbose: true
+    verbose: true,
 }

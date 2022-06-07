@@ -2,7 +2,7 @@
 import {
     Comment,
     CommentFrame,
-    KismetColor
+    KismetColor,
 } from '../../src/structures/index.js'
 
 describe('comment', () => {
@@ -26,7 +26,7 @@ describe('comment', () => {
         expect(new Comment().setBorder({ width: 100 }).borderWidth).toBe(100)
         expect(
             new Comment().setBorder({
-                color
+                color,
             }).borderColor
         ).toBe(color)
 

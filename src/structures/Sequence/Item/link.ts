@@ -2,7 +2,7 @@ import { boolToKismet, parseVar, t, Constants } from '../../../shared/index.js'
 
 import type {
     BaseKismetConnectionOptions,
-    KismetConnectionType
+    KismetConnectionType,
 } from '../../../types/index.js'
 
 export class BaseKismetConnection {
@@ -32,13 +32,13 @@ export class BaseKismetConnection {
         this.name = input
         this.connectionIndex = index ?? 0
 
-        this.bHidden = true
+        this.bHidden = false
 
         this.type = type
         this.baseConnection = !(options.extends ?? false)
         this.kismet = kismetOptions ?? {
             Draw: 0,
-            OverrideDelta: 0
+            OverrideDelta: 0,
         }
     }
 
@@ -67,7 +67,7 @@ export class BaseKismetConnection {
             .map(prop => {
                 return {
                     name: prop.substring(0, prop.indexOf('=')),
-                    value: prop.substring(prop.indexOf('=') + 1)
+                    value: prop.substring(prop.indexOf('=') + 1),
                 }
             })
             .reduce((z, a) => ({ ...z, [a.name]: a.value }), {})
@@ -82,9 +82,9 @@ export class BaseKismetConnection {
     protected format (keys?: string[]): string {
         const base = [
             ...(keys ?? []),
-            `OverrideDelta=${this.kismet.OverrideDelta}`
+            `OverrideDelta=${this.kismet.OverrideDelta}`,
         ].concat(
-            !this.bHidden && this.type === 'variable'
+            this.bHidden && this.type === 'variable'
                 ? [`bHidden=${boolToKismet(this.bHidden)}`]
                 : []
         )
@@ -109,9 +109,7 @@ export class BaseKismetConnection {
     }
 
     public addLink (linkId: string, index?: number, hidden?: boolean): this {
-        if (this.links == undefined) {
-            this.links = []
-        }
+        this.links ??= []
 
         if (hidden != undefined) {
             this.bHidden = hidden
@@ -192,8 +190,8 @@ export class VariableConnection extends BaseKismetConnection {
         super({
             input,
             index,
-            type,
-            extends: true
+            type: Constants.ConnectionType.VARIABLE,
+            extends: true,
         })
 
         const properties = BaseKismetConnection.convertInput(input)
@@ -208,8 +206,10 @@ export class VariableConnection extends BaseKismetConnection {
             DrawX,
             bWriteable,
             bSequenceNeverReadsOnlyWritesToThisVar,
-            bModifiesLinkedObject
+            bModifiesLinkedObject,
         } = properties
+
+        this.name = t(PropertyName)
 
         this.expectedType = t(ExpectedType)
         this.PropertyName = t(PropertyName)
@@ -250,6 +250,10 @@ export class VariableConnection extends BaseKismetConnection {
         return this
     }
 
+    public isOutput (): boolean {
+        return this.bWriteable
+    }
+
     /**
      * @deprecated
      */
@@ -270,12 +274,16 @@ export class ItemConnection extends BaseKismetConnection {
     public LinkedOp: string
     public DrawY: number
 
-    constructor (input: string, type: KismetConnectionType, index?: number) {
+    constructor (
+        input: string,
+        type: Exclude<KismetConnectionType, 'variable'>,
+        index?: number
+    ) {
         super({
             input,
             type,
             index,
-            extends: true
+            extends: true,
         })
 
         const properties = BaseKismetConnection.convertInput(input)
@@ -287,7 +295,7 @@ export class ItemConnection extends BaseKismetConnection {
             bDisabledPIE,
             ActivateDelay,
             LinkedOp,
-            DrawY
+            DrawY,
         } = properties
 
         this.name = LinkDesc
@@ -304,7 +312,7 @@ export class ItemConnection extends BaseKismetConnection {
     public static isItemConnectionType (type: string): boolean {
         const validTypes = [
             Constants.ConnectionType.INPUT,
-            Constants.ConnectionType.OUTPUT
+            Constants.ConnectionType.OUTPUT,
         ]
 
         return validTypes.includes(<never>type)

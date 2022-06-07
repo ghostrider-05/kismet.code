@@ -25,7 +25,7 @@ describe('item sequence', () => {
         )
         expect(
             sequenceBuilder({
-                defaultView: sequenceView
+                defaultView: sequenceView,
             }).defaultView
         ).toEqual(sequenceView)
 

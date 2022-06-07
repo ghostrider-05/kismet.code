@@ -9,7 +9,7 @@ const {
     conditionBuilder,
     eventBuilder,
     sequenceBuilder,
-    variableBuilder
+    variableBuilder,
 } = builders
 
 // TODO: improve string / JSON tests
@@ -95,7 +95,7 @@ describe('Sequence item', () => {
             ObjInstanceVersion: 1,
             ObjectArchetype: baseBuilderArchetype,
             ParentSequence: Constants.MAIN_SEQUENCE,
-            Name: action.toJSON().Name
+            Name: action.toJSON().Name,
         }
 
         test('default kismet data', () => {
@@ -105,14 +105,14 @@ describe('Sequence item', () => {
         test('item position', () => {
             const newPosition = {
                 x: 500,
-                y: 500
+                y: 500,
             }
             const positionAction = actionBuilder().setPosition(newPosition)
             const { ObjPosX: x, ObjPosY: y } = positionAction.toJSON()
 
             expect(newPosition).toEqual({
                 x,
-                y
+                y,
             })
         })
 
@@ -140,7 +140,7 @@ describe('Sequence item', () => {
                     ObjectArchetype: baseBuilderArchetype.replace(
                         'Archetype',
                         'Archetype2'
-                    )
+                    ),
                 })
 
             expect(equalAction.equals(equalEvent)).toBe(false)

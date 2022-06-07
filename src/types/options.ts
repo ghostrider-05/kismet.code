@@ -1,7 +1,7 @@
 import {
     ProcessId,
     SequenceAction,
-    SequenceCondition
+    SequenceCondition,
 } from '../structures/index.js'
 
 import { PositionStyleOption, VariablePositionStyleOption } from './enums.js'
@@ -114,6 +114,7 @@ export interface BaseKismetConnectionOptions {
 export interface BaseKismetItemOptions {
     ObjInstanceVersion?: number
     ObjectArchetype: string
+    index?: number
     inputs: {
         input?: string[]
         output?: string[]

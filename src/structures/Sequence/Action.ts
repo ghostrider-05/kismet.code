@@ -4,7 +4,7 @@ import { Constants, KismetError } from '../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
-    KismetActionRequiredOptions
+    KismetActionRequiredOptions,
 } from '../../types/index.js'
 
 const { NodeType, ConnectionType } = Constants
@@ -16,10 +16,25 @@ export class SequenceAction extends SequenceNode {
     ) {
         super({
             ...options,
-            type: options.isCondition ? NodeType.CONDITIONS : NodeType.ACTIONS
+            type: options.isCondition ? NodeType.CONDITIONS : NodeType.ACTIONS,
         })
     }
 
+    /**
+     * Adds a new output connection
+     * @param from Data from this node
+     * @param to The node to connect to
+     */
+    public addOutputConnection (
+        from: { name: string },
+        to: { name: string; item: SequenceNode }
+    ): this {
+        return this.addConnection(to.item as SequenceAction, from.name, to.name)
+    }
+
+    /**
+     * @deprecated Use {@link SequenceAction.addOutputConnection} instead
+     */
     public addConnection (
         item: SequenceAction,
         outputName: string,
@@ -41,12 +56,12 @@ export class SequenceAction extends SequenceNode {
         } else if (!connection) {
             throw new KismetError('UNKNOWN_CONNECTION', [
                 outputName,
-                this['kismet']['class']
+                this['kismet']['class'],
             ])
         } else {
             throw new KismetError('UNKNOWN_CONNECTION', [
                 inputName,
-                this['kismet']['class']
+                this['kismet']['class'],
             ])
         }
 

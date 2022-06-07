@@ -42,6 +42,22 @@ export class KismetColor {
         })
     }
 
+    public static hexToRgba (hex: `#${string}`, alpha = 1) {
+        if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) throw new Error('Bad Hex')
+
+        let c = hex.substring(1).split('')
+
+        if (c.length === 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]]
+
+        const v = Number('0x' + c.join(''))
+        return [(v >> 16) & 255, (v >> 8) & 255, v & 255, alpha] as [
+            number,
+            number,
+            number,
+            number
+        ]
+    }
+
     public setColor (type: 'R' | 'G' | 'B' | 'A', value: number): this {
         this._validateNumber(value)
 
@@ -63,6 +79,12 @@ export class KismetColor {
         this.A = colors[3]
 
         return this
+    }
+
+    public setHexColor (hexColor: `#${string}`, alpha = 1) {
+        const colors = KismetColor.hexToRgba(hexColor, alpha)
+
+        return this.setColors(colors)
     }
 
     public toString (): string {

@@ -27,7 +27,7 @@ export class ProcessId {
 
         return {
             name,
-            count: Number(count)
+            count: Number(count),
         }
     }
 
@@ -114,7 +114,7 @@ class ProcessDataManager extends ProcessIdManager {
             name,
             options: options ?? {},
             ids: new Map(),
-            overwrittenIds: new Map()
+            overwrittenIds: new Map(),
         }
 
         return id
@@ -126,14 +126,21 @@ class ProcessDataManager extends ProcessIdManager {
      * @param id The project id of the sequence / item
      * @returns If succeeded, whether the attached project was found or not
      */
-    public debug (input: string, id?: ProcessId): void | boolean {
-        if (!this.getProject(id)?.options.debug) return
+    public debug (
+        input: string,
+        id?: ProcessId
+    ): { content: string; completed: boolean } | undefined {
+        const project = this.getProject(id)
+        if (!project?.options.debug) return
 
-        const prefix = this.getProject(id)?.name
-        const content = prefix ? `[${prefix}]` : '' + input
+        const content = `[${project.name}] ` + input
 
         console.log(content)
-        return !!prefix
+
+        return {
+            content,
+            completed: true,
+        }
     }
 
     public id (Class: string, options?: ProcessIdOptions): ProcessId {

@@ -4,7 +4,7 @@
 export enum ConnectionType {
     INPUT = 'input',
     OUTPUT = 'output',
-    VARIABLE = 'variable'
+    VARIABLE = 'variable',
 }
 
 /**
@@ -12,7 +12,7 @@ export enum ConnectionType {
  */
 export enum DefaultConnectionName {
     IN = 'In',
-    OUT = 'Out'
+    OUT = 'Out',
 }
 
 /**
@@ -20,7 +20,7 @@ export enum DefaultConnectionName {
  */
 export enum KismetBoolean {
     True = 'True',
-    False = 'False'
+    False = 'False',
 }
 
 /**
@@ -33,7 +33,7 @@ export enum NodeProperty {
     LINKS_INPUT = 'InputLinks',
     LINKS_OUTPUT = 'OutputLinks',
     LINKS_VARIABLE = 'VariableLinks',
-    NAME = 'ObjName'
+    NAME = 'ObjName',
 }
 
 /**
@@ -44,7 +44,7 @@ export enum NodeType {
     CONDITIONS = 'conditions',
     EVENTS = 'events',
     SEQUENCES = 'sequences',
-    VARIABLES = 'variables'
+    VARIABLES = 'variables',
 }
 
 /**
@@ -63,7 +63,7 @@ export enum PositionStyleOption {
     GRID = 'grid',
     MOUNTAIN = 'mountain',
     SCHEMA = 'schema',
-    WATERFALL = 'waterfall'
+    WATERFALL = 'waterfall',
 }
 
 /**
@@ -80,5 +80,5 @@ export enum VariablePositionStyleOption {
     INHERIT = 'inherit',
     ATTACH = 'attach',
     GLOBAL = 'global',
-    SCHEMA = 'schema'
+    SCHEMA = 'schema',
 }

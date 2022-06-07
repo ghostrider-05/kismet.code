@@ -39,6 +39,8 @@ export class KismetError<T extends MessageKey> {
             process.stdout.write(_message)
             return
         } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
             const error = new Error(_message, { cause: options?.cause })
 
             throw error

@@ -1,5 +1,9 @@
 import { existsSync, readdirSync } from 'fs'
-import { isType } from '../../shared/index.js'
+import { mkdir } from 'fs/promises'
+import { resolve } from 'path'
+
+import { arrayUnionInput, isType } from '../../shared/index.js'
+import type { PathInput } from '../../types/index.js'
 
 export function _validateNodeInput (json: Record<string, unknown>): boolean {
     return (
@@ -10,7 +14,7 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
             'flags',
             'replicated',
             'name',
-            'type'
+            'type',
         ]) &&
         isType('array', json.defaultproperties, ['name']) &&
         isType('object', json.enums) &&
@@ -18,7 +22,14 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
     )
 }
 
-export function _validatePaths (paths: string[]): boolean {
+export function _validatePaths (
+    input: Partial<Omit<PathInput, 'packages'>>
+): boolean {
+    const paths = Object.keys(input)
+        .map(key => input[key as keyof typeof input])
+        .filter(n => n)
+    if (paths.filter(n => n != undefined).length === 0) return false
+
     return paths.every(path => {
         const isValid = path && existsSync(path)
         if (!isValid) console.warn(`Could not find path: ${path}`)
@@ -27,26 +38,55 @@ export function _validatePaths (paths: string[]): boolean {
     })
 }
 
+async function _validateSubPath (path: string, key: string): Promise<void> {
+    const createPath = (end?: string) =>
+        resolve('.', './' + path.concat(end ?? ''))
+
+    if (!existsSync(createPath())) await mkdir(createPath())
+    if (!existsSync(createPath(`./${key}/`)))
+        await mkdir(createPath(`./${key}/`))
+    if (!existsSync(createPath(`./${key}/Classes/`)))
+        await mkdir(createPath(`./${key}/Classes/`))
+}
+
+export async function _validateSubPaths (
+    path: string,
+    key: string | string[]
+): Promise<void[]> {
+    const keys = arrayUnionInput(key)
+
+    return await Promise.all(
+        keys.map(async k => await _validateSubPath(path, k))
+    )
+}
+
 export function _validatePackage (
-    importPath: string,
     name: string,
-    packageList?: string[]
+    paths: Omit<PathInput, 'exportPath'>,
+    includeClasses: boolean
 ): {
     kismetNodes: string[]
     path: string
 } | null {
+    const { importPath, packages } = paths
     const path = [importPath].concat(name, '.Classes', '.json').join('\\')
 
-    if (!_validatePaths([path])) return null
+    if (
+        !_validatePaths({
+            importPath: path,
+        })
+    )
+        return null
 
     const kismetNodes = readdirSync(path).filter(file => {
         return (
-            file.toLowerCase().startsWith('seq') &&
-            !file.toLowerCase().startsWith('sequence')
+            includeClasses ||
+            (file.toLowerCase().startsWith('seq') &&
+                !file.toLowerCase().startsWith('sequence'))
         )
     })
 
-    if ((packageList?.length ?? 0) > 0 && !packageList?.includes(name)) {
+    if ((packages?.length ?? 0) > 0 ? !packages?.includes(name) : false) {
         return null
     }
 

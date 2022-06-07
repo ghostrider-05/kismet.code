@@ -1,4 +1,7 @@
-import type { KismetConnectionType, UnrealJsonReadFile } from '../types'
+import type { 
+    KismetConnectionType, 
+    UnrealJsonReadFile 
+} from '../types/index.js'
 
 const formatLinks = (links: Record<KismetConnectionType, string[]>): string => {
     const formatted = JSON.stringify(links, null, 4)
@@ -22,7 +25,7 @@ export class ${node.name} extends SequenceAction {
             inputs: ${formatLinks(node.links)}
         })
     }
-${node.staticProperties ?? ''}
+${node.staticProperties}
 }`
 
 export const conditions = (node: UnrealJsonReadFile): string => `
@@ -38,7 +41,7 @@ export class ${node.name} extends SequenceCondition {
                 inputs: ${formatLinks(node.links)}
             })
         }
-        ${node.staticProperties ?? ''}
+        ${node.staticProperties}
 }`
 
 export const events = (node: UnrealJsonReadFile): string => `
@@ -52,6 +55,23 @@ export class ${node.name} extends SequenceEvent {
             ObjInstanceVersion: 3,
             ObjectArchetype: ${node.archetype},
             inputs: ${formatLinks(node.links)},
+            ...options
+        })
+    }
+}
+`
+
+export const variables = (node: UnrealJsonReadFile): string => `
+/* eslint-disable no-mixed-spaces-and-tabs */
+import { SequenceVariable } from "../../../structures/Sequence/index.js";
+import { KismetVariableOptions, BaseKismetItemOptions } from "../../../types/index.js";
+
+export class ${node.name} extends SequenceVariable {
+    constructor (options?: KismetVariableOptions & BaseKismetItemOptions) {
+        super({
+            ObjInstanceVersion: 3,
+            ObjectArchetype: ${node.archetype},
+            inputs: {},
             ...options
         })
     }

@@ -11,7 +11,7 @@ import type {
     SequenceItemType,
     SequencePositionManagerOptions,
     SequenceSchemaOptions,
-    SequenceSchemaVariableOptions
+    SequenceSchemaVariableOptions,
 } from '../../types/index.js'
 
 const { PositionStyleOption, VariablePositionStyleOption } = Constants
@@ -89,7 +89,7 @@ export class SequencePositionManager {
                 output.push({
                     id: Var.linkId,
                     x: itemPos.x + i * 200,
-                    y: itemPos.y - 200
+                    y: itemPos.y - 200,
                 })
             } else if (
                 style === VariablePositionStyleOption.GLOBAL &&
@@ -103,7 +103,7 @@ export class SequencePositionManager {
 
                 const position = {
                     x: bounds[0] + ratio * (i % (Vars.length - 1)),
-                    y: bounds[1] + (1 / ratio) * (i % (Vars.length - 1))
+                    y: bounds[1] + (1 / ratio) * (i % (Vars.length - 1)),
                 }
 
                 output.push({ ...position, id: Var.linkId })
@@ -144,11 +144,11 @@ export class SequencePositionManager {
 
         let lastPosition: KismetPosition = {
             x: options.startX,
-            y: options.startY
+            y: options.startY,
         }
         const multipliers: KismetPosition = {
             x: style === PositionStyleOption.GRID ? 1 : 0.75,
-            y: style === PositionStyleOption.WATERFALL ? -1 : 1
+            y: style === PositionStyleOption.WATERFALL ? -1 : 1,
         }
 
         const items = type
@@ -168,7 +168,7 @@ export class SequencePositionManager {
             } else if (item.isSequenceItem()) {
                 const newPosition = {
                     x: lastPosition.x + multipliers.x * options.spaceBetween,
-                    y: lastPosition.y + multipliers.y * options.spaceBetween
+                    y: lastPosition.y + multipliers.y * options.spaceBetween,
                 }
 
                 lastPosition = newPosition
@@ -200,7 +200,7 @@ export class SequencePositionManager {
             if (this.style !== PositionStyleOption.NONE)
                 positions = this.applyStyle(sequenceItems, {
                     style: this.style,
-                    options: this.options
+                    options: this.options,
                 })
         } else {
             for (const schema of this.schema) {
