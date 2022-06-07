@@ -12,4 +12,5 @@ nodes.json
 
 # Other
 *.cs
+*.txt
 *.py
