@@ -17,9 +17,6 @@ Node 16.6.0 or newer is required.
 npm install kismet.ts
 ```
 
-<!-- Remove when published on NPM -->
-> Beta: install with `npm i ghostrider-05/kismet.ts` and generate the dist folder
-
 ### Links
 
 - [Documentation][docs]

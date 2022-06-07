@@ -149,7 +149,7 @@ export interface KismetObjectCommentOptions {
     supressAutoComment?: boolean
 }
 
-interface BaseKismetEventOptions {
+export interface BaseKismetEventOptions {
     maxTriggerCount?: number
     triggerDelay?: number
     enabled?: boolean
@@ -157,7 +157,7 @@ interface BaseKismetEventOptions {
     clientSideOnly?: boolean
 }
 
-interface BaseKismetVariableOptions {
+export interface BaseKismetVariableOptions {
     name?: string
 }
 

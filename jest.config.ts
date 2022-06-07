@@ -3,7 +3,7 @@ export default {
     collectCoverage: true,
     //TODO: write tests for items
     collectCoverageFrom: [
-        '**/*.{js,ts}',
+        '**/*.js',
         '!src/items/actions/Classes/*.{js,ts}',
         '!src/items/conditions/Classes/*.{js,ts}',
         '!src/items/events/Classes/*.{js,ts}',

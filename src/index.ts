@@ -9,7 +9,7 @@ import {
     SequenceCondition,
     SequenceEvent,
     SequenceVariable,
-    KismetFile
+    KismetFile,
 } from './structures/index.js'
 
 import { Constants, clipboard } from './shared/index.js'
@@ -22,7 +22,7 @@ const Structures = {
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
-    SequenceVariable
+    SequenceVariable,
 }
 
 const Util = class Util {

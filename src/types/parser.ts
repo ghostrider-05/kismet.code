@@ -17,21 +17,17 @@ export interface PathInput {
     packages?: string[]
 }
 
-interface _ExportOptions<T extends boolean = true>
+export interface ExportOptions<T extends boolean = boolean>
     extends Record<string, unknown> {
     debug?: boolean
     groupItems?: boolean
     json?: boolean
     blender?: T
-    blenderOptions: If<T, BlenderAddonGeneratorOptions> | undefined
+    blenderOptions?: If<T, BlenderAddonGeneratorOptions> | undefined
     types?: Enum<Exclude<NodeType, NodeType.SEQUENCES>>[]
     classes?: boolean
     //sort?: 'package' | 'name' TODO: implement
 }
-
-export type ExportOptions<T extends boolean = boolean> = Partial<
-    _ExportOptions<T>
->
 
 export interface PathCreateOptions {
     check?: boolean

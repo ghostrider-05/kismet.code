@@ -1,11 +1,12 @@
 {
   "name": "kismet.ts",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Make kismet from code",
-  "main": "./src/dist/src/index.js",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config './src/dist/jest.config.js'",
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config ./src/dist/jest.config.js",
     "test:update": "npm run build && npm test",
     "build": "tsc",
     "prestart": "npm run build",
@@ -24,17 +25,27 @@
   ],
   "author": "ghostrider-05",
   "license": "unlicense",
+  "repository": {
+    "url": "github:ghostrider-05/kismet.ts"
+  },
+  "homepage": "https://github.com/ghostrider-05/kismet.ts",
+  "bugs": {
+    "url": "https://github.com/ghostrider-05/kismet.ts/issues"
+  },
+  "files": [
+    "src/dist/src"
+  ],
   "devDependencies": {
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^28.1.1",
     "@types/node": "^16.6.1",
-    "@typescript-eslint/eslint-plugin": "^5.16.0",
-    "@typescript-eslint/parser": "^5.16.0",
-    "dotenv": "^16.0.0",
-    "eslint": "^8.12.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
-    "jest": "^27.5.1",
-    "prettier": "^2.6.1",
-    "typescript": "^4.6.3"
+    "jest": "^28.1.1",
+    "prettier": "^2.6.2",
+    "typescript": "^4.7.3"
   },
   "dependencies": {
     "clipboardy": "^3.0.0"

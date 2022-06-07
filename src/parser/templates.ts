@@ -1,6 +1,6 @@
-import type { 
-    KismetConnectionType, 
-    UnrealJsonReadFile 
+import type {
+    KismetConnectionType,
+    UnrealJsonReadFile,
 } from '../types/index.js'
 
 const formatLinks = (links: Record<KismetConnectionType, string[]>): string => {
