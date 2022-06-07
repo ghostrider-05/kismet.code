@@ -7,7 +7,7 @@ export const defaultOptions: Required<ExportOptions> = {
     json: false,
     blenderOptions: {},
     classes: false,
-    types: ['actions', 'conditions', 'events', 'variables']
+    types: ['actions', 'conditions', 'events', 'variables'],
 }
 
 export const _defaultExportOptions = (
@@ -24,7 +24,7 @@ export const _defaultExportOptions = (
         .reduce(
             (prev, [key, value]) => ({
                 ...prev,
-                [key]: value
+                [key]: value,
             }),
             {} as Required<ExportOptions>
         )

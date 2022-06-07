@@ -1,4 +1,4 @@
-import { linkIcon } from "../node/index.js"
+import { linkIcon } from '../node/index.js'
 
 export const operatorTemplate = (options: {
     paperclip: boolean
@@ -71,10 +71,14 @@ def validate_sockets (link):
     from_icon = link.from_socket.display_shape
     to_icon = link.to_socket.display_shape
 
-    is_var_link = from_icon == '${linkIcon('variables')}' or to_icon == '${linkIcon('variables')}'
+    is_var_link = from_icon == '${linkIcon(
+        'variables'
+    )}' or to_icon == '${linkIcon('variables')}'
 
     if is_var_link:
-        return from_icon == '${linkIcon('variables')}' and to_icon == '${linkIcon('variables')}'
+        return from_icon == '${linkIcon(
+            'variables'
+        )}' and to_icon == '${linkIcon('variables')}'
     else:
         return True
 
@@ -243,7 +247,11 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 ${options.paperclip ? '        paperclip.copy(sequence_text.rstrip())' : ''}
 ${options.log ? '        print(sequence_text.rstrip())' : ''}
 
-        self.report({ 'INFO' }, ${options.paperclip ? 'Copied kismet nodes' : 'Logged kismet nodes to console'})
+        self.report({ 'INFO' }, ${
+            options.paperclip
+                ? 'Copied kismet nodes'
+                : 'Logged kismet nodes to console'
+        })
 
         return { 'FINISHED' }
 

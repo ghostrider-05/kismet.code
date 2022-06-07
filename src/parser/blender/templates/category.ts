@@ -4,7 +4,10 @@ interface RegisterOptions {
     register: boolean
 }
 
-const registorFunction = (enabled: boolean) => !enabled ? '' : `
+const registorFunction = (enabled: boolean) =>
+    !enabled
+        ? ''
+        : `
 def register():
     from bpy.utils import register_class
     for cls in classes:
@@ -29,7 +32,10 @@ if __name__ == "__main__":
     register()
 `
 
-export const registerTemplate = (categories: Record<string, string[]>, options: RegisterOptions) => `
+export const registerTemplate = (
+    categories: Record<string, string[]>,
+    options: RegisterOptions
+) => `
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 

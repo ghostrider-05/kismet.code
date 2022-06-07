@@ -26,6 +26,7 @@ interface _ExportOptions<T extends boolean = true>
     blenderOptions: If<T, BlenderAddonGeneratorOptions> | undefined
     types?: Enum<Exclude<NodeType, NodeType.SEQUENCES>>[]
     classes?: boolean
+    //sort?: 'package' | 'name' TODO: implement
 }
 
 export type ExportOptions<T extends boolean = boolean> = Partial<
@@ -107,6 +108,6 @@ export type UnrealJsonReadFileNode = Omit<
     displayName?: string
     links: Record<
         KismetConnectionType,
-        { name: string; expectedType?: string, isOutput?: boolean }[]
+        { name: string; expectedType?: string; isOutput?: boolean }[]
     >
 }

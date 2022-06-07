@@ -27,17 +27,26 @@ describe('main project', () => {
 
     test('list project items', () => {
         const items = {
-            Actions: [
-                builders.actionBuilder(),
-                builders.actionBuilder(),
-                builders.actionBuilder()
-            ],
-            Events: [builders.eventBuilder()]
+            Actions: {
+                name: builders.actionBuilder(),
+                name2: builders.actionBuilder(),
+                name3: builders.actionBuilder(),
+                name4: {
+                    invalid: builders.actionBuilder(),
+                },
+            },
+            Events: { name: builders.eventBuilder() },
+            Conditions: {},
+            Variables: {},
         }
 
         expect(KismetFile.listItems(items)).toEqual([
-            ...items.Actions,
-            ...items.Events
+            ...Object.keys(items.Actions)
+                .map(key =>
+                    key !== 'name4' ? items.Actions[<never>key] : undefined
+                )
+                .filter(n => n),
+            ...Object.keys(items.Events).map(key => items.Events[<never>key]),
         ])
     })
 

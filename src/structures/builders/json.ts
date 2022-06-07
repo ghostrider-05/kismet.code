@@ -12,15 +12,15 @@ export const JSONnode = {
             name: 'LevelNames',
             type: 'array<name>',
             replicated: 'False',
-            category: ''
+            category: '',
         },
         {
             flags: '',
             name: 'bShouldBlockOnLoad',
             type: 'bool',
             replicated: 'False',
-            category: ''
-        }
+            category: '',
+        },
     ],
     category: '"Engine"',
     type: 'actions',
@@ -30,20 +30,20 @@ export const JSONnode = {
     defaultproperties: [
         {
             name: 'bShouldBlockOnLoad',
-            value: 'true'
-        }
+            value: 'true',
+        },
     ],
     links: {
         input: [
             {
-                name: '"Wait"'
-            }
+                name: '"Wait"',
+            },
         ],
         output: [
             {
-                name: '"Finished"'
-            }
+                name: '"Finished"',
+            },
         ],
-        variable: []
-    }
+        variable: [],
+    },
 }

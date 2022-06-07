@@ -1,33 +1,51 @@
-import { isPlaceableClass } from "../../utils/ClassManager.js"
-import { variableBlenderType } from "./variable.js"
+import { isPlaceableClass } from '../../utils/ClassManager.js'
+import { variableBlenderType } from './variable.js'
 
-import type { UnrealJsonReadFile } from "../../../types/index.js"
+import type { UnrealJsonReadFile } from '../../../types/index.js'
 
-const template = (name: string, properties: Readonly<[string, string, string | undefined]>[]) => `
+const template = (
+    name: string,
+    properties: Readonly<[string, string, string | undefined]>[]
+) => `
 class ${name}(bpy.types.PropertyGroup):
 ${properties.map(p => `   ${p[0]}: bpy.props.${p[1]}(${p[2] ?? ''})`)}
 `
 
 export function resolveArrayType (input: string) {
-    return input.includes('array<') 
-        ? input.slice('array<'.length + 1, -1).split(' ').filter(n => n).at(-1)
+    return input.includes('array<')
+        ? input
+              .slice('array<'.length + 1, -1)
+              .split(' ')
+              .filter(n => n)
+              .at(-1)
         : undefined
 }
 
-function resolveStructure (name: string, classes: Partial<UnrealJsonReadFile>[], includeClasses = true) {
-    const findName = (s: { name?: string}) => s.name === name
+function resolveStructure (
+    name: string,
+    classes: Partial<UnrealJsonReadFile>[],
+    includeClasses = true
+) {
+    const findName = (s: { name?: string }) => s.name === name
 
-    const struct = (includeClasses ? classes.find(findName) : undefined)
-        ?? classes.find(item => item.structures?.find(findName))?.structures?.find(findName)
+    const struct =
+        (includeClasses ? classes.find(findName) : undefined) ??
+        classes
+            .find(item => item.structures?.find(findName))
+            ?.structures?.find(findName)
 
-    const variables = struct && 'properties' in struct ? struct.properties : struct?.variables
+    const variables =
+        struct && 'properties' in struct ? struct.properties : struct?.variables
 
-    if (!variables) return 
+    if (!variables) return
 
     return variables.filter(n => n.category !== null)
 }
 
-export function formatStructure (name: string, classes: Partial<UnrealJsonReadFile>[]) {
+export function formatStructure (
+    name: string,
+    classes: Partial<UnrealJsonReadFile>[]
+) {
     const variables = resolveStructure(name, classes, true)
     if (!variables) {
         console.log(`Unable to resolve structure ${name}`)
@@ -45,4 +63,3 @@ export function formatStructure (name: string, classes: Partial<UnrealJsonReadFi
 
     return template(name, properties)
 }
-

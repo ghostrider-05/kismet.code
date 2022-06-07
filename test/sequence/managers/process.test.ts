@@ -42,7 +42,7 @@ describe('process manager', () => {
         expect(ProcessManager.debug('test')).toBeUndefined()
 
         const id = ProcessManager.attachProject('test_process_4', {
-            debug: true
+            debug: true,
         })
         expect(ProcessManager.processes['test_process_4']).toBeTruthy()
 
@@ -54,7 +54,7 @@ describe('process manager', () => {
         // project options
         ProcessManager.attachProject('test_process_5')
         expect(ProcessManager.processes['test_process_4'].options).toEqual({
-            debug: true
+            debug: true,
         })
         expect(ProcessManager.processes['test_process_5'].options).toEqual({})
 

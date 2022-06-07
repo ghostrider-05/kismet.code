@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.3
+
+- `SequenceAction.addConnection` is now deprecated
+
+### Bug fixes
+
+- types: export type
+- classParser: allow class names with /
+
+### Features
+
+- items: update to v2.13
+- blender: add addon generator
+- classParser: add variables and Blender support
+- errors: add `INVALID_PATH`
+- **Util.Color**: add `setHexColor` method
+- **KismetFile**: improve `list*Items` methods
+- **BaseSequenceItem**: set position with offset
+- **SequenceAction**: add `addOutputConnection` method
+- **VariableConnection**: add `isOutput` method
+- **BaseKismetItemOptions**: allow overwriting with `index`
+
 ## 1.0.0-beta.2
 
 - `<Class>#toKismet` is now deprecated on all classes in favour of `<Class>#toString`

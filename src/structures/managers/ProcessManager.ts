@@ -27,7 +27,7 @@ export class ProcessId {
 
         return {
             name,
-            count: Number(count)
+            count: Number(count),
         }
     }
 
@@ -114,7 +114,7 @@ class ProcessDataManager extends ProcessIdManager {
             name,
             options: options ?? {},
             ids: new Map(),
-            overwrittenIds: new Map()
+            overwrittenIds: new Map(),
         }
 
         return id
@@ -139,7 +139,7 @@ class ProcessDataManager extends ProcessIdManager {
 
         return {
             content,
-            completed: true
+            completed: true,
         }
     }
 

@@ -3,7 +3,7 @@ import { Sequence } from '../base.js'
 import {
     BaseKismetConnection,
     ItemConnection,
-    VariableConnection
+    VariableConnection,
 } from './link.js'
 
 import { ProcessId, ProcessManager } from '../../managers/index.js'
@@ -13,7 +13,8 @@ import {
     filterEmptyLines,
     mapObjectKeys,
     parseVar,
-    quote
+    quote,
+    readArchetype,
 } from '../../../shared/index.js'
 
 import type {
@@ -25,7 +26,7 @@ import type {
     SequenceItemType,
     SequenceItemTypeName,
     KismetVariablesType,
-    KismetPosition
+    KismetPosition,
 } from '../../../types/index.js'
 
 const { KISMET_NODE_LINES, MAIN_SEQUENCE, ObjInstanceVersions } = Constants
@@ -53,7 +54,7 @@ export class BaseSequenceItem extends BaseItem {
         this.sequence = MAIN_SEQUENCE
 
         this._setConnections(options.inputs)
-        const { Class, Package } = this._readArchetype(options.ObjectArchetype)
+        const { Class, Package } = readArchetype(options.ObjectArchetype)
 
         this.kismet = {
             x: 0,
@@ -66,23 +67,13 @@ export class BaseSequenceItem extends BaseItem {
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
                 height: options.Draw?.height ?? null,
-                maxWidth: options.Draw?.maxWidth ?? null
-            }
+                maxWidth: options.Draw?.maxWidth ?? null,
+            },
         }
 
-        this.id = ProcessManager.id(this.kismet.class)
-    }
-
-    private _readArchetype (
-        archetype: string
-    ): Record<'Class' | 'Package', string> {
-        const [Class, defaultClass] = archetype.split("'")
-        const [Package] = defaultClass.split('.')
-
-        return {
-            Class,
-            Package
-        }
+        this.id = ProcessManager.id(this.kismet.class, {
+            index: options.index,
+        })
     }
 
     private _setConnections (inputs: BaseKismetItemOptions['inputs']): void {
@@ -106,7 +97,7 @@ export class BaseSequenceItem extends BaseItem {
         if (!links)
             return {
                 key,
-                connections: []
+                connections: [],
             }
 
         if (links.length === 0 && ['input', 'output'].includes(key)) {
@@ -118,9 +109,9 @@ export class BaseSequenceItem extends BaseItem {
                         : [
                               new BaseKismetConnection({
                                   input: key === 'input' ? 'In' : 'Out',
-                                  type: key as KismetConnectionType
-                              })
-                          ]
+                                  type: key as KismetConnectionType,
+                              }),
+                          ],
             }
         } else
             return {
@@ -135,7 +126,7 @@ export class BaseSequenceItem extends BaseItem {
                     .filter(n => n != undefined) as (
                     | ItemConnection
                     | VariableConnection
-                )[]
+                )[],
             }
     }
 
@@ -147,7 +138,7 @@ export class BaseSequenceItem extends BaseItem {
             ObjInstanceVersion,
             ParentSequence,
             x,
-            y
+            y,
         } = this.kismet
 
         const json: Record<string, KismetVariablesType> = {
@@ -160,7 +151,7 @@ export class BaseSequenceItem extends BaseItem {
             MaxWidth: DrawConfig.maxWidth ?? null,
             DrawHeight: DrawConfig.height ?? null,
             Name: quote(this.getKismetName()),
-            ObjectArchetype
+            ObjectArchetype,
         }
 
         return json
@@ -178,7 +169,7 @@ export class BaseSequenceItem extends BaseItem {
                 this.kismet.class
             ),
             filterEmptyLines(properties),
-            KISMET_NODE_LINES.end
+            KISMET_NODE_LINES.end,
         ]
 
         return item.join('\n')
@@ -219,7 +210,7 @@ export class BaseSequenceItem extends BaseItem {
     public setComment ({
         comment,
         supressAutoComment,
-        outputCommentToScreen
+        outputCommentToScreen,
     }: {
         comment?: string
         supressAutoComment?: boolean
@@ -232,11 +223,11 @@ export class BaseSequenceItem extends BaseItem {
         return this
     }
 
-    public setPosition (position: KismetPosition): this {
+    public setPosition (position: KismetPosition, offset?: boolean): this {
         const { x, y } = position
 
-        this.kismet.x = x
-        this.kismet.y = y
+        this.kismet.x = x + (offset ? this.kismet.x : 0)
+        this.kismet.y = y + (offset ? this.kismet.y : 0)
 
         return this
     }

@@ -48,5 +48,5 @@ class RemoveKismetArrayOperator(bpy.types.Operator):
 
 export const ArrayUIList = {
     classes,
-    layout
+    layout,
 }

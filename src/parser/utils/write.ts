@@ -6,7 +6,7 @@ import { nodeToJSON } from '../read.js'
 
 import {
     BlenderAddonGenerator,
-    BlenderAddonGeneratorOptions
+    BlenderAddonGeneratorOptions,
 } from '../blender/parser.js'
 
 import { Constants, stringFirstCharUppercase } from '../../shared/index.js'
@@ -15,7 +15,7 @@ import type {
     If,
     JsonFile,
     UnrealJsonReadFile,
-    UnrealJsonReadFileNode
+    UnrealJsonReadFileNode,
 } from '../../types/index.js'
 
 const { NodeType } = Constants
@@ -86,7 +86,7 @@ export const writeNode = async (
 
     const output: { jsonNode?: UnrealJsonReadFileNode; Class?: JsonFile } = {
         jsonNode: undefined,
-        Class: undefined
+        Class: undefined,
     }
 
     const nodeContent = _fileContent(node)
@@ -103,7 +103,7 @@ export const writeNode = async (
             name,
             category,
             type,
-            Package: options.Package
+            Package: options.Package,
         }
     })
 
@@ -126,7 +126,11 @@ async function writeCategory<T extends boolean = true> (
 }
 
 function setup (path: string) {
-    return async function writeData (items: unknown[], file: string, data?: string) {
+    return async function writeData (
+        items: unknown[],
+        file: string,
+        data?: string
+    ) {
         if (items.length > 0) {
             await writeFile(
                 createPath(path + file),
@@ -140,13 +144,7 @@ export async function writePackages<T extends boolean = true> (
     options: PackageWriteOptions<T>
 ): Promise<void> {
     const exportedPaths: string[] = []
-    const {
-        classes,
-        json,
-        blender,
-        blenderOptions,
-        externalClasses
-    } = options
+    const { classes, json, blender, blenderOptions, externalClasses } = options
 
     for (const category of Object.keys(classes)) {
         const categoryPath = await writeCategory(category, options)

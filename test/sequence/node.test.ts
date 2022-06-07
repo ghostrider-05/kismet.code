@@ -8,7 +8,7 @@ const {
     eventBuilder,
     nodeBuilder,
     sequenceBuilder,
-    variableBuilder
+    variableBuilder,
 } = builders
 
 const { Actions, Events } = KismetFile.Items
@@ -112,7 +112,7 @@ describe('sequence event', () => {
             triggerDelay: 1,
             enabled: false,
             playerOnly: true,
-            clientSideOnly: true
+            clientSideOnly: true,
         })
 
         expect(optionEvent.trigger.maxCount).toBe(1)
@@ -145,7 +145,7 @@ describe('sequence event', () => {
             new MainMenuSwitched()
                 .on({
                     name: 'Changed',
-                    item: actionBuilder()
+                    item: actionBuilder(),
                 })
                 .getConnection('output', 'Changed')?.links?.length
         ).toBe(1)
@@ -154,11 +154,11 @@ describe('sequence event', () => {
             new MainMenuSwitched()
                 .on({
                     name: 'Changed',
-                    item: actionBuilder()
+                    item: actionBuilder(),
                 })
                 .on({
                     name: 'Changed',
-                    item: conditionBuilder()
+                    item: conditionBuilder(),
                 })
                 .getConnection('output', 'Changed')?.links?.length
         ).toBe(2)
@@ -167,7 +167,7 @@ describe('sequence event', () => {
         expect(() =>
             new MainMenuSwitched().on({
                 name: 'test',
-                item: actionBuilder()
+                item: actionBuilder(),
             })
         ).toThrowError()
 
@@ -176,7 +176,7 @@ describe('sequence event', () => {
             new MainMenuSwitched().on({
                 name: 'Changed',
                 // @ts-expect-error
-                item: variableBuilder()
+                item: variableBuilder(),
             })
         ).toThrowError()
     })

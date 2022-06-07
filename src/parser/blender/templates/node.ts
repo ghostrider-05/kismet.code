@@ -4,21 +4,24 @@ import {
     formatVariables,
     formatVariableNames,
     formatConnections,
-    formatVariableSockets
+    formatVariableSockets,
 } from '../node/index.js'
 
 import { Constants } from '../../../shared/index.js'
 
-import type { 
+import type {
     UnrealJsonReadFile,
-    UnrealJsonReadFileNode 
+    UnrealJsonReadFileNode,
 } from '../../../types/index.js'
 
 const displayName = (node: UnrealJsonReadFileNode) => {
     return node.displayName ?? `"${node.Class}"`
 }
 
-export const classTemplate = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[]) => `
+export const classTemplate = (
+    node: UnrealJsonReadFileNode,
+    classes: Partial<UnrealJsonReadFile>[]
+) => `
 class ${node.Class}(Node, KismetNodeTreeNode):
     '''${node.Package}/${node.Class}'''
     bl_idname = '${node.Class}'

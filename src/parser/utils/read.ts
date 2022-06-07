@@ -1,9 +1,9 @@
-import { Constants } from "../../shared/index.js"
+import { Constants } from '../../shared/index.js'
 
-import type { 
+import type {
     RawUnrealJsonDefaultVariables,
-    RawUnrealJsonVariable 
-} from "../../types/index.js"
+    RawUnrealJsonVariable,
+} from '../../types/index.js'
 
 export class NodeProperties {
     private properties: RawUnrealJsonDefaultVariables[]
@@ -46,9 +46,9 @@ export function getStaticProperties (variables: RawUnrealJsonVariable[]) {
                                   `${i > 0 ? '\t' : ''}\t${v.name}:'${v.name}'`
                           )
                           .join(',\n'),
-                      '}'
+                      '}',
                   ]
-                : []
+                : [],
     }
 
     const staticProperties =
@@ -59,30 +59,40 @@ export function getStaticProperties (variables: RawUnrealJsonVariable[]) {
     return staticProperties
 }
 
-const nodeMatchDescriptions = <B extends string = ''>() => <T extends string>(
-    links: string[], 
-    matches: [T, RegExp, string | undefined][]
-) => {
-    return links.map(link => matches.reduce((output, match) => {
-        const value = link.match(match[1])?.[0]
+const nodeMatchDescriptions =
+    <B extends string = ''>() =>
+    <T extends string>(
+        links: string[],
+        matches: [T, RegExp, string | undefined][]
+    ) => {
+        return links.map(link =>
+            matches.reduce(
+                (output, match) => {
+                    const value = link.match(match[1])?.[0]
 
-        return {
-            ...output,
-            [match[0]]: match[2] != undefined ? match[2] === value : value
-        }
-    }, {} as {
-        [K in T]: K extends B ? boolean : string
-    }))
-}
+                    return {
+                        ...output,
+                        [match[0]]:
+                            match[2] != undefined ? match[2] === value : value,
+                    }
+                },
+                {} as {
+                    [K in T]: K extends B ? boolean : string
+                }
+            )
+        )
+    }
 
 export const nodeLinks = {
-    node: (links: string[]) => nodeMatchDescriptions()(links, [
-        ['name', /(?<=LinkDesc=)(.*?)(?=,)/g, undefined]
-    ]),
+    node: (links: string[]) =>
+        nodeMatchDescriptions()(links, [
+            ['name', /(?<=LinkDesc=)(.*?)(?=,)/g, undefined],
+        ]),
 
-    variable: (links: string[]) => nodeMatchDescriptions<'isOutput'>()(links, [
-        ['name', /(?<=LinkDesc=)(.*?)(?=,)/g, undefined],
-        ['expectedType', /(?<=ExpectedType=)(.*?)(?=,)/g, undefined],
-        ['isOutput', /(?<=bWriteable=)(.*?)(?=,)/g, 'true']
-    ])
+    variable: (links: string[]) =>
+        nodeMatchDescriptions<'isOutput'>()(links, [
+            ['name', /(?<=LinkDesc=)(.*?)(?=,)/g, undefined],
+            ['expectedType', /(?<=ExpectedType=)(.*?)(?=,)/g, undefined],
+            ['isOutput', /(?<=bWriteable=)(.*?)(?=,)/g, 'true'],
+        ]),
 }

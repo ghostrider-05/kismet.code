@@ -24,14 +24,14 @@ export class Comment extends BaseSequenceItem {
     constructor (comment?: string) {
         super({
             ObjectArchetype: `SequenceFrame'Engine.Default__SequenceFrame'`,
-            inputs: {}
+            inputs: {},
         })
 
         this.comment = comment ?? 'Comment'
 
         this.size = {
             x: 128,
-            y: 64
+            y: 64,
         }
 
         this.drawBox = false
@@ -133,20 +133,20 @@ export class Comment extends BaseSequenceItem {
             ['BorderColor', this.borderColor.toString()],
             ['FillColor', this.fillColor.toString()],
             ['FillMaterial', this.fillMaterial ?? ''],
-            ['FillTexture', this.fillTexture ?? '']
+            ['FillTexture', this.fillTexture ?? ''],
         ]
 
         const json = variables.reduce(
             (prev, curr) => ({
                 ...prev,
-                [curr[0]]: curr[1]
+                [curr[0]]: curr[1],
             }),
             {}
         )
 
         return {
             ...json,
-            ...super.toJSON()
+            ...super.toJSON(),
         }
     }
 

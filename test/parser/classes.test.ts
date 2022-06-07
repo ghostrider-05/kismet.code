@@ -7,13 +7,13 @@ import { findClasses } from '../../src/parser/find.js'
 import {
     catchFileWriteError,
     getExportFile,
-    writeFile
+    writeFile,
 } from '../../src/parser/utils/files.js'
 
 import { _debug } from '../../src/parser/utils/options.js'
 import {
     _validateNodeInput,
-    _validatePackage
+    _validatePackage,
 } from '../../src/parser/utils/validate.js'
 
 import type { JsonFile } from '../../src/types/index.js'
@@ -82,7 +82,7 @@ describe('class parser', () => {
                 name: 'Class',
                 Package: 'Engine',
                 type: 'actions',
-                category: 'Test'
+                category: 'Test',
             }
 
             expect(getExportFile([], false)).toBe('')

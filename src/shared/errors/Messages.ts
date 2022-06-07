@@ -17,7 +17,7 @@ export const Messages = {
         Overwrite the sequence by provide a new sequence structure`,
     SEQUENCE_EMPTY: (name: string) => `Sequence '${name}' is empty`,
     UNKNOWN_CONNECTION: (name: string, obj: string) =>
-        `Could not find output connection for '${name}' on ${obj}`
+        `Could not find output connection for '${name}' on ${obj}`,
 }
 
 export type MessageKey = keyof typeof Messages

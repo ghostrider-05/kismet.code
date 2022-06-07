@@ -4,7 +4,7 @@ import { addVariable, Constants, quote } from '../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
-    KismetVariableOptions
+    KismetVariableOptions,
 } from '../../types/index.js'
 
 export class SequenceVariable extends BaseSequenceItem {

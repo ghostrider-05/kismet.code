@@ -7,20 +7,17 @@ import { addVariable, boolToKismet } from '../../../shared/index.js'
 import type {
     BaseKismetItemOptions,
     KismetVariablesType,
-    SequenceItemTypeName
+    SequenceItemTypeName,
 } from '../../../types/index.js'
 
 export class SequenceNode extends BaseSequenceItem {
-    public hasBreakpoint: boolean
-    private variables: { name: string; value: string }[]
+    public hasBreakpoint = false
+    private variables: { name: string; value: string }[] = []
 
     constructor (
         options: BaseKismetItemOptions & { type?: SequenceItemTypeName }
     ) {
         super(options)
-
-        this.hasBreakpoint = false
-        this.variables = []
     }
 
     public setBreakPoint (enabled: boolean): this {
@@ -55,7 +52,7 @@ export class SequenceNode extends BaseSequenceItem {
             if (!this.variables.some(n => n.name === variableName)) {
                 this.variables.push({
                     name: variableName,
-                    value: value.toString()
+                    value: value.toString(),
                 })
             } else {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -70,14 +67,14 @@ export class SequenceNode extends BaseSequenceItem {
     public override toJSON (): Record<string, KismetVariablesType> {
         const breakpoint = this.hasBreakpoint
             ? {
-                  bIsBreakpointSet: this.hasBreakpoint
+                  bIsBreakpointSet: this.hasBreakpoint,
               }
             : {}
 
         const variables = this.variables.reduce(
             (prev, curr) => ({
                 ...prev,
-                [curr.name]: curr.value
+                [curr.name]: curr.value,
             }),
             {}
         )
@@ -85,7 +82,7 @@ export class SequenceNode extends BaseSequenceItem {
         return {
             ...breakpoint,
             ...variables,
-            ...super.toJSON()
+            ...super.toJSON(),
         }
     }
 
@@ -94,7 +91,7 @@ export class SequenceNode extends BaseSequenceItem {
 
         const properties: [string, string][] = this.variables.map(v => [
             v.name,
-            v.value
+            v.value,
         ])
 
         return addVariable(node, properties)

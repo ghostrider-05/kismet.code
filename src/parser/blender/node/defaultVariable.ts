@@ -1,6 +1,6 @@
-import { Constants } from "../../../shared/index.js"
+import { Constants } from '../../../shared/index.js'
 
-import type { Enum, If } from "../../../types/index.js"
+import type { Enum, If } from '../../../types/index.js'
 
 const defaultType = (value: string) => {
     if (['True', 'False'].includes(value)) return 'BoolProperty'
@@ -13,7 +13,7 @@ export const defaultVariables = () => {
     const base: [string, string][] = [
         ['ObjComment', `''`],
         ['bOutputObjCommentToScreen', 'False'],
-        ['bSuppressAutoComment', 'True']
+        ['bSuppressAutoComment', 'True'],
     ]
 
     const breakpoint: [string, string] = ['breakpoint', 'False']
@@ -24,14 +24,14 @@ export const defaultVariables = () => {
         ['bEnabled', 'True'],
         ['Priority', '0'],
         ['bPlayerOnly', 'True'],
-        ['bClientsideOnly', 'False']
+        ['bClientsideOnly', 'False'],
     ]
 
     return {
         base,
         breakpoint,
         event,
-        varName
+        varName,
     }
 }
 

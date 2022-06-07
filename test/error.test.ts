@@ -21,12 +21,12 @@ test('kismet error', () => {
     expect(
         () =>
             new KismetError('SEQUENCE_EMPTY', ['test_sequence'], {
-                error: false
+                error: false,
             })
     ).not.toThrowError()
     expect(
         new KismetError('SEQUENCE_EMPTY', ['test_sequence'], {
-            error: false
+            error: false,
         })
     ).toBeDefined()
 
@@ -36,7 +36,7 @@ test('kismet error', () => {
         () =>
             new KismetError('FLOAT_INPUT', undefined, {
                 cause: new Error(),
-                data: { origin: 'test' }
+                data: { origin: 'test' },
             })
     ).toThrowError()
 })

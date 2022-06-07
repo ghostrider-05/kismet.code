@@ -2,13 +2,16 @@ import { createWriteStream } from 'fs'
 import { writeFile } from 'fs/promises'
 
 import { groupByProperty } from '../../shared/index.js'
-import { UnrealJsonReadFile, UnrealJsonReadFileNode } from '../../types/index.js'
+import {
+    UnrealJsonReadFile,
+    UnrealJsonReadFileNode,
+} from '../../types/index.js'
 
 import {
     baseTemplate,
     classTemplate,
     operatorTemplate,
-    registerTemplate
+    registerTemplate,
 } from './templates/index.js'
 
 export interface BlenderAddonGeneratorOptions {
@@ -21,7 +24,7 @@ const createCategories = (nodes: UnrealJsonReadFileNode[]) => {
     return groupByProperty(nodes, 'type')
         .map(items => {
             return {
-                [items[0].type]: items.map(item => item.Class)
+                [items[0].type]: items.map(item => item.Class),
             }
         })
         .reduce((prev, curr) => ({ ...prev, ...curr }), {})
@@ -37,17 +40,18 @@ export class BlenderAddonGenerator {
 
         const categories = createCategories(nodes)
 
-        const nodeTemplate = (node: UnrealJsonReadFileNode) => classTemplate(node, classes)
+        const nodeTemplate = (node: UnrealJsonReadFileNode) =>
+            classTemplate(node, classes)
         const content = [
             baseTemplate(options?.copy ?? true),
             ...nodes.map(nodeTemplate),
             operatorTemplate({
                 paperclip: options?.copy ?? true,
-                log: options?.logSequence ?? true
+                log: options?.logSequence ?? true,
             }),
             registerTemplate(categories, {
-                register: options?.register ?? true
-            })
+                register: options?.register ?? true,
+            }),
         ].join('\n\n')
 
         //https://stackoverflow.com/questions/21817453/replace-multiple-blank-lines-in-text-using-javascript
@@ -62,7 +66,7 @@ export class BlenderAddonGenerator {
         await writeFile(path, '')
 
         const stream = createWriteStream(path, {
-            flags: 'a'
+            flags: 'a',
         })
 
         stream.write(content)

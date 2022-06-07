@@ -3,7 +3,7 @@ import {
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
-    SequenceVariable
+    SequenceVariable,
 } from '../structures/Sequence/index.js'
 
 import { NodeType } from './enums.js'

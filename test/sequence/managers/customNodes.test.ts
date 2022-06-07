@@ -24,6 +24,7 @@ describe('custom node manager', () => {
     })
 
     test('set export options', () => {
+        Classes.setExportOptions()
         expect(
             Classes.setExportOptions(Constants.defaultClassParserOptions)
                 .options
@@ -33,7 +34,7 @@ describe('custom node manager', () => {
         expect(
             Classes.setExportOptions({ debug: true }).setExportOptions({
                 debug: false,
-                json: true
+                json: true,
             }).options.debug
         ).toBe(false)
         expect(
@@ -44,7 +45,7 @@ describe('custom node manager', () => {
 
     test('set export packages', () => {
         expect(Classes.setClassPackages(['Engine']).packages).toEqual([
-            'Engine'
+            'Engine',
         ])
     })
 

@@ -10,7 +10,7 @@ import type {
     PathInput,
     RawUnrealJsonFile,
     UnrealJsonReadFile,
-    UnrealJsonReadFileNode
+    UnrealJsonReadFileNode,
 } from '../../types/index.js'
 
 interface NodeReadOptions {
@@ -38,7 +38,7 @@ function readNode (options: NodeReadOptions) {
 
     return {
         nodePath: exportPath.concat(`/${node.type}/Classes/${node.name}.ts`),
-        node
+        node,
     }
 }
 
@@ -61,7 +61,7 @@ async function readPackage (
             debug: options.debug ?? false,
             name: file,
             ...paths,
-            classes
+            classes,
         })
         if (!kismetNode) continue
         if (!externalClasses.some(x => x.Class === kismetNode.node.Class)) {
@@ -80,12 +80,12 @@ async function readPackage (
             (await writeNode(node, {
                 path: nodePath,
                 json: options.json || options.blender,
-                Package: name
+                Package: name,
             })) ?? {}
 
         items.push({
             jsonNode,
-            Class
+            Class,
         })
     }
 
@@ -97,8 +97,10 @@ function getSuperClasses (name: string, items: Partial<UnrealJsonReadFile>[]) {
     const Classes = [name]
     let latests: string | undefined = Extends
 
-    const isExtending = (name?: string) => name != undefined && name !== 'Object'
-    const extendingClasses = (list: string[]) => list.concat(latests ? [latests] : [])
+    const isExtending = (name?: string) =>
+        name != undefined && name !== 'Object'
+    const extendingClasses = (list: string[]) =>
+        list.concat(latests ? [latests] : [])
 
     if (!isExtending(Extends)) return extendingClasses(Classes)
 
@@ -112,9 +114,13 @@ function getSuperClasses (name: string, items: Partial<UnrealJsonReadFile>[]) {
     return extendingClasses(Classes)
 }
 
-export function isPlaceableClass (name: string, items: Partial<UnrealJsonReadFile>[]) {
-    return getSuperClasses(name, items)
-        .some(n => items.find(i => i.name === n)?.placeable)
+export function isPlaceableClass (
+    name: string,
+    items: Partial<UnrealJsonReadFile>[]
+) {
+    return getSuperClasses(name, items).some(
+        n => items.find(i => i.name === n)?.placeable
+    )
 }
 
 //Internal wrapper for reading / writing packages
@@ -123,7 +129,7 @@ export class ClassManager {
         actions: [],
         events: [],
         conditions: [],
-        variables: []
+        variables: [],
     }
     public json: UnrealJsonReadFileNode[] = []
     public externalClasses: Partial<UnrealJsonReadFile>[] = []
@@ -137,7 +143,7 @@ export class ClassManager {
 
     public async readPackage ({
         name,
-        paths
+        paths,
     }: {
         name: string
         paths: PathInput
@@ -180,7 +186,7 @@ export class ClassManager {
             blenderOptions: this.options?.blenderOptions,
             groupItems: this.options?.groupItems ?? false,
             blender: this.options?.blender ?? false,
-            isMainFolder: exportPath === './src/items/'
+            isMainFolder: exportPath === './src/items/',
         })
     }
 }

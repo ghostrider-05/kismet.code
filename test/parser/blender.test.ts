@@ -1,13 +1,13 @@
 import {
     nodeCategoryClasses,
-    nodeCategories
+    nodeCategories,
 } from '../../src/parser/blender/category.js'
 import { variableBlenderType } from '../../src/parser/blender/node/variable.js'
 import { BlenderAddonGenerator } from '../../src/parser/blender/parser.js'
 import {
     operatorTemplate,
     baseTemplate,
-    classTemplate
+    classTemplate,
 } from '../../src/parser/blender/templates/index.js'
 
 import { JSONnode } from '../../src/structures/builders/index.js'
@@ -26,7 +26,9 @@ describe('blender addon generator', () => {
 
         expect(baseTemplate(false)).not.toContain('import paperclip')
 
-        expect(classTemplate(JSONnode as UnrealJsonReadFileNode, [])).toBeTruthy()
+        expect(
+            classTemplate(JSONnode as UnrealJsonReadFileNode, [])
+        ).toBeTruthy()
         expect(classTemplate(JSONnode as UnrealJsonReadFileNode, [])).toContain(
             JSONnode.Class
         )
@@ -43,7 +45,7 @@ describe('blender addon generator', () => {
 
     test('template category', () => {
         const categories = {
-            test: ['test1', 'test2', 'test3']
+            test: ['test1', 'test2', 'test3'],
         }
 
         expect(nodeCategories(categories)).toBeTruthy()

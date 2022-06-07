@@ -9,7 +9,7 @@ export const writeFile = async (
     content: string
 ): Promise<void> => {
     return await writeToFile(path, filterEmptyLines(content), {
-        encoding: 'utf8'
+        encoding: 'utf8',
     })
 }
 
@@ -60,7 +60,7 @@ export function getExportFile (
             '\n',
             exportStatement(classes, {
                 groupItems,
-                items: classNames
+                items: classNames,
             })
         )
         .join('\n')

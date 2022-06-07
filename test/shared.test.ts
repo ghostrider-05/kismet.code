@@ -7,7 +7,7 @@ import {
     groupByProperty,
     stringFirstCharUppercase,
     isType,
-    filterEmptyLines
+    filterEmptyLines,
 } from '../src/shared/index.js'
 
 describe('shared', () => {
@@ -58,16 +58,16 @@ describe('shared', () => {
                 [
                     { a: 'Package1', b: 3 },
                     { a: 'Package1', b: 6 },
-                    { a: 'Package2', b: 0 }
+                    { a: 'Package2', b: 0 },
                 ],
                 'a'
             )
         ).toStrictEqual([
             [
                 { a: 'Package1', b: 3 },
-                { a: 'Package1', b: 6 }
+                { a: 'Package1', b: 6 },
             ],
-            [{ a: 'Package2', b: 0 }]
+            [{ a: 'Package2', b: 0 }],
         ])
     })
 

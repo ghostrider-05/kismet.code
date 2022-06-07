@@ -14,7 +14,7 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
             'flags',
             'replicated',
             'name',
-            'type'
+            'type',
         ]) &&
         isType('array', json.defaultproperties, ['name']) &&
         isType('object', json.enums) &&
@@ -73,7 +73,7 @@ export function _validatePackage (
 
     if (
         !_validatePaths({
-            importPath: path
+            importPath: path,
         })
     )
         return null

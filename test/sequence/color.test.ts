@@ -8,7 +8,7 @@ describe('Kismet color util', () => {
         R: 1,
         G: 2,
         B: 3,
-        A: 255
+        A: 255,
     }
     const baseColorOptions = <[number, number, number, number]>(
         Object.values(baseValues)

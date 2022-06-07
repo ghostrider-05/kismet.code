@@ -6,7 +6,7 @@ import type {
     RawUnrealJsonConstant,
     RawUnrealJsonFile,
     UnrealJsonReadFile,
-    UnrealJsonReadFileNode
+    UnrealJsonReadFileNode,
 } from '../types/index.js'
 
 const { KISMET_CLASSES_PREFIXES, NodeProperty } = Constants
@@ -15,14 +15,14 @@ export function readNodeFile (
     json: RawUnrealJsonFile,
     Package: string
 ): UnrealJsonReadFile {
-    const { 
-        name: Class, 
+    const {
+        name: Class,
         extends: Extends,
-        structs: structures, 
-        variables, 
-        defaultproperties, 
+        structs: structures,
+        variables,
+        defaultproperties,
         placeable,
-        enums
+        enums,
     } = json
 
     const defaultProperties = new NodeProperties(defaultproperties)
@@ -61,8 +61,8 @@ export function readNodeFile (
         links: {
             input: defaultProperties.filter(NodeProperty.LINKS_INPUT),
             output: defaultProperties.filter(NodeProperty.LINKS_OUTPUT),
-            variable: defaultProperties.filter(NodeProperty.LINKS_VARIABLE)
-        }
+            variable: defaultProperties.filter(NodeProperty.LINKS_VARIABLE),
+        },
     }
 }
 
@@ -93,8 +93,8 @@ export function nodeToJSON (node: UnrealJsonReadFile): UnrealJsonReadFileNode {
         links: {
             input: inputLinks,
             output: outputLinks,
-            variable: variableLinks
-        }
+            variable: variableLinks,
+        },
     }
 }
 
@@ -102,12 +102,14 @@ export function destructureDefaultProperty (input: string) {
     return input
         .slice(1, -1)
         .match(/(?<=,|^)(.*?=.*?)(?=,|$)/gm)
-        ?.map((i,_, a) => {
-            return i.includes('(') 
-                ? [i, a[_+1]].join(',').slice(0, ([i, a[_+1]].join(',')).indexOf('),') + 1)  
-                : i.includes(')') 
-                    ? i.slice(i.indexOf(')') + 2) 
-                    : i
+        ?.map((i, _, a) => {
+            return i.includes('(')
+                ? [i, a[_ + 1]]
+                      .join(',')
+                      .slice(0, [i, a[_ + 1]].join(',').indexOf('),') + 1)
+                : i.includes(')')
+                ? i.slice(i.indexOf(')') + 2)
+                : i
         })
         .filter(n => n)
         .map(n => n.split('=') as [string, string])

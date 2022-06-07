@@ -8,7 +8,7 @@ import { KismetError } from '../../shared/index.js'
 import {
     ExportOptions,
     PathCreateOptions,
-    PathInput
+    PathInput,
 } from '../../types/index.js'
 
 export class CustomNodesManager {
@@ -47,7 +47,7 @@ export class CustomNodesManager {
             importPath: this.importPath!,
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             exportPath: this.exportPath!,
-            packages: this.packages
+            packages: this.packages,
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -104,7 +104,7 @@ export class CustomNodesManager {
         else
             this.options = {
                 ...this.options,
-                ...options
+                ...options,
             }
 
         return this

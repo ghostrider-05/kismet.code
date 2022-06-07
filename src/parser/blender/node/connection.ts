@@ -3,7 +3,7 @@ import { Constants, KismetError, quote } from '../../../shared/index.js'
 import {
     UnrealJsonReadFileNode,
     KismetConnectionType,
-    UnrealJsonReadFile
+    UnrealJsonReadFile,
 } from '../../../types/index.js'
 import { linkIcon } from './icon.js'
 import { variableBlenderType } from './variable.js'
@@ -30,8 +30,8 @@ const getKeyValue = (key: string, type: string, links?: { name: string }[]) => {
     if (type === NodeType.EVENTS && key === ConnectionType.VARIABLE)
         return [
             {
-                name: `"Instigator"`
-            }
+                name: `"Instigator"`,
+            },
         ]
 
     if (
@@ -40,19 +40,22 @@ const getKeyValue = (key: string, type: string, links?: { name: string }[]) => {
     )
         return [
             {
-                name: `"Target"`
-            }
+                name: `"Target"`,
+            },
         ]
 
     return defaultKeyValue(key)
 }
 
-const getConnections = (node: UnrealJsonReadFileNode): UnrealJsonReadFileNode['links'] => {
-    if (node.type === Constants.NodeType.VARIABLES) return {
-        variable: [{ name: 'Out' }],
-        input: [],
-        output: []
-    }
+const getConnections = (
+    node: UnrealJsonReadFileNode
+): UnrealJsonReadFileNode['links'] => {
+    if (node.type === Constants.NodeType.VARIABLES)
+        return {
+            variable: [{ name: 'Out' }],
+            input: [],
+            output: [],
+        }
 
     return Object.keys(node.links)
         .map(key => {
@@ -62,13 +65,13 @@ const getConnections = (node: UnrealJsonReadFileNode): UnrealJsonReadFileNode['l
                         key,
                         node.type,
                         node.links[key as KismetConnectionType]
-                    ) ?? node.links[key as KismetConnectionType]
+                    ) ?? node.links[key as KismetConnectionType],
             }
         })
         .reduce(
             (prev, curr) => ({
                 ...prev,
-                ...curr
+                ...curr,
             }),
             {}
         ) as UnrealJsonReadFileNode['links']
@@ -84,7 +87,10 @@ const nodeSocketName = (name: string) =>
         .replaceAll(/>/g, '2')
         .replaceAll(/!/g, '3')}Socket`
 
-export const formatConnections = (node: UnrealJsonReadFileNode, classes: Partial<UnrealJsonReadFile>[]) => {
+export const formatConnections = (
+    node: UnrealJsonReadFileNode,
+    classes: Partial<UnrealJsonReadFile>[]
+) => {
     const connections = getConnections(node)
 
     if (
@@ -113,15 +119,22 @@ export const formatConnections = (node: UnrealJsonReadFileNode, classes: Partial
 
             return connections[key as KismetConnectionType]
                 .map(connection => {
-                    if (node.name === `"Instigator"` && node.type !== 'events') return ''
+                    if (node.name === `"Instigator"` && node.type !== 'events')
+                        return ''
                     const finalPrefix =
-                        connection.name === `"Instigator"` || node.type === Constants.NodeType.VARIABLES ? 'self.outputs' : prefix
+                        connection.name === `"Instigator"` ||
+                        node.type === Constants.NodeType.VARIABLES
+                            ? 'self.outputs'
+                            : prefix
                     const socketName = nodeSocketName(connection.name)
 
                     return `        ${socketName} = ${finalPrefix}.new('${
-                        variableBlenderType(classes, connection.expectedType).socket
+                        variableBlenderType(classes, connection.expectedType)
+                            .socket
                     }', ${
-                        node.type === Constants.NodeType.VARIABLES ? quote(connection.name) : connection.name
+                        node.type === Constants.NodeType.VARIABLES
+                            ? quote(connection.name)
+                            : connection.name
                     })\n        ${socketName}.display_shape = '${linkIcon(
                         key
                     )}'\n        ${socketName}.link_limit = 250\n`
