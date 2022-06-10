@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.4
+
+- **BaseSequenceItem**: `comment`, `supressAutoComment` and `outputCommentToScreen` are deprecated
+- **SequenceNode**: `setBreakPoint` is deprecated
+
+### Bug fixes
+
+- npm: correct main and types paths
+
+### Features
+
+- **BaseSequenceItem**: set position in constructor options
+- **BaseSequenceItem**: set sequence in constructor options
+- **SequenceNode**: correctly name `setBreakpoint`
+
+### Breaking changes
+
+- **SequenceEvent**: `on` event correctly sets link index
+
 ## 1.0.0-beta.3
 
 - `SequenceAction.addConnection` is now deprecated

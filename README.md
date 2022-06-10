@@ -39,7 +39,7 @@ const DrawText = new Actions.DrawText()
     .setVariable('Target', targets)
 
 const onMapLoaded = new Events.LevelLoaded()
-    .on({ name: 'Loaded and Visible', item: DrawText })
+    .on('Loaded and Visible', { item: DrawText })
 
 const project = new KismetFile({ projectName: 'MyMap' })
 const sequence = project.mainSequence

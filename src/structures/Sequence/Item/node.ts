@@ -20,6 +20,11 @@ export class SequenceNode extends BaseSequenceItem {
         super(options)
     }
 
+    public setBreakpoint (enabled: boolean): this {
+        return this.setBreakPoint(enabled)
+    }
+
+    /** @deprecated Use {@link SequenceNode.setBreakpoint} instead */
     public setBreakPoint (enabled: boolean): this {
         this.hasBreakpoint = enabled
 

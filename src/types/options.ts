@@ -120,6 +120,9 @@ export interface BaseKismetItemOptions {
         output?: string[]
         variable?: string[]
     }
+    position?: { x?: number; y?: number }
+    sequence?: string
+    /** @deprecated */
     Draw?: {
         width: number
         maxWidth?: number

@@ -33,27 +33,31 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         this.clientSideOnly = options?.clientSideOnly ?? false
     }
 
-    public on<T extends SequenceNode> ({
-        name,
-        item,
-    }: {
-        name: string
-        item: T
-    }): this {
+    public on<T extends SequenceNode> (
+        name: string,
+        to: {
+            name?: string
+            item: T
+        }
+    ): this {
         const connection = this.getConnection('output', name) as ItemConnection
+        const itemConnection = to.item.getConnection(
+            'input',
+            to.name
+        ) as ItemConnection
 
-        if (!item.isSequenceNode()) {
+        if (!to.item.isSequenceNode()) {
             new KismetError('INVALID_NODE_ARGUMENT')
         }
 
-        if (connection) {
+        if (connection && (to.name ? itemConnection : true)) {
             connection.addLink(
-                item.linkId,
-                this.connections?.output.indexOf(connection)
+                to.item.linkId,
+                to.item.connections?.input.indexOf(itemConnection)
             )
         } else {
             new KismetError('UNKNOWN_CONNECTION', [
-                name,
+                to.name ?? name,
                 this['kismet']['class'],
             ])
         }

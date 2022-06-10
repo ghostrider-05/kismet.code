@@ -117,20 +117,25 @@ describe('Sequence item', () => {
         })
 
         test('item comment', () => {
-            expect(actionBuilder().comment).toBeNull()
-            expect(actionBuilder().outputCommentToScreen).toBeNull()
-            expect(actionBuilder().supressAutoComment).toBeNull()
+            expect(actionBuilder().commentOptions.comment).toBeUndefined()
+            expect(
+                actionBuilder().commentOptions.outputCommentToScreen
+            ).toBeUndefined()
+            expect(
+                actionBuilder().commentOptions.supressAutoComment
+            ).toBeUndefined()
 
             expect(
-                actionBuilder().setComment({ comment: 'Test' }).comment
+                actionBuilder().setComment({ comment: 'Test' }).commentOptions
+                    .comment
             ).toEqual('Test')
             expect(
                 actionBuilder().setComment({ outputCommentToScreen: true })
-                    .outputCommentToScreen
+                    .commentOptions.outputCommentToScreen
             ).toBe(true)
             expect(
                 actionBuilder().setComment({ supressAutoComment: false })
-                    .supressAutoComment
+                    .commentOptions.supressAutoComment
             ).toBe(false)
         })
 

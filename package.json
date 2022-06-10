@@ -1,9 +1,9 @@
 {
   "name": "kismet.ts",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Make kismet from code",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./src/dist/src/index.js",
+  "types": "./src/dist/src/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config ./src/dist/jest.config.js",
@@ -14,10 +14,10 @@
     "lint": "npx eslint . --ext .cjs,.ts,.tsx",
     "prettier": "npx prettier --check .",
     "format": "npx prettier --write . && npx eslint . --ext .cjs,.ts,.tsx --fix",
-    "parser:build": "node ./src/dist/parser/run.js"
+    "parser:build": "node ./src/dist/src/parser/run.js"
   },
   "bin": {
-    "create-custom-kismet-nodes": "node ./src/dist/parser/run.js"
+    "create-custom-kismet-nodes": "node ./src/dist/src/parser/run.js"
   },
   "keywords": [
     "udk",

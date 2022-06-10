@@ -32,11 +32,24 @@ import type {
 const { KISMET_NODE_LINES, MAIN_SEQUENCE, ObjInstanceVersions } = Constants
 
 export class BaseSequenceItem extends BaseItem {
+    /** @deprecated */
     public comment: string | null
+    /** @deprecated */
     public supressAutoComment: boolean | null
+    /** @deprecated */
     public outputCommentToScreen: boolean | null
 
-    public connections: KismetConnections | null = null
+    public commentOptions: {
+        comment?: string
+        supressAutoComment?: boolean
+        outputCommentToScreen?: boolean
+    } = {}
+
+    public connections: KismetConnections = {
+        input: [],
+        output: [],
+        variable: [],
+    }
     public sequence: string
 
     public readonly id: ProcessId
@@ -57,12 +70,14 @@ export class BaseSequenceItem extends BaseItem {
         const { Class, Package } = readArchetype(options.ObjectArchetype)
 
         this.kismet = {
-            x: 0,
-            y: 0,
+            x: options.position?.x ?? 0,
+            y: options.position?.y ?? 0,
             class: Class,
             classType: `Class'${Package}.${Class}'`,
             ObjectArchetype: options.ObjectArchetype,
-            ParentSequence: MAIN_SEQUENCE,
+            ParentSequence: options.sequence
+                ? `Sequence'${options.sequence}'`
+                : MAIN_SEQUENCE,
             ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
@@ -193,17 +208,18 @@ export class BaseSequenceItem extends BaseItem {
     }
 
     public equals (item: SequenceItemType): boolean {
-        return item.kismet?.ObjectArchetype === this.kismet.ObjectArchetype
+        return item.kismet.ObjectArchetype === this.kismet.ObjectArchetype
     }
 
     public getConnection (
         type: KismetConnectionType,
-        connectionName: string
+        connectionName?: string
     ): (BaseKismetConnection | KismetConnection) | null {
         const connections = this.connections?.[type] as
             | BaseKismetConnection[]
             | undefined
 
+        if (!connectionName) return null
         return connections?.find(c => c.name === connectionName) ?? null
     }
 
@@ -216,9 +232,9 @@ export class BaseSequenceItem extends BaseItem {
         supressAutoComment?: boolean
         outputCommentToScreen?: boolean
     }): this {
-        this.comment = comment ?? null
-        this.supressAutoComment = supressAutoComment ?? null
-        this.outputCommentToScreen = outputCommentToScreen ?? null
+        this.commentOptions.comment = comment
+        this.commentOptions.supressAutoComment = supressAutoComment
+        this.commentOptions.outputCommentToScreen = outputCommentToScreen
 
         return this
     }
@@ -261,12 +277,14 @@ export class BaseSequenceItem extends BaseItem {
             if (type.length > 0) type.forEach(link => (json[link[0]] = link[1]))
         })
 
-        if (typeof this.comment === 'string')
-            json['ObjComment'] = quote(this.comment)
-        if (this.supressAutoComment === false)
-            json['bSuppressAutoComment'] = this.supressAutoComment
-        if (this.outputCommentToScreen)
-            json['bOutputObjCommentToScreen'] = this.outputCommentToScreen
+        const { comment, outputCommentToScreen, supressAutoComment } =
+            this.commentOptions
+
+        if (typeof comment === 'string') json['ObjComment'] = quote(comment)
+        if (supressAutoComment === false)
+            json['bSuppressAutoComment'] = supressAutoComment
+        if (outputCommentToScreen)
+            json['bOutputObjCommentToScreen'] = outputCommentToScreen
 
         return json
     }

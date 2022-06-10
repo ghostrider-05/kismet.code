@@ -26,10 +26,7 @@ describe('class parser', () => {
     })
 
     test('write file', async () => {
-        return await writeFile(
-            resolve('.', './src/dist/src/text.txt'),
-            'test'
-        )
+        return await writeFile(resolve('.', './src/dist/src/text.txt'), 'test')
     })
 
     test('debug logging', () => {

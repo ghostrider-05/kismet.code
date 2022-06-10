@@ -143,8 +143,7 @@ describe('sequence event', () => {
     test('event attach action', () => {
         expect(
             new MainMenuSwitched()
-                .on({
-                    name: 'Changed',
+                .on('Changed', {
                     item: actionBuilder(),
                 })
                 .getConnection('output', 'Changed')?.links?.length
@@ -152,12 +151,10 @@ describe('sequence event', () => {
 
         expect(
             new MainMenuSwitched()
-                .on({
-                    name: 'Changed',
+                .on('Changed', {
                     item: actionBuilder(),
                 })
-                .on({
-                    name: 'Changed',
+                .on('Changed', {
                     item: conditionBuilder(),
                 })
                 .getConnection('output', 'Changed')?.links?.length
@@ -165,16 +162,14 @@ describe('sequence event', () => {
 
         // Invalid connection name
         expect(() =>
-            new MainMenuSwitched().on({
-                name: 'test',
+            new MainMenuSwitched().on('test', {
                 item: actionBuilder(),
             })
         ).toThrowError()
 
         // Invalid item
         expect(() =>
-            new MainMenuSwitched().on({
-                name: 'Changed',
+            new MainMenuSwitched().on('Changed', {
                 // @ts-expect-error
                 item: variableBuilder(),
             })
