@@ -14,8 +14,14 @@ import type {
 } from '../../types/index.js'
 
 export class SequenceEvent<T extends {} = {}> extends SequenceNode {
+    /**
+     * The trigger options for this event
+     */
     public trigger: { maxCount: number; delay: number }
     public playerOnly: boolean
+    /**
+     * @see https://docs.unrealengine.com/udk/Three/KismetUserGuide.html#Client%20Side%20Kismet
+     */
     public clientSideOnly: boolean
     public enabled: boolean
 
@@ -65,12 +71,19 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         return this
     }
 
+    /**
+     * Disable this event
+     */
     public setDisabled (): this {
         this.enabled = false
 
         return this
     }
 
+    /**
+     * Set the client / player display options
+     * @param options 
+     */
     public setDisplay ({
         player,
         client,
@@ -89,6 +102,10 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
         return this
     }
 
+    /**
+     * Set the trigger options for this event
+     * @param options 
+     */
     public setTrigger ({ max, delay }: { max?: number; delay?: number }): this {
         if (max != undefined) {
             this.trigger.maxCount = max

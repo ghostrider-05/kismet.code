@@ -5,6 +5,15 @@ import type {
     RawUnrealJsonVariable,
 } from '../../types/index.js'
 
+export function convertNodeName (name: string | null | undefined) {
+    return name
+        ?.replaceAll('"', '')
+        .split(' ')
+        .join('')
+        .replace('?', '')
+        .replace(/\\|\//g, '_')
+}
+
 export class NodeProperties {
     private properties: RawUnrealJsonDefaultVariables[]
 

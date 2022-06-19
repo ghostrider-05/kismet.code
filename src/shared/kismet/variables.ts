@@ -1,19 +1,18 @@
 import { KISMET_LINE_INDENT, KismetBoolean } from '../util/Constants.js'
 
 import type {
-    KismetVariableInternalTypeList,
-    KismetVariablesType,
+    KismetVariableValue,
 } from '../../types/index.js'
 
 export function addVariable (
     node: string,
-    variable: KismetVariableInternalTypeList
+    variables: [string, KismetVariableValue][]
 ): string {
     return node
         .split('\n')
         .flatMap((line, index) => {
             return index === 0
-                ? [line].concat(variable.map(v => parseVar(v[0], v[1])))
+                ? [line].concat(variables.map(([name, value]) => parseVar(name, value)))
                 : line
         })
         .join('\n')
@@ -23,7 +22,7 @@ export function boolToKismet (input: boolean | null): string {
     return input ? KismetBoolean.True : KismetBoolean.False
 }
 
-export function parseVar (name: string, value: KismetVariablesType): string {
+export function parseVar (name: string, value: KismetVariableValue): string {
     if (value == null) return ''
 
     const stringValue =

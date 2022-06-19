@@ -3,7 +3,7 @@ import { KismetColor } from './misc/index.js'
 
 import { boolToKismet, parseVar } from '../../shared/index.js'
 
-import { KismetVariablesType } from '../../types/index.js'
+import type { KismetVariableValue } from '../../types/index.js'
 
 const DEFAULT_COMMENT_FRAME_SIZE_X = 248
 const DEFAULT_COMMENT_FRAME_SIZE_Y = 184
@@ -122,8 +122,8 @@ export class Comment extends BaseSequenceItem {
         return this
     }
 
-    public override toJSON (): Record<string, KismetVariablesType> {
-        const variables: [string, KismetVariablesType][] = [
+    public override toJSON (): Record<string, KismetVariableValue> {
+        const variables: [string, KismetVariableValue][] = [
             ['SizeX', this.size.x],
             ['SizeY', this.size.y],
             ['BorderWidth', this.borderWidth],

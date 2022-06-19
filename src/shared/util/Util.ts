@@ -2,7 +2,7 @@ import clipboardy from 'clipboardy'
 
 import { KismetError } from '../errors/index.js'
 
-import { ArrayUnion } from '../../types/index.js'
+import type { ArrayUnion } from '../../types/index.js'
 
 export function arrayUnionInput<T> (input: ArrayUnion<T>): T[] {
     return Array.isArray(input) ? input : [input]
@@ -59,7 +59,7 @@ export function isType (
     keys?: string[]
 ): boolean {
     if (input == undefined) return true
-    let isValid = true
+    let isValid: boolean
 
     switch (type) {
         case 'string':
@@ -101,13 +101,25 @@ export function quote (value: string): string {
     return `"${value}"`
 }
 
-export function stringFirstCharUppercase (input: string): string | null {
+export function capitalize (input: string): string | null {
     if (!input) return null
     return input[0].toUpperCase() + input.slice(1)
 }
 
-export function t<T> (input: unknown): T {
-    return input as T
+export function cast<T> (input: unknown, type?: 'boolean' | 'number'): T {
+    if (!type) return input as T
+    else {
+        switch (type) {
+            case 'boolean':
+                return cast(
+                    ['true', 'false'].includes(<never>input)
+                        ? input === 'true'
+                        : Boolean(input)
+                )
+            case 'number':
+                return cast(Number(input))
+        }
+    }
 }
 
 export const clipboard = class ClipboardUtil {

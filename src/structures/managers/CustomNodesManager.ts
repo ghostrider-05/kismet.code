@@ -52,6 +52,8 @@ export class CustomNodesManager {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const completed = await findClasses(paths, this.options)
+
+        if (!completed) this.log('Failed to complete task...')
     }
 
     /**

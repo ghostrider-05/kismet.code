@@ -68,6 +68,10 @@ export class SequenceAction extends SequenceNode {
         return this
     }
 
+    /**
+     * Set the targets for this node
+     * @param objects The object references to the targets
+     */
     public setTargets (objects: string[]): this {
         objects.forEach((object, i) => {
             this.setVariable(`Targets(${i})`, object)

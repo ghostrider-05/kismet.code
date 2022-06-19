@@ -13,9 +13,10 @@ import {
     ProcessId,
 } from './managers/index.js'
 
-import { clipboard } from '../shared/index.js'
+import { cast, clipboard } from '../shared/index.js'
 
 import type {
+    ClassConstructor,
     projectOptions,
     SchemaItemNames,
     SequenceItemType,
@@ -25,12 +26,24 @@ import type {
 export class KismetFile {
     public readonly id: ProcessId
 
+    /**
+     * The main sequence that is attached to this project
+     */
     public mainSequence: Sequence
     /**
      * @deprecated
      */
     public classParser: CustomNodesManager
+
+    /**
+     * The name of the kismet project.
+     * Can be found as the .udk name / map name.
+     */
     public projectName: string
+
+    /**
+     * Layout options for positioning kismet nodes
+     */
     public layout?: SequencePositionOptions<SchemaItemNames>
 
     constructor (options: projectOptions<SchemaItemNames>) {
@@ -51,6 +64,10 @@ export class KismetFile {
         this.classParser = new CustomNodesManager()
     }
 
+    /**
+     * Default Rocket League nodes (actions, conditions, events) + default UDK nodes
+     * @version 2.13
+     */
     public static Items = {
         Actions,
         Conditions,
@@ -61,6 +78,10 @@ export class KismetFile {
         CommentFrame,
     }
 
+    /**
+     * Convert the default items ({@link KismetFile.Items}) to an array of items
+     * @returns The converted nodes
+     */
     public static listDefaultItems () {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { Comment, CommentFrame, ...input } = KismetFile.Items
@@ -68,7 +89,28 @@ export class KismetFile {
         return KismetFile.listItems(<never>input)
     }
 
-    public static listItems (
+    /**
+     * Convert nodes to an array of items
+     * @see {@link KismetFile.listDefaultItems} to list the default items
+     * @param input An object that holds the custom items
+     * @returns The converted array of items
+     * @example
+     * const items = KismetFile.listItems({
+     *  Actions: {
+     *      MyAction
+     *  }
+     * }) // [MyAction]
+     * @example
+     * const items = KismetFile.listItems({
+     *  Actions: {
+     *      MyAction,
+     *      MyCategory: {
+     *          TestAction
+     *      }
+     *  }
+     * }) // [MyAction]
+     */
+    public static listItems<T extends SequenceItemType> (
         input: Record<
             Exclude<
                 keyof typeof KismetFile['Items'],
@@ -85,14 +127,20 @@ export class KismetFile {
                     const Class = category[cKey as keyof typeof category] as
                         | BaseSequenceItem
                         | Record<string, BaseSequenceItem>
-                    return Class instanceof BaseSequenceItem
+
+                    const isInstance = Class instanceof BaseSequenceItem
+                    if (isInstance) return true
+
+                    try {
+                        return (
+                            new (cast(Class) as ClassConstructor)() instanceof
+                            BaseSequenceItem
+                        )
+                    } catch {
+                        /** */
+                    }
                 })
-                .map(
-                    name =>
-                        category[
-                            name as keyof typeof category
-                        ] as SequenceItemType
-                )
+                .map(name => category[name as keyof typeof category] as T)
 
             return classes
         })
@@ -100,12 +148,20 @@ export class KismetFile {
         return items
     }
 
+    /**
+     * Copy any kismet node to the clipboard
+     * @param item The item to copy
+     */
     public static async copy (item: SequenceItemType): Promise<void> {
         const input = item.toString()
 
         return await clipboard.write(input)
     }
 
+    /**
+     * Copy this project kismet file to the clipboard.
+     * Copies {@link KismetFile.toString}. 
+     */
     public async copyKismet (): Promise<void> {
         return await clipboard.write(this.toString())
     }

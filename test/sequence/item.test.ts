@@ -102,6 +102,16 @@ describe('Sequence item', () => {
             expect(action.toJSON()).toEqual(defaultKismetData)
         })
 
+        test('item to string', () => {
+            const baseItem = new Structures.BaseItem({
+                ObjectArchetype: baseBuilderArchetype,
+                inputs: {},
+            })
+
+            expect(baseItem.toString()).toBeDefined()
+            expect(baseItem.toKismet()).toEqual(baseItem.toString())
+        })
+
         test('item position', () => {
             const newPosition = {
                 x: 500,

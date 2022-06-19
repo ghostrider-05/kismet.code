@@ -25,6 +25,10 @@ describe('main project', () => {
         expect(ProcessManager.processes['test_1'].options.debug).toBe(true)
     })
 
+    test('list default items', () => {
+        expect(KismetFile.listDefaultItems().length).toBeGreaterThan(0)
+    })
+
     test('list project items', () => {
         const items = {
             Actions: {

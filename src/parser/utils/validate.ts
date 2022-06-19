@@ -7,7 +7,7 @@ import type { PathInput } from '../../types/index.js'
 
 export function _validateNodeInput (json: Record<string, unknown>): boolean {
     return (
-        isType('string', json.name) &&
+        isType('string', json.name) && // lgtm [js/trivial-conditional]
         isType('string', json.extends) &&
         isType('string', json.extendswithin) &&
         isType('array', json.variables, [

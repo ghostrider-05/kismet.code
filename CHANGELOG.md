@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.5
+
+- **Sequence**: `findConnectedEvent`, `filterByClassName`, `listConnectedItems`, `indexOf`, `replaceItem`
+
+### Bug fixes
+
+- **KismetFile**: correctly type `list*Items` methods
+
+### Features
+
+- **Sequence**: add method to clear all breakpoints
+- **Sequence**: move some methods to `util` property
+- **Sequence**: add `resolve`, `updateItem` and `updateItems` for managing items
+- docs: improve jsdoc coverage
+
 ## 1.0.0-beta.4
 
 - **BaseSequenceItem**: `comment`, `supressAutoComment` and `outputCommentToScreen` are deprecated

@@ -2,13 +2,13 @@ import { config } from 'dotenv'
 
 import { findClasses } from './index.js'
 
-import { t } from '../shared/index.js'
+import { cast } from '../shared/index.js'
 
 config()
 
 const groupItems =
     'KISMET_GROUP_ITEMS' in process.env
-        ? t<boolean>(process.env.KISMET_GROUP_ITEMS)
+        ? cast<boolean>(process.env.KISMET_GROUP_ITEMS)
         : false
 const importPath =
     'KISMET_IMPORT_PATH' in process.env

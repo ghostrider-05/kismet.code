@@ -1,4 +1,9 @@
-import { boolToKismet, parseVar, t, Constants } from '../../../shared/index.js'
+import {
+    boolToKismet,
+    parseVar,
+    cast,
+    Constants,
+} from '../../../shared/index.js'
 
 import type {
     BaseKismetConnectionOptions,
@@ -209,19 +214,20 @@ export class VariableConnection extends BaseKismetConnection {
             bModifiesLinkedObject,
         } = properties
 
-        this.name = t(PropertyName)
+        this.name = cast(PropertyName)
 
-        this.expectedType = t(ExpectedType)
-        this.PropertyName = t(PropertyName)
-        this.bAllowAnyType = t(bAllowAnyType) ?? false
-        this.CachedProperty = t(CachedProperty) ?? null
-        this.MinVars = t(MinVars) ?? 1
-        this.MaxVars = t(MaxVars) ?? 255
-        this.DrawX = t(DrawX) ?? 0
-        this.bWriteable = t(bWriteable) ?? false
+        this.expectedType = cast(ExpectedType)
+        this.PropertyName = cast(PropertyName)
+        this.bAllowAnyType = cast(bAllowAnyType, 'boolean') ?? false
+        this.CachedProperty = cast(CachedProperty) ?? null
+        this.MinVars = cast(MinVars, 'number') ?? 1
+        this.MaxVars = cast(MaxVars, 'number') ?? 255
+        this.DrawX = cast(DrawX) ?? 0
+        this.bWriteable = cast(bWriteable, 'boolean') ?? false
         this.bSequenceNeverReadsOnlyWritesToThisVar =
-            t(bSequenceNeverReadsOnlyWritesToThisVar) ?? false
-        this.bModifiesLinkedObject = t(bModifiesLinkedObject) ?? false
+            cast(bSequenceNeverReadsOnlyWritesToThisVar, 'boolean') ?? false
+        this.bModifiesLinkedObject =
+            cast(bModifiesLinkedObject, 'boolean') ?? false
     }
 
     public override addLink (
@@ -301,12 +307,12 @@ export class ItemConnection extends BaseKismetConnection {
         this.name = LinkDesc
             ? (<string>LinkDesc).replaceAll('"', '')
             : this.name
-        this.bHasImpulse = t(bHasImpulse) ?? false
-        this.bDisabled = t(bDisabled) ?? false
-        this.bDisabledPIE = t(bDisabledPIE) ?? false
-        this.ActivateDelay = t(ActivateDelay) ?? 0.0
-        this.LinkedOp = t(LinkedOp) ?? null
-        this.DrawY = t(DrawY) ?? 0
+        this.bHasImpulse = cast(bHasImpulse, 'boolean') ?? false
+        this.bDisabled = cast(bDisabled, 'boolean') ?? false
+        this.bDisabledPIE = cast(bDisabledPIE, 'boolean') ?? false
+        this.ActivateDelay = cast(ActivateDelay, 'number') ?? 0.0
+        this.LinkedOp = cast(LinkedOp, 'number') ?? null
+        this.DrawY = cast(DrawY, 'number') ?? 0
     }
 
     public static isItemConnectionType (type: string): boolean {

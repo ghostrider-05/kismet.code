@@ -5,7 +5,7 @@ import {
     boolToKismet,
     Constants,
     groupByProperty,
-    stringFirstCharUppercase,
+    capitalize,
     isType,
     filterEmptyLines,
 } from '../src/shared/index.js'
@@ -32,9 +32,9 @@ describe('shared', () => {
 
     test('string pascalcase', () => {
         //@ts-expect-error
-        expect(stringFirstCharUppercase(undefined)).toBeNull()
+        expect(capitalize(undefined)).toBeNull()
 
-        expect(stringFirstCharUppercase('test')).toEqual('Test')
+        expect(capitalize('test')).toEqual('Test')
     })
 
     test('filter empty lines', () => {

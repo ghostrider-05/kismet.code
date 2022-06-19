@@ -1,4 +1,5 @@
 import { BaseItem } from './Item/_base.js'
+import { SequenceUtil } from './baseUtil.js'
 
 import {
     ProcessManager,
@@ -7,37 +8,68 @@ import {
 } from '../managers/index.js'
 
 import {
-    boolToKismet,
     Constants,
     filterEmptyLines,
     parseVar,
 } from '../../shared/index.js'
 
 import type {
-    KismetVariablesType,
-    KismetVariableInternalTypeList,
     SequenceItemType,
     SequenceViewOptions,
     SequenceOptions,
     SequenceBaseConstructorOptions,
     SchemaItemNames,
+    KismetVariableValue,
 } from '../../types/index.js'
+
 
 const { DefaultLayoutOptions, KISMET_NODE_LINES, MAIN_SEQUENCE, NodeType } =
     Constants
 
+export type SequenceItemResolvable = string | ProcessId | SequenceItemType
+export type SequenceResolvable = Sequence | SequenceItemResolvable
+
+/**
+ * Class for a kismet sequence
+ */
 export class Sequence extends BaseItem {
     public name: string
+
+    /**
+     * The location of focus when opening the sequence
+     */
     public defaultView: Required<SequenceViewOptions>
 
     public readonly id: ProcessId
+
+    /**
+     * The id of the attached project to this sequence
+     */
     public readonly project?: ProcessId
 
+    /**
+     * Whether this sequence can be edited
+     */
     public enabled = true
+
+    /**
+     * The parent sequence of this sequence.  
+     */
     public parentSequence: string = MAIN_SEQUENCE
 
+    /**
+     * The items that are added to this sequence
+     */
     public items: (SequenceItemType | Sequence)[] = []
-    public subSequences: Sequence[] = []
+
+    /**
+     * The subsequences that are added in this sequence
+     */
+    public get subSequences (): Sequence[] {
+        return this.items.filter(item => {
+            return item.isSequence()
+        }) as Sequence[]
+    }
 
     private kismet: { x: number; y: number }
     private positionManager: SequencePositionManager
@@ -86,7 +118,12 @@ export class Sequence extends BaseItem {
             ObjInstanceVersion,
             DrawHeight,
             DrawWidth,
+            ...this.kismet,
         }
+    }
+
+    public get util (): SequenceUtil {
+        return new SequenceUtil(this)
     }
 
     public get linkId (): string {
@@ -129,7 +166,6 @@ export class Sequence extends BaseItem {
 
         subSequence.parentSequence = this.linkId
 
-        this.subSequences.push(subSequence)
         this.items.push(subSequence)
 
         return {
@@ -138,90 +174,88 @@ export class Sequence extends BaseItem {
         }
     }
 
-    public findConnectedEvent (
-        actionId: string,
-        event: { id: string; connectioName?: string }
-    ): SequenceItemType | undefined {
-        const events = this.items.filter(n => {
-            if (n.isEvent() && n.linkId === event.id) {
-                const connectedItems = this.listConnectedItems(event.id)
-
-                return connectedItems.includes(actionId)
-            } else return false
+    /**
+     * Clear all breakpoints on items in this sequence
+     * @param includeSubsequences Whether to clear breakpoints in subsequences (default false)
+     */
+    public clearAllBreakpoints (includeSubsequences?: boolean): this {
+        this.items.forEach(item => {
+            if (item.isSequenceNode()) {
+                this.updateItem(item, item.setBreakpoint(false))
+            } else if (includeSubsequences && item.isSequence()) {
+                item.clearAllBreakpoints(true)
+            }
         })
 
-        return events.length > 0 ? <SequenceItemType>events[0] : undefined
+        return this
     }
 
+    /**
+     * Find the first connected event that is the input of a node
+     * @param actionId The id of the node to find the event for
+     * @param event The event information
+     * @param event.connectionName The output name of the link from the event node
+     * @deprecated
+     */
+    public findConnectedEvent (
+        actionId: string,
+        event: { 
+            id: string; 
+            /**
+             * @deprecated
+             */
+            connectioName?: string
+            connectionName?: string 
+        }
+    ): SequenceItemType | undefined {
+        return this.util.findConnectedEvent(actionId, event)
+    }
+
+    /**
+     * Get all items in this sequence with the same class
+     * @param item The item to use as reference
+     * @deprecated
+     */
     public filterByClassName (
         item: SequenceItemType | Sequence
     ): (SequenceItemType | Sequence)[] {
-        return this.items.filter(
-            n => n.linkId.split("'")[0] === item.linkId.split("'")[0]
-        )
+        return this.util.filterByClassName(item)
     }
 
+    /**
+     * List all connected items to an item in this sequence
+     * @param itemId The link id of the item
+     * @param outputConnection The output connection name to find only items to this link
+     * @deprecated
+     */
     public listConnectedItems (
         itemId: string,
         outputConnection?: string
     ): string[] {
-        const item = this.resolveId(itemId)
-
-        if (item?.isSequenceItem()) {
-            const ids = item.connections?.output.flatMap(link =>
-                link.name === (outputConnection ?? link.name)
-                    ? link.linkedIds
-                    : []
-            )
-            if (!ids || ids.length === 0) return []
-
-            let idsToFilter = ids
-
-            while (idsToFilter.length <= this.items.length) {
-                const cItems = idsToFilter
-                    .map(id => this.resolveId(id))
-                    .filter(n => n)
-                const newIds: string[] = cItems
-                    .flatMap(i =>
-                        i?.isSequenceItem() && !idsToFilter.includes(i.linkId)
-                            ? i.connections?.output.flatMap(
-                                  link => link.linkedIds
-                              )
-                            : undefined
-                    )
-                    .filter(n => n) as string[]
-
-                if (newIds.length > 0) {
-                    idsToFilter = idsToFilter.concat(newIds)
-                } else {
-                    break
-                }
-            }
-
-            return idsToFilter
-        } else return []
+        return this.util.listConnectedItems(itemId, outputConnection)
     }
 
+    /**
+     * Returns the index of the first occurrence of an item in this sequence, or -1 if it is not present.
+     * @param id 
+     * @deprecated
+     */
     public indexOf (id: string): number {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return this.items.indexOf(this.items.find(i => i.linkId === id)!)
+        return this.util.indexOf(id)
     }
 
+    /** @deprecated Use {@link Sequence.updateItem} instead */
     public replaceItem (
         linkId: string,
         newItem: SequenceItemType | Sequence
     ): void {
-        const item = this.items.find(n => n.linkId === linkId)
-
-        if (!item) {
-            return console.warn(
-                `Could not find replacement item with id: ${linkId}`
-            )
-        }
-
-        this.items[this.items.indexOf(item)] = newItem
+        this.updateItem(linkId, newItem)
     }
 
+    /**
+     * Resolve an id to an item in this sequence
+     * @param id The id to search
+     */
     public resolveId (
         id: string | ProcessId
     ): SequenceItemType | Sequence | null {
@@ -234,18 +268,36 @@ export class Sequence extends BaseItem {
         ) // TODO: TS doesn't type thisArg
     }
 
+    public resolve (item: SequenceResolvable) {
+        const id = typeof item !== 'string' && 'linkId' in item ? item.id : item
+
+        return this.resolveId(id)
+    }
+
+    /**
+     * Disable this sequence
+     */
     public setDisabled (): this {
         this.enabled = false
 
         return this
     }
 
+    /**
+     * Set a new name for this sequence.
+     * Cannot be set if this sequence is the main sequence.
+     * @param name 
+     */
     public setName (name: string): this {
-        this.name = name
+        if (!this.mainSequence) this.name = name
 
         return this
     }
 
+    /**
+     * Set view options for this sequence
+     * @param options The default view options
+     */
     public setView (options: SequenceViewOptions): this {
         const { x, y, zoom } = options
 
@@ -256,32 +308,33 @@ export class Sequence extends BaseItem {
         return this
     }
 
-    public toJSON (): Record<string, KismetVariablesType> {
-        const { archetype, ObjInstanceVersion, DrawHeight, DrawWidth } =
-            this.properties
+    public updateItem (item: SequenceResolvable, updatedItem: Sequence | SequenceItemType) {
+        const linkId = this.resolve(item)?.linkId
+        if (!linkId) return undefined
 
+        const foundItem = this.items.find(n => n.linkId === linkId)
+
+        if (!foundItem) {
+            return console.warn(
+                `Could not find item with id: ${linkId}`
+            )
+        }
+
+        this.items[this.items.indexOf(foundItem)] = updatedItem
+
+        return this
+    }
+
+    public updateItems (items: [SequenceResolvable, (SequenceItemType | Sequence)][]): this {
+        items.forEach(([oldItem, newItem]) => this.updateItem(oldItem, newItem))
+
+        return this
+    }
+
+    public toJSON (): Record<string, KismetVariableValue> {
         this.items = this.positionManager.fillPositions(this)['items']
 
-        const variables = this.items
-            .map<[string, KismetVariablesType]>((item, i) => [
-                `SequenceObjects(${i})`,
-                item.linkId,
-            ])
-            .concat([
-                ['ObjectArchetype', archetype],
-                ['ObjName', this.name],
-                ['ObjInstanceVersion', ObjInstanceVersion],
-                ['DrawWidth', DrawWidth],
-                ['DrawHeight', DrawHeight],
-                ['Name', this.name],
-                ['ObjPosX', this.kismet.x],
-                ['ObjPosY', this.kismet.y],
-                ['ParentSequence', this.parentSequence],
-                ['bEnabled', boolToKismet(this.enabled)],
-                ['DefaultViewX', this.defaultView.x],
-                ['DefaultViewY', this.defaultView.y],
-                ['DefaultViewZoom', this.defaultView.zoom],
-            ]) as KismetVariableInternalTypeList
+        const variables = new SequenceUtil(this)['toRecord'](this.items, this.properties)
 
         return variables.reduce(
             (prev, curr) => ({

@@ -1,6 +1,6 @@
 {
   "name": "kismet.ts",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "description": "Make kismet from code",
   "main": "./src/dist/src/index.js",
   "types": "./src/dist/src/index.d.ts",

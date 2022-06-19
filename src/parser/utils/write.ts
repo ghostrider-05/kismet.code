@@ -9,7 +9,7 @@ import {
     BlenderAddonGeneratorOptions,
 } from '../blender/parser.js'
 
-import { Constants, stringFirstCharUppercase } from '../../shared/index.js'
+import { Constants, capitalize } from '../../shared/index.js'
 
 import type {
     If,
@@ -120,9 +120,7 @@ async function writeCategory<T extends boolean = true> (
 
     await writeFile(path, content)
 
-    return `export * as ${stringFirstCharUppercase(
-        key
-    )} from './${key}/index.js'`
+    return `export * as ${capitalize(key)} from './${key}/index.js'`
 }
 
 function setup (path: string) {

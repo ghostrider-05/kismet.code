@@ -1,15 +1,13 @@
 // Generates kismet code for Advent of Code 2021, day 1 part 1
 
 import { readFile } from 'fs/promises'
-import { KismetFile } from 'kismet.ts'
-
-import * as Items from 'my_item_path'
+import { KismetFile } from '../../src/dist/src/index.js'
 
 const { 
-    events: { LevelLoaded }, 
-    conditions: { CompareInt }, 
-    actions: { Int, AddInt, DrawText, ConvertToString }
-} = Items
+    Events: { LevelLoaded }, 
+    Conditions: { CompareInt }, 
+    Actions: { Int, AddInt, DrawText, ConvertToString }
+} = KismetFile.Items
 
 const { Integer, Player, String } =  KismetFile.Items.Variables
 
@@ -44,7 +42,7 @@ for (let i = 1; i < input.length; i++) {
     const compare = new CompareInt()
         .setVariable('A', intmin1)
         .setVariable('B', int)
-        .addConnection(addInt, 'A < B', 'In')
+        .addOutputConnection({ name: 'A < B'} , { name: 'In', item: addInt })
         
     file.mainSequence.addItems([emptyInt, compare, addInt, addLength])
 

@@ -1,6 +1,11 @@
-import { Constants, stringFirstCharUppercase } from '../shared/index.js'
+import { Constants, capitalize } from '../shared/index.js'
 
-import { getStaticProperties, NodeProperties, nodeLinks } from './utils/read.js'
+import {
+    convertNodeName,
+    getStaticProperties,
+    NodeProperties,
+    nodeLinks,
+} from './utils/read.js'
 
 import type {
     RawUnrealJsonConstant,
@@ -27,21 +32,13 @@ export function readNodeFile (
 
     const defaultProperties = new NodeProperties(defaultproperties)
 
-    const name = stringFirstCharUppercase(
-        defaultProperties.get(NodeProperty.NAME)
-    )
+    const name = capitalize(defaultProperties.get(NodeProperty.NAME))
     const category = defaultProperties.get(NodeProperty.CATEGORY)
 
     const staticProperties = getStaticProperties(variables)
 
     return {
-        name:
-            name
-                ?.replaceAll('"', '')
-                .split(' ')
-                .join('')
-                .replace('?', '')
-                .replace(/\\|\//, '_') ?? Class,
+        name: convertNodeName(name) ?? Class,
         Class,
         Extends,
         structures,

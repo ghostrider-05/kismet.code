@@ -12,7 +12,7 @@ If your use case is specified here, you do not need to add your local classes an
 ## Extract JSON
 
 To generate the classes, a JSON file is used to hold all information about available connections, names, etc.
-You can generate the JSON structure (see this page for example) to fill in the details of your own nodes or use [the available JSON file](../src/items/nodes.json) to modify the nodes. This file can also be used when you want to generate other file outputs than the JSON file.
+You can generate the JSON structure (see this page for example) to fill in the details of your own nodes or use [the JSONGenerator](https://ghostrider-05.github.io/ghostrider) to modify the nodes. This file can also be used when you want to generate other file outputs than the JSON file.
 
 ## Generating classes
 

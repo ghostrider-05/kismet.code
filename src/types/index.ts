@@ -32,6 +32,8 @@ export interface KismetVectorComponents {
 
 export type KismetPosition = Omit<KismetVectorComponents, 'z'>
 
+export type UDKArchetype = `${string}'${string}.${string}'`
+
 export type UDKSceneObject = string
 
 export type UDKContentBrowserObject = 'None' | string
@@ -49,6 +51,11 @@ export type SequenceItemType =
 
 export type SequenceItemTypeName = Enum<NodeType>
 
-export type KismetVariablesType = string | number | boolean | null | undefined
+export type KismetVariableValue = string | number | boolean | null | undefined
 
+export type KismetVariableDefaultValue = `(${string})`
+
+/** @deprecated */
+export type KismetVariablesType = KismetVariableValue
+/** @deprecated */
 export type KismetVariableInternalTypeList = [string, KismetVariablesType][]
