@@ -8,6 +8,7 @@ import {
     SequenceAction,
     SequenceCondition,
     SequenceEvent,
+    SequenceGridManager,
     SequenceVariable,
     KismetFile,
 } from './structures/index.js'
@@ -28,6 +29,7 @@ const Structures = {
 const Util = class Util {
     public static Color = KismetColor
     public static clipboard = clipboard
+    public static SequenceGrid = SequenceGridManager
 }
 
 export * from './types/index.js'

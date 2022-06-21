@@ -99,7 +99,6 @@ describe('base node connections', () => {
     })
 
     test('export string', () => {
-        expect(base.toKismet()).toEqual(base.toString())
         expect(base.toString()).toBeTruthy()
     })
 })
@@ -115,14 +114,12 @@ describe('item link', () => {
     })
 
     test('export string', () => {
-        expect(inputLink.toKismet()).toEqual(inputLink.toString())
         expect(inputLink.toString()).toBeTruthy()
     })
 })
 
 describe('variable link', () => {
     test('export string', () => {
-        expect(variableLink.toKismet()).toEqual(variableLink.toString())
         expect(variableLink.toString()).toBeTruthy()
     })
 })

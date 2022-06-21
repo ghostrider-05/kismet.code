@@ -26,13 +26,6 @@ export class StringVariable extends SequenceVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         const properties: [string, string][] = this.value !== '' ? [
             ['StrValue', quote(this.value)]

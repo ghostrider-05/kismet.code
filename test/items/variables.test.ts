@@ -31,10 +31,6 @@ describe('default sequence variables', () => {
 
         expect(new Bool().setValue(true).toString()).toContain('bValue=1')
         expect(new Bool().setValue(false).toString()).toContain('bValue=0')
-
-        const bool = new Bool()
-        /** @deprecated  */
-        expect(bool.toKismet()).toEqual(bool.toString())
     })
 
     test('external variable', () => {
@@ -57,10 +53,6 @@ describe('default sequence variables', () => {
                 .setExternalVariable({ type: new External() })
                 .toString()
         ).toContain('ExpectedType')
-
-        const external = new External()
-        /** @deprecated  */
-        expect(external.toKismet()).toEqual(external.toString())
     })
 
     test('float variable', () => {
@@ -71,10 +63,6 @@ describe('default sequence variables', () => {
             new Float({ allowIntegers: false }).setValue(1)
         ).toThrowError()
         expect(new Float().setValue(1.0).value).toBe(1.0)
-
-        const float = new Float()
-        /** @deprecated  */
-        expect(float.toKismet()).toEqual(float.toString())
     })
 
     test('integer variable', () => {
@@ -84,10 +72,6 @@ describe('default sequence variables', () => {
         expect(() => new Integer().setValue(1.2)).toThrowError()
 
         expect(new Integer().toString()).toContain('IntValue')
-
-        const int = new Integer()
-        /** @deprecated  */
-        expect(int.toKismet()).toEqual(int.toString())
     })
 
     test('interpdata variable', () => {
@@ -101,10 +85,6 @@ describe('default sequence variables', () => {
         ).toBe(false)
 
         expect(new InterpData().toString()).toContain('bShouldBakeAndPrune')
-
-        const interp = new InterpData()
-        /** @deprecated  */
-        expect(interp.toKismet()).toEqual(interp.toString())
     })
 
     test('named variable', () => {
@@ -124,10 +104,6 @@ describe('default sequence variables', () => {
         expect(
             new Named().setSearchVariable({ type: new Named() }).toString()
         ).toContain('ExpectedType')
-
-        const named = new Named()
-        /** @deprecated  */
-        expect(named.toKismet()).toEqual(named.toString())
     })
 
     test('object variable', () => {
@@ -138,10 +114,6 @@ describe('default sequence variables', () => {
         expect(new Object().setValue('test').toString()).toContain(
             'ObjValue=test'
         )
-
-        const obj = new Object()
-        /** @deprecated  */
-        expect(obj.toKismet()).toEqual(obj.toString())
     })
 
     test('object list variable', () => {
@@ -152,9 +124,6 @@ describe('default sequence variables', () => {
 
         const objList = new ObjectList().addItems(['test', 'test_0', 'test_1'])
         expect(objList.toString()).toContain('ObjList(2)')
-
-        /** @deprecated  */
-        expect(objList.toKismet()).toEqual(objList.toString())
     })
 
     test('object volume variable', () => {
@@ -172,10 +141,6 @@ describe('default sequence variables', () => {
 
         expect(new ObjectVolume().toString()).toContain('ExcludeClassList(1)')
         expect(new ObjectVolume().toString()).toContain('bCollidingOnly')
-
-        const objVolume = new ObjectVolume()
-        /** @deprecated  */
-        expect(objVolume.toKismet()).toEqual(objVolume.toString())
     })
 
     test('player variable', () => {
@@ -186,10 +151,6 @@ describe('default sequence variables', () => {
         expect(new Player().setPlayerIndex(1).playerIndex).toBe(1)
 
         expect(new Player().toString()).toContain('bAllPlayers')
-
-        const player = new Player()
-        /** @deprecated  */
-        expect(player.toKismet()).toEqual(player.toString())
     })
 
     test('random float variable', () => {
@@ -213,10 +174,6 @@ describe('default sequence variables', () => {
         expect(new RandomFloat().toString()).toContain('Max')
 
         expect(new RandomFloat().equals(new Float())).toBe(false)
-
-        const rFloat = new RandomFloat()
-        /** @deprecated  */
-        expect(rFloat.toKismet()).toEqual(rFloat.toString())
     })
 
     test('random integer variable', () => {
@@ -235,10 +192,6 @@ describe('default sequence variables', () => {
         expect(new RandomInteger().toString()).toContain('Max')
 
         expect(new RandomInteger().equals(new Integer())).toBe(false)
-
-        const rInt = new RandomInteger()
-        /** @deprecated  */
-        expect(rInt.toKismet()).toEqual(rInt.toString())
     })
 
     test('string variable', () => {
@@ -246,10 +199,6 @@ describe('default sequence variables', () => {
         expect(new String().setValue('test').value).toBe('test')
 
         expect(new String().setValue('test').toString()).toContain('StrValue')
-
-        const str = new String()
-        /** @deprecated  */
-        expect(str.toKismet()).toEqual(str.toString())
     })
 
     test('vector variable', () => {
@@ -261,9 +210,5 @@ describe('default sequence variables', () => {
         })
 
         expect(new Vector().toString()).toContain('VectValue')
-
-        const vector = new Vector()
-        /** @deprecated  */
-        expect(vector.toKismet()).toEqual(vector.toString())
     })
 })

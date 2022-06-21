@@ -74,8 +74,6 @@ describe('item sequence', () => {
     })
 
     test('sequence string', () => {
-        const seq = sequenceBuilder()
-        /** @deprecated */
-        expect(seq.toKismet()).toEqual(seq.toString())
+        expect(sequenceBuilder().toString()).toBeTruthy()
     })
 })

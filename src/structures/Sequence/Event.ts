@@ -148,11 +148,4 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
         return addVariable(super.toString(), variables)
     }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
 }

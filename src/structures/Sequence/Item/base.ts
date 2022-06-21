@@ -53,6 +53,7 @@ export class BaseSequenceItem extends BaseItem {
     public sequence: string
 
     public readonly id: ProcessId
+    public name: string
 
     private kismet: BaseKismetItemDrawOptions
 
@@ -68,6 +69,8 @@ export class BaseSequenceItem extends BaseItem {
 
         this._setConnections(options.inputs)
         const { Class, Package } = readArchetype(options.ObjectArchetype)
+
+        this.name = options.name ?? Class
 
         this.kismet = {
             x: options.position?.x ?? 0,
@@ -295,12 +298,5 @@ export class BaseSequenceItem extends BaseItem {
         const variables = Object.keys(json).map(n => parseVar(n, json[n]))
 
         return this.formatNode(variables)
-    }
-
-    /**
-     * @deprecated
-     */
-    public toKismet (): string {
-        return this.toString()
     }
 }

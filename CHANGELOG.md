@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 1.0.0-beta.5
 
-- **Sequence**: `findConnectedEvent`, `filterByClassName`, `listConnectedItems`, `indexOf`, `replaceItem`
+- **Sequence**: `findConnectedEvent`, `filterByClassName`, `listConnectedItems`, `indexOf` and `replaceItem` are deprecated for `Sequence.util.*`
 
 ### Bug fixes
 
@@ -12,11 +12,17 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+- **BaseSequenceItem**: set display name in constructor options
 - **Sequence**: add method to clear all breakpoints
 - **Sequence**: move some methods to `util` property
-- **Sequence**: add `resolve`, `updateItem` and `updateItems` for managing items
+- **Sequence**: add `resolve`, `update`, `updateItem` and `updateItems` for managing items
+- **Util**: add SequenceGrid
 - docs: improve jsdoc coverage
 
+### BREAKING CHANGES
+
+- remove all deprecated items released in 1.0.0-beta.3 or earlier
+ 
 ## 1.0.0-beta.4
 
 - **BaseSequenceItem**: `comment`, `supressAutoComment` and `outputCommentToScreen` are deprecated

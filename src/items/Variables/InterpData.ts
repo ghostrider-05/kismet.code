@@ -27,13 +27,6 @@ export class InterpData extends SequenceVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         const kismet = super.toString()
 

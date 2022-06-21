@@ -29,13 +29,6 @@ export class ObjectVariable extends SequenceVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         const properties: [string, string][] = [
             ['ObjValue', this.value === '' ? 'None' : this.value]
@@ -66,13 +59,6 @@ export class ObjectListVariable extends ObjectVariable {
         items.forEach(item => this.addItem(item))
 
         return this
-    }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
     }
 
     public override toString (): string {
@@ -106,13 +92,6 @@ export class ObjectVolumeVariable extends ObjectVariable {
         this.collidingOnly = enabled
 
         return this
-    }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
     }
 
     public override toString (): string {

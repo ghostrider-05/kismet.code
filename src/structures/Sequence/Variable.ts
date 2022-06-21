@@ -29,11 +29,4 @@ export class SequenceVariable extends BaseSequenceItem {
             ? addVariable(kismet, [['VarName', quote(this.variableName)]])
             : kismet
     }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
 }

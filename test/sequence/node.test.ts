@@ -22,9 +22,9 @@ describe('item node and constructors', () => {
         expect(nodeBuilder().setBreakPoint(true).hasBreakpoint).toBe(true)
 
         expect(
-            nodeBuilder().setBreakPoint(true).toJSON().bIsBreakpointSet
+            nodeBuilder().setBreakpoint(true).toJSON().bIsBreakpointSet
         ).toBe('True')
-        expect(nodeBuilder().setBreakPoint(true).toString()).toContain(
+        expect(nodeBuilder().setBreakpoint(true).toString()).toContain(
             'bIsBreakpointSet'
         )
         expect(nodeBuilder().toString()).not.toContain('bIsBreakpointSet')
@@ -55,9 +55,7 @@ describe('item node and constructors', () => {
     })
 
     test('node item string', () => {
-        const node = nodeBuilder()
-        /** @deprecated */
-        expect(node.toKismet()).toEqual(node.toString())
+        expect(nodeBuilder().toString()).toBeTruthy()
     })
 })
 
@@ -71,7 +69,7 @@ describe('sequence action', () => {
     test('action add connection', () => {
         expect(
             new AddGameBall()
-                .addConnection(new AddGameBall(), 'Added', 'Add')
+                .addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'Add' })
                 .toJSON()['OutputLinks(0)']
         ).toMatch(
             /\(OverrideDelta=0,DrawY=0,Links=\(\(LinkedOp=SeqAct_AddGameBall_TA'SeqAct_AddGameBall_TA_\d'\)\)\)/g
@@ -80,7 +78,7 @@ describe('sequence action', () => {
         const sequence = sequenceBuilder()
         const addBallAction = new AddGameBall()
             .setSequence(sequence)
-            .addConnection(new AddGameBall(), 'Added', 'Add')
+            .addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'Add' })
 
         expect(sequence.resolveId(addBallAction.id)).toBe(addBallAction)
     })
@@ -88,12 +86,12 @@ describe('sequence action', () => {
     test('action invalid add connection', () => {
         // Invalid output connection
         expect(() =>
-            new AddGameBall().addConnection(new AddGameBall(), 'test', 'Add')
+            new AddGameBall().addOutputConnection({ name: 'test' }, { item: new AddGameBall(), name: 'Add' })
         ).toThrowError()
 
         // Invalid input connection
         expect(() =>
-            new AddGameBall().addConnection(new AddGameBall(), 'Added', 'test')
+            new AddGameBall().addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'test' })
         ).toThrowError()
     })
 })
@@ -179,10 +177,6 @@ describe('sequence event', () => {
     test('event export', () => {
         expect(eventBuilder().toJSON().MaxTriggerCount).toBe(0)
         expect(eventBuilder().toString()).toContain('MaxTriggerCount=0')
-
-        const event = eventBuilder()
-        /** @deprecated */
-        expect(event.toKismet()).toEqual(event.toString())
     })
 })
 
@@ -196,9 +190,5 @@ describe('sequence variable', () => {
         expect(variableBuilder({ name: 'test' }).toString()).toContain(
             'VarName'
         )
-
-        const variable = variableBuilder()
-        /** @deprecated */
-        expect(variable.toKismet()).toEqual(variable.toString())
     })
 })

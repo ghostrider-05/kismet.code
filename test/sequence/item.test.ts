@@ -109,7 +109,6 @@ describe('Sequence item', () => {
             })
 
             expect(baseItem.toString()).toBeDefined()
-            expect(baseItem.toKismet()).toEqual(baseItem.toString())
         })
 
         test('item position', () => {

@@ -8,7 +8,6 @@ import {
 import { Variables, Actions, Conditions, Events } from '../items/index.js'
 
 import {
-    CustomNodesManager,
     ProcessManager,
     ProcessId,
 } from './managers/index.js'
@@ -30,10 +29,6 @@ export class KismetFile {
      * The main sequence that is attached to this project
      */
     public mainSequence: Sequence
-    /**
-     * @deprecated
-     */
-    public classParser: CustomNodesManager
 
     /**
      * The name of the kismet project.
@@ -60,8 +55,6 @@ export class KismetFile {
             mainSequence: true,
             project: this.id,
         })
-
-        this.classParser = new CustomNodesManager()
     }
 
     /**

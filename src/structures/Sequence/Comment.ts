@@ -156,13 +156,6 @@ export class Comment extends BaseSequenceItem {
 
         return this.formatNode(properties)
     }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
 }
 
 export class CommentFrame extends Comment {

@@ -101,11 +101,4 @@ export class SequenceNode extends BaseSequenceItem {
 
         return addVariable(node, properties)
     }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
 }

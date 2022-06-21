@@ -1,6 +1,10 @@
-import { boolToKismet } from "../../shared";
-import { KismetVariableValue, SequenceItemType } from "../../types";
+import { boolToKismet } from "../../shared/index.js";
+
 import { type Sequence } from "./base.js";
+import type { 
+    KismetVariableValue,
+    SequenceItemType
+} from "../../types/index.js";
 
 export class SequenceUtil {
     private sequence: Sequence;

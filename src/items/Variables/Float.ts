@@ -38,13 +38,6 @@ export class FloatVariable extends SequenceVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         return addVariable(super.toString(), [['FloatValue', this.value.toString()]])
     }
@@ -73,13 +66,6 @@ export class RandomFloatVariable extends FloatVariable {
         this.maxValue = max
 
         return this
-    }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
     }
 
     public override toString (): string {

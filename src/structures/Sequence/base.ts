@@ -308,16 +308,21 @@ export class Sequence extends BaseItem {
         return this
     }
 
-    public updateItem (item: SequenceResolvable, updatedItem: Sequence | SequenceItemType) {
+    public update (item: Sequence | SequenceItemType): this | undefined {
+        return this.updateItem(item.linkId, item)
+    }
+
+    public updateItem (item: SequenceResolvable, updatedItem: Sequence | SequenceItemType): this | undefined {
         const linkId = this.resolve(item)?.linkId
         if (!linkId) return undefined
 
         const foundItem = this.items.find(n => n.linkId === linkId)
 
         if (!foundItem) {
-            return console.warn(
+            console.warn(
                 `Could not find item with id: ${linkId}`
             )
+            return
         }
 
         this.items[this.items.indexOf(foundItem)] = updatedItem
@@ -360,12 +365,5 @@ export class Sequence extends BaseItem {
             : [filterEmptyLines(this.items.map(i => i.toString()))]
 
         return lines.join('\n')
-    }
-
-    /**
-     * @deprecated
-     */
-    public toKismet (): string {
-        return this.toString()
     }
 }

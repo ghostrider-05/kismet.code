@@ -30,13 +30,6 @@ export class IntegerVariable extends SequenceVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         return addVariable(super.toString(), [['IntValue', this.value.toString()]])
     }
@@ -67,13 +60,6 @@ export class RandomIntegerVariable extends IntegerVariable {
         this.maxValue = max
 
         return this
-    }
-
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
     }
 
     public override toString (): string {

@@ -76,9 +76,5 @@ describe('comment', () => {
         expect(new Comment().toJSON().SizeX).toBeDefined()
 
         expect(new Comment().toString()).toContain('SizeX')
-
-        const comment = new Comment()
-        /** @deprecated */
-        expect(comment.toKismet()).toEqual(comment.toString())
     })
 })

@@ -31,13 +31,6 @@ export class PlayerVariable extends ObjectVariable {
         return this
     }
 
-    /**
-     * @deprecated
-     */
-    public override toKismet (): string {
-        return this.toString()
-    }
-
     public override toString (): string {
         const properties: [string, string][] = [
             ['PlayerIdx', this.playerIndex.toString()],
