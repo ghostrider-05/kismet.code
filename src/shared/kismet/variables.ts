@@ -1,8 +1,6 @@
 import { KISMET_LINE_INDENT, KismetBoolean } from '../util/Constants.js'
 
-import type {
-    KismetVariableValue,
-} from '../../types/index.js'
+import type { KismetVariableValue } from '../../types/index.js'
 
 export function addVariable (
     node: string,
@@ -12,7 +10,9 @@ export function addVariable (
         .split('\n')
         .flatMap((line, index) => {
             return index === 0
-                ? [line].concat(variables.map(([name, value]) => parseVar(name, value)))
+                ? [line].concat(
+                      variables.map(([name, value]) => parseVar(name, value))
+                  )
                 : line
         })
         .join('\n')

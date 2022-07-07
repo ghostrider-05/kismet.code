@@ -69,7 +69,10 @@ describe('sequence action', () => {
     test('action add connection', () => {
         expect(
             new AddGameBall()
-                .addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'Add' })
+                .addOutputConnection(
+                    { name: 'Added' },
+                    { item: new AddGameBall(), name: 'Add' }
+                )
                 .toJSON()['OutputLinks(0)']
         ).toMatch(
             /\(OverrideDelta=0,DrawY=0,Links=\(\(LinkedOp=SeqAct_AddGameBall_TA'SeqAct_AddGameBall_TA_\d'\)\)\)/g
@@ -78,7 +81,10 @@ describe('sequence action', () => {
         const sequence = sequenceBuilder()
         const addBallAction = new AddGameBall()
             .setSequence(sequence)
-            .addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'Add' })
+            .addOutputConnection(
+                { name: 'Added' },
+                { item: new AddGameBall(), name: 'Add' }
+            )
 
         expect(sequence.resolveId(addBallAction.id)).toBe(addBallAction)
     })
@@ -86,12 +92,18 @@ describe('sequence action', () => {
     test('action invalid add connection', () => {
         // Invalid output connection
         expect(() =>
-            new AddGameBall().addOutputConnection({ name: 'test' }, { item: new AddGameBall(), name: 'Add' })
+            new AddGameBall().addOutputConnection(
+                { name: 'test' },
+                { item: new AddGameBall(), name: 'Add' }
+            )
         ).toThrowError()
 
         // Invalid input connection
         expect(() =>
-            new AddGameBall().addOutputConnection({ name: 'Added' }, { item: new AddGameBall(), name: 'test' })
+            new AddGameBall().addOutputConnection(
+                { name: 'Added' },
+                { item: new AddGameBall(), name: 'test' }
+            )
         ).toThrowError()
     })
 })

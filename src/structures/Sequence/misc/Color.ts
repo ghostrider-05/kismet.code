@@ -1,3 +1,5 @@
+import { KismetError } from '../../../shared/index.js'
+
 export class KismetColor {
     public MIN_COLOR_VALUE: number
     public MAX_COLOR_VALUE: number
@@ -20,18 +22,17 @@ export class KismetColor {
 
     private _validateNumber (value: number): void {
         if (typeof value !== 'number')
-            throw new Error(
-                'Expected number as color. Received value of type' +
-                    typeof value
-            )
+            new KismetError('INVALID_COLOR_TYPE', [typeof value])
 
         const isInvalid =
             value < this.MIN_COLOR_VALUE || value > this.MAX_COLOR_VALUE
 
         if (isInvalid)
-            throw new Error(
-                `Invalid color value. Expected value between ${this.MIN_COLOR_VALUE} and ${this.MAX_COLOR_VALUE}. Received: ${value}`
-            )
+            new KismetError('INVALID_COLOR_VALUE', [
+                this.MIN_COLOR_VALUE,
+                this.MAX_COLOR_VALUE,
+                value,
+            ])
     }
 
     private _validateOptions (options: Record<string, number>): void {
@@ -70,8 +71,7 @@ export class KismetColor {
 
     public setColors (colors: [number, number, number, number]): this {
         colors.forEach(color => this._validateNumber(color))
-        if (colors.length !== 4)
-            throw new Error('Invalid color lenght provided. Expected 4 values')
+        if (colors.length !== 4) new KismetError('INVALID_COLORS_INPUT')
 
         this.R = colors[0]
         this.G = colors[1]

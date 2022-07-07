@@ -7,11 +7,7 @@ import {
     SequencePositionManager,
 } from '../managers/index.js'
 
-import {
-    Constants,
-    filterEmptyLines,
-    parseVar,
-} from '../../shared/index.js'
+import { Constants, filterEmptyLines, parseVar } from '../../shared/index.js'
 
 import type {
     SequenceItemType,
@@ -21,7 +17,6 @@ import type {
     SchemaItemNames,
     KismetVariableValue,
 } from '../../types/index.js'
-
 
 const { DefaultLayoutOptions, KISMET_NODE_LINES, MAIN_SEQUENCE, NodeType } =
     Constants
@@ -53,7 +48,7 @@ export class Sequence extends BaseItem {
     public enabled = true
 
     /**
-     * The parent sequence of this sequence.  
+     * The parent sequence of this sequence.
      */
     public parentSequence: string = MAIN_SEQUENCE
 
@@ -199,13 +194,13 @@ export class Sequence extends BaseItem {
      */
     public findConnectedEvent (
         actionId: string,
-        event: { 
-            id: string; 
+        event: {
+            id: string
             /**
              * @deprecated
              */
             connectioName?: string
-            connectionName?: string 
+            connectionName?: string
         }
     ): SequenceItemType | undefined {
         return this.util.findConnectedEvent(actionId, event)
@@ -237,7 +232,7 @@ export class Sequence extends BaseItem {
 
     /**
      * Returns the index of the first occurrence of an item in this sequence, or -1 if it is not present.
-     * @param id 
+     * @param id
      * @deprecated
      */
     public indexOf (id: string): number {
@@ -286,7 +281,7 @@ export class Sequence extends BaseItem {
     /**
      * Set a new name for this sequence.
      * Cannot be set if this sequence is the main sequence.
-     * @param name 
+     * @param name
      */
     public setName (name: string): this {
         if (!this.mainSequence) this.name = name
@@ -312,16 +307,17 @@ export class Sequence extends BaseItem {
         return this.updateItem(item.linkId, item)
     }
 
-    public updateItem (item: SequenceResolvable, updatedItem: Sequence | SequenceItemType): this | undefined {
+    public updateItem (
+        item: SequenceResolvable,
+        updatedItem: Sequence | SequenceItemType
+    ): this | undefined {
         const linkId = this.resolve(item)?.linkId
         if (!linkId) return undefined
 
         const foundItem = this.items.find(n => n.linkId === linkId)
 
         if (!foundItem) {
-            console.warn(
-                `Could not find item with id: ${linkId}`
-            )
+            console.warn(`Could not find item with id: ${linkId}`)
             return
         }
 
@@ -330,7 +326,9 @@ export class Sequence extends BaseItem {
         return this
     }
 
-    public updateItems (items: [SequenceResolvable, (SequenceItemType | Sequence)][]): this {
+    public updateItems (
+        items: [SequenceResolvable, SequenceItemType | Sequence][]
+    ): this {
         items.forEach(([oldItem, newItem]) => this.updateItem(oldItem, newItem))
 
         return this
@@ -339,7 +337,10 @@ export class Sequence extends BaseItem {
     public toJSON (): Record<string, KismetVariableValue> {
         this.items = this.positionManager.fillPositions(this)['items']
 
-        const variables = new SequenceUtil(this)['toRecord'](this.items, this.properties)
+        const variables = new SequenceUtil(this)['toRecord'](
+            this.items,
+            this.properties
+        )
 
         return variables.reduce(
             (prev, curr) => ({

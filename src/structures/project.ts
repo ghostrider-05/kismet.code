@@ -7,10 +7,7 @@ import {
 
 import { Variables, Actions, Conditions, Events } from '../items/index.js'
 
-import {
-    ProcessManager,
-    ProcessId,
-} from './managers/index.js'
+import { ProcessManager, ProcessId } from './managers/index.js'
 
 import { cast, clipboard } from '../shared/index.js'
 
@@ -153,7 +150,7 @@ export class KismetFile {
 
     /**
      * Copy this project kismet file to the clipboard.
-     * Copies {@link KismetFile.toString}. 
+     * Copies {@link KismetFile.toString}.
      */
     public async copyKismet (): Promise<void> {
         return await clipboard.write(this.toString())

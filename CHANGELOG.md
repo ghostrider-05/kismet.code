@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 ### BREAKING CHANGES
 
 - remove all deprecated items released in 1.0.0-beta.3 or earlier
- 
+
 ## 1.0.0-beta.4
 
 - **BaseSequenceItem**: `comment`, `supressAutoComment` and `outputCommentToScreen` are deprecated

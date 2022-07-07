@@ -1,32 +1,37 @@
-import { boolToKismet } from "../../shared/index.js";
+import { boolToKismet } from '../../shared/index.js'
 
-import { type Sequence } from "./base.js";
-import type { 
+import { type Sequence } from './base.js'
+import type {
     KismetVariableValue,
-    SequenceItemType
-} from "../../types/index.js";
+    SequenceItemType,
+} from '../../types/index.js'
 
 export class SequenceUtil {
-    private sequence: Sequence;
+    private sequence: Sequence
 
     constructor (sequence: Sequence) {
         this.sequence = sequence
     }
 
     protected toRecord (
-        items: (SequenceItemType | Sequence)[], 
+        items: (SequenceItemType | Sequence)[],
         properties: Record<
             | 'x'
             | 'y'
             | 'archetype'
             | 'DrawWidth'
             | 'DrawHeight'
-            | 'ObjInstanceVersion', 
-            string | number>
+            | 'ObjInstanceVersion',
+            string | number
+        >
     ): [string, KismetVariableValue][] {
-        const { ObjInstanceVersion, archetype, DrawHeight, DrawWidth, x, y } = properties
+        const { ObjInstanceVersion, archetype, DrawHeight, DrawWidth, x, y } =
+            properties
         const itemValues = items.map((item, index) => {
-            return [`SequenceObjects(${index})`, item.linkId] as [string, string]
+            return [`SequenceObjects(${index})`, item.linkId] as [
+                string,
+                string
+            ]
         })
 
         return [
@@ -55,14 +60,17 @@ export class SequenceUtil {
      */
     public findConnectedEvent (
         actionId: string,
-        event: { 
-            id: string; 
-            connectionName?: string 
+        event: {
+            id: string
+            connectionName?: string
         }
     ): SequenceItemType | undefined {
         const events = this.sequence.items.filter(n => {
             if (n.isEvent() && n.linkId === event.id) {
-                const connectedItems = this.sequence.listConnectedItems(event.id, event.connectionName)
+                const connectedItems = this.sequence.listConnectedItems(
+                    event.id,
+                    event.connectionName
+                )
 
                 return connectedItems.includes(actionId)
             } else return false
@@ -75,7 +83,7 @@ export class SequenceUtil {
      * Get all items in this sequence with the same class
      * @param item The item to use as reference
      */
-     public filterByClassName (
+    public filterByClassName (
         item: SequenceItemType | Sequence
     ): (SequenceItemType | Sequence)[] {
         return this.sequence.items.filter(
@@ -89,7 +97,7 @@ export class SequenceUtil {
      */
     public indexOf (id: string): number {
         const item = this.sequence.items.find(i => i.linkId === id)
-        
+
         if (!item) return -1
         else return this.sequence.items.indexOf(item)
     }

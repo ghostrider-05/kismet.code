@@ -1,4 +1,8 @@
-import { BaseKismetConnection, ItemConnection, SequenceNode } from './Item/index.js'
+import {
+    BaseKismetConnection,
+    ItemConnection,
+    SequenceNode,
+} from './Item/index.js'
 
 import { Constants, KismetError } from '../../shared/index.js'
 
@@ -22,8 +26,8 @@ export class SequenceAction extends SequenceNode {
     }
 
     private _validateConnection (
-        fromConnection: KismetConnection | BaseKismetConnection | null, 
-        toConnection: KismetConnection, 
+        fromConnection: KismetConnection | BaseKismetConnection | null,
+        toConnection: KismetConnection,
         names: string[]
     ) {
         if (fromConnection && toConnection) {
@@ -50,7 +54,8 @@ export class SequenceAction extends SequenceNode {
         from: { name: string },
         to: { name: string; item: SequenceNode }
     ): this {
-        const { name: outputName } = from, { item, name: inputName } = to
+        const { name: outputName } = from,
+            { item, name: inputName } = to
 
         const connection = this.getConnection(ConnectionType.OUTPUT, outputName)
         const itemConnection = item.getConnection(
@@ -58,7 +63,12 @@ export class SequenceAction extends SequenceNode {
             inputName
         ) as ItemConnection
 
-        if (this._validateConnection(connection, itemConnection, [outputName, inputName])) {
+        if (
+            this._validateConnection(connection, itemConnection, [
+                outputName,
+                inputName,
+            ])
+        ) {
             this.connections?.output
                 .find(n => n.name === outputName)
                 ?.addLink(

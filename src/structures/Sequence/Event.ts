@@ -82,7 +82,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
     /**
      * Set the client / player display options
-     * @param options 
+     * @param options
      */
     public setDisplay ({
         player,
@@ -104,7 +104,7 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
 
     /**
      * Set the trigger options for this event
-     * @param options 
+     * @param options
      */
     public setTrigger ({ max, delay }: { max?: number; delay?: number }): this {
         if (max != undefined) {

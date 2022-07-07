@@ -25,8 +25,8 @@ import type {
     BaseKismetItemDrawOptions,
     SequenceItemType,
     SequenceItemTypeName,
-    KismetVariablesType,
     KismetPosition,
+    KismetVariableValue,
 } from '../../../types/index.js'
 
 const { KISMET_NODE_LINES, MAIN_SEQUENCE, ObjInstanceVersions } = Constants
@@ -100,7 +100,10 @@ export class BaseSequenceItem extends BaseItem {
                 .map(key => {
                     const links = inputs[key as keyof typeof inputs]
 
-                    return this._groupConnections(links, key)
+                    return this._groupConnections(
+                        links,
+                        <KismetConnectionType>key
+                    )
                 })
                 .reduce(
                     (x, y) => ({ ...x, [y.key]: y.connections }),
@@ -111,7 +114,10 @@ export class BaseSequenceItem extends BaseItem {
         }
     }
 
-    private _groupConnections (links: string[] | undefined, key: string) {
+    private _groupConnections (
+        links: string[] | undefined,
+        key: KismetConnectionType
+    ) {
         if (!links)
             return {
                 key,
@@ -127,7 +133,7 @@ export class BaseSequenceItem extends BaseItem {
                         : [
                               new BaseKismetConnection({
                                   input: key === 'input' ? 'In' : 'Out',
-                                  type: key as KismetConnectionType,
+                                  type: key,
                               }),
                           ],
             }
@@ -136,10 +142,7 @@ export class BaseSequenceItem extends BaseItem {
                 key,
                 connections: links
                     .map(input => {
-                        return BaseKismetConnection.convertLink(
-                            key as KismetConnectionType,
-                            input
-                        )
+                        return BaseKismetConnection.convertLink(key, input)
                     })
                     .filter(n => n != undefined) as (
                     | ItemConnection
@@ -159,7 +162,7 @@ export class BaseSequenceItem extends BaseItem {
             y,
         } = this.kismet
 
-        const json: Record<string, KismetVariablesType> = {
+        const json: Record<string, KismetVariableValue> = {
             ObjInstanceVersion:
                 ObjInstanceVersions.get(Class) ?? ObjInstanceVersion,
             ParentSequence,
@@ -268,7 +271,7 @@ export class BaseSequenceItem extends BaseItem {
         return this
     }
 
-    public toJSON (): Record<string, KismetVariablesType> {
+    public toJSON (): Record<string, KismetVariableValue> {
         const json = this._BasetoJSON()
 
         const connections =

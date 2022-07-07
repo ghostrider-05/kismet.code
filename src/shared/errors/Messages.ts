@@ -5,6 +5,10 @@ export const Messages = {
         Remove an object with this id or choose a differen index`,
     INTEGER_INPUT: 'Value is an float, not a integer',
     INVALID_COLORS_INPUT: 'Invalid color lenght provided. Expected 4 values',
+    INVALID_COLOR_TYPE: (type: string) =>
+        `Expected number as color. Received value of type ${type}`,
+    INVALID_COLOR_VALUE: (min: number, max: number, value: number) =>
+        `Invalid color value. Expected value between ${min} and ${max}. Received: ${value}`,
     INVALID_NODE_ARGUMENT:
         'Invalid item: expected a node (action or condition)',
     INVALID_PATH: (path: string) => `Could not find path: ${path}`,
