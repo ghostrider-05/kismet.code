@@ -204,10 +204,12 @@ export class InputTextSequenceParser<
                           { name: 'Out' },
                           {
                               name: 'In',
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                               item: <SequenceNode>sequenceItems.at(index + 2)!,
                           }
                       )
             )
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 .setVariable(this.manager.findVariableType(output)!, output)
                 .setVariable('Target', target)
 

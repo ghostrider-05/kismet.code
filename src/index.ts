@@ -34,16 +34,3 @@ const Util = class Util {
 
 export * from './types/index.js'
 export { KismetFile, Parsers, Structures, Util, Constants }
-
-import { InputTextSequenceParser } from './structures/managers/TextManager.js'
-
-const textparser = new InputTextSequenceParser(KismetFile.listDefaultItems(), {
-    toString: false,
-    sequence: {
-        layout: { style: Constants.PositionStyleOption.MOUNTAIN },
-    },
-})
-
-KismetFile.copy(
-    textparser.parsePropertyChain('Player().PRI.Team.<Integer>TeamIndex')!
-)

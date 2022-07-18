@@ -1,14 +1,15 @@
+import { CustomNodesManager } from './managers/index.js'
+
 import {
-    CustomNodesManager,
     TextParserOptions,
     InputTextNodeParser,
     InputTextSequenceParser,
-} from './managers/index.js'
+} from './managers/TextManager.js'
 
 export const Parsers = {
     Classes: new CustomNodesManager(),
     NodeText: InputTextNodeParser,
-    SequenceText: InputTextNodeParser,
+    SequenceText: InputTextSequenceParser,
 }
 
 export type { TextParserOptions }
