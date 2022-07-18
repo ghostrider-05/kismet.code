@@ -1,4 +1,4 @@
-import { type Sequence } from '../../index.js'
+import { Sequence } from '../../index.js'
 
 import type {
     KismetConnectionType,

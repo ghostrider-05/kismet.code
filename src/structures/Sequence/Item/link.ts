@@ -205,9 +205,10 @@ export class VariableConnection extends BaseKismetConnection {
             bWriteable,
             bSequenceNeverReadsOnlyWritesToThisVar,
             bModifiesLinkedObject,
+            LinkDesc,
         } = properties
 
-        this.name = cast(PropertyName)
+        this.name = cast(LinkDesc.toString().replace(/"/g, ''))
 
         this.expectedType = cast(ExpectedType)
         this.PropertyName = cast(PropertyName)

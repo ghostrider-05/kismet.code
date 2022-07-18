@@ -6,7 +6,7 @@ import { addVariable, boolToKismet } from '../../../shared/index.js'
 
 import type {
     BaseKismetItemOptions,
-    KismetVariablesType,
+    KismetVariableValue,
     SequenceItemTypeName,
 } from '../../../types/index.js'
 
@@ -33,6 +33,12 @@ export class SequenceNode extends BaseSequenceItem {
         return this
     }
 
+    public setProperty (name: string, value: KismetVariableValue): this {
+        this.raw.push([name, value])
+
+        return this
+    }
+
     public setVariable (
         variableName: string,
         value: SequenceVariable | string | number,
@@ -53,7 +59,7 @@ export class SequenceNode extends BaseSequenceItem {
                 this.connections?.variable.indexOf(connection),
                 hidden
             )
-        } else {
+        } else if (!value.toString().includes('Begin')) {
             if (!this.variables.some(n => n.name === variableName)) {
                 this.variables.push({
                     name: variableName,
@@ -69,7 +75,7 @@ export class SequenceNode extends BaseSequenceItem {
         return this
     }
 
-    public override toJSON (): Record<string, KismetVariablesType> {
+    public override toJSON (): Record<string, KismetVariableValue> {
         const breakpoint = this.hasBreakpoint
             ? {
                   bIsBreakpointSet: this.hasBreakpoint,

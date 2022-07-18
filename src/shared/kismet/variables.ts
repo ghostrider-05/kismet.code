@@ -8,8 +8,8 @@ export function addVariable (
 ): string {
     return node
         .split('\n')
-        .flatMap((line, index) => {
-            return index === 0
+        .flatMap((line, index, lines) => {
+            return index === lines.length - 2
                 ? [line].concat(
                       variables.map(([name, value]) => parseVar(name, value))
                   )

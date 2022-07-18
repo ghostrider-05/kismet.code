@@ -9,13 +9,17 @@ All notable changes to this project will be documented in this file.
 ### Bug fixes
 
 - **KismetFile**: correctly type `list*Items` methods
+- **KismetFile**: `copy` allows a sequence as input
 
 ### Features
 
 - **BaseSequenceItem**: set display name in constructor options
+- **BaseSequenceItem**: add `fromJSON` method
+- **BaseSequenceItem**/**SequenceNode**: add `raw` property and methods
 - **Sequence**: add method to clear all breakpoints
 - **Sequence**: move some methods to `util` property
 - **Sequence**: add `resolve`, `update`, `updateItem` and `updateItems` for managing items
+- **Parsers**: add `NodeText` and `SequenceText` for converting text
 - **Util**: add SequenceGrid
 - docs: improve jsdoc coverage
 

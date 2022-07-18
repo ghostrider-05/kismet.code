@@ -1,6 +1,6 @@
 import { boolToKismet } from '../../shared/index.js'
 
-import { type Sequence } from './base.js'
+import { Sequence } from './base.js'
 import type {
     KismetVariableValue,
     SequenceItemType,

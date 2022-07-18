@@ -1,10 +1,9 @@
 import { BaseItem } from './_base.js'
 import { Sequence } from '../base.js'
-import {
-    BaseKismetConnection,
-    ItemConnection,
-    VariableConnection,
-} from './link.js'
+import { BaseKismetConnection } from './link.js'
+import { ItemConnectionManager } from './connection.js'
+
+import { KismetBoolean } from '../misc/Boolean.js'
 
 import { ProcessId, ProcessManager } from '../../managers/index.js'
 
@@ -45,16 +44,13 @@ export class BaseSequenceItem extends BaseItem {
         outputCommentToScreen?: boolean
     } = {}
 
-    public connections: KismetConnections = {
-        input: [],
-        output: [],
-        variable: [],
-    }
+    public connections: KismetConnections
     public sequence: string
 
     public readonly id: ProcessId
     public name: string
 
+    public raw: [string, KismetVariableValue][] = []
     private kismet: BaseKismetItemDrawOptions
 
     constructor (
@@ -65,9 +61,16 @@ export class BaseSequenceItem extends BaseItem {
         this.comment = null
         this.supressAutoComment = null
         this.outputCommentToScreen = null
-        this.sequence = MAIN_SEQUENCE
+        const sequence = options.sequence
+            ? `Sequence'${options.sequence}'`
+            : MAIN_SEQUENCE
+        this.sequence = sequence
 
-        this._setConnections(options.inputs)
+        this.connections = ItemConnectionManager.createConnections(
+            options.inputs,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            options.type!
+        )
         const { Class, Package } = readArchetype(options.ObjectArchetype)
 
         this.name = options.name ?? Class
@@ -78,10 +81,11 @@ export class BaseSequenceItem extends BaseItem {
             class: Class,
             classType: `Class'${Package}.${Class}'`,
             ObjectArchetype: options.ObjectArchetype,
-            ParentSequence: options.sequence
-                ? `Sequence'${options.sequence}'`
-                : MAIN_SEQUENCE,
-            ObjInstanceVersion: options.ObjInstanceVersion ?? 1,
+            ParentSequence: sequence,
+            ObjInstanceVersion:
+                options.ObjInstanceVersion ??
+                ObjInstanceVersions.get(Class) ??
+                1,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,
                 height: options.Draw?.height ?? null,
@@ -94,66 +98,8 @@ export class BaseSequenceItem extends BaseItem {
         })
     }
 
-    private _setConnections (inputs: BaseKismetItemOptions['inputs']): void {
-        try {
-            this.connections = ['input', 'output', 'variable']
-                .map(key => {
-                    const links = inputs[key as keyof typeof inputs]
-
-                    return this._groupConnections(
-                        links,
-                        <KismetConnectionType>key
-                    )
-                })
-                .reduce(
-                    (x, y) => ({ ...x, [y.key]: y.connections }),
-                    {}
-                ) as KismetConnections
-        } catch (err) {
-            console.log(err, this)
-        }
-    }
-
-    private _groupConnections (
-        links: string[] | undefined,
-        key: KismetConnectionType
-    ) {
-        if (!links)
-            return {
-                key,
-                connections: [],
-            }
-
-        if (links.length === 0 && ['input', 'output'].includes(key)) {
-            return {
-                key,
-                connections:
-                    this.type === 'events' && key === 'input'
-                        ? []
-                        : [
-                              new BaseKismetConnection({
-                                  input: key === 'input' ? 'In' : 'Out',
-                                  type: key,
-                              }),
-                          ],
-            }
-        } else
-            return {
-                key,
-                connections: links
-                    .map(input => {
-                        return BaseKismetConnection.convertLink(key, input)
-                    })
-                    .filter(n => n != undefined) as (
-                    | ItemConnection
-                    | VariableConnection
-                )[],
-            }
-    }
-
     private _BasetoJSON () {
         const {
-            class: Class,
             DrawConfig,
             ObjectArchetype,
             ObjInstanceVersion,
@@ -163,8 +109,11 @@ export class BaseSequenceItem extends BaseItem {
         } = this.kismet
 
         const json: Record<string, KismetVariableValue> = {
-            ObjInstanceVersion:
-                ObjInstanceVersions.get(Class) ?? ObjInstanceVersion,
+            ...(this.raw.reduce(
+                (prev, curr) => ({ ...prev, [curr[0]]: curr[1] }),
+                {}
+            ) ?? {}),
+            ObjInstanceVersion,
             ParentSequence,
             ObjPosX: x,
             ObjPosY: y,
@@ -301,5 +250,44 @@ export class BaseSequenceItem extends BaseItem {
         const variables = Object.keys(json).map(n => parseVar(n, json[n]))
 
         return this.formatNode(variables)
+    }
+
+    public static fromJSON (input: Record<string, KismetVariableValue>) {
+        const keys = [
+            'ObjectArchetype',
+            'ObjComment',
+            'bSuppressAutoComment',
+            'bIsBreakpointSet',
+            'bOutputObjCommentToScreen',
+        ] as const
+        type Writeable<T> = { -readonly [P in keyof T]: T[P] }
+        type RawJSON = Record<Writeable<typeof keys>[number], string>
+
+        const keyValues = keys.reduce(
+            (_, key) => ({ ..._, [key]: input[key] }),
+            {} as RawJSON
+        )
+
+        const comment = {
+            ...keyValues,
+            supressAutoComment: KismetBoolean.toCode(
+                keyValues.bSuppressAutoComment,
+                true
+            ),
+            outputCommentToScreen: KismetBoolean.toCode(
+                keyValues.bSuppressAutoComment,
+                true
+            ),
+        }
+
+        return new BaseSequenceItem({
+            ...keyValues,
+            inputs: ItemConnectionManager.fromText(input),
+            sequence: <string>input['ParentSequence'],
+            position: {
+                x: Number(input['ObjPosX']),
+                y: Number(input['ObjPosY']),
+            },
+        }).setComment(comment)
     }
 }

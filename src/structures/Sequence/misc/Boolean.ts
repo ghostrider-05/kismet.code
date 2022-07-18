@@ -15,7 +15,7 @@ export class KismetBoolean {
             : Constants.KismetBoolean.False
     }
 
-    public static toCode (value: string): boolean {
+    public static toCode (value: string, silent = false): boolean {
         const code =
             value === Constants.KismetBoolean.True
                 ? true
@@ -23,7 +23,7 @@ export class KismetBoolean {
                 ? false
                 : undefined
 
-        if (code == undefined)
+        if (code == undefined && !silent)
             new KismetError('INVALID_TYPE', [
                 value,
                 'kismet string of a boolean',

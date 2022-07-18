@@ -142,7 +142,7 @@ export class KismetFile {
      * Copy any kismet node to the clipboard
      * @param item The item to copy
      */
-    public static async copy (item: SequenceItemType): Promise<void> {
+    public static async copy (item: SequenceItemType | Sequence): Promise<void> {
         const input = item.toString()
 
         return await clipboard.write(input)
