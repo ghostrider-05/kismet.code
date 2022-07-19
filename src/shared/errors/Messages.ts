@@ -20,8 +20,8 @@ export const Messages = {
     SEQUENCE_DEFINED: `A sequence is already defined and cannot be changed by name. 
         Overwrite the sequence by provide a new sequence structure`,
     SEQUENCE_EMPTY: (name: string) => `Sequence '${name}' is empty`,
-    UNKNOWN_CONNECTION: (name: string, obj: string) =>
-        `Could not find output connection for '${name}' on ${obj}`,
+    UNKNOWN_CONNECTION: (name: string, obj: string, type = 'output') =>
+        `Could not find ${type} connection for '${name}' on ${obj}`,
 }
 
 export type MessageKey = keyof typeof Messages

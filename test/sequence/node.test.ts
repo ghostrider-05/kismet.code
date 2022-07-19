@@ -75,7 +75,7 @@ describe('sequence action', () => {
                 )
                 .toJSON()['OutputLinks(0)']
         ).toMatch(
-            /\(OverrideDelta=0,DrawY=0,Links=\(\(LinkedOp=SeqAct_AddGameBall_TA'SeqAct_AddGameBall_TA_\d'\)\)\)/g
+            /\(OverrideDelta=0,DrawY=0,Links=\(\(LinkedOp=SeqAct_AddGameBall_TA'SeqAct_AddGameBall_TA_\d+'\)\)\)/g
         )
 
         const sequence = sequenceBuilder()

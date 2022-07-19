@@ -39,12 +39,21 @@ class InputTextManager {
             const a = _a.toLowerCase(),
                 b = _b.toLowerCase()
 
-            return a === b || b.includes(a) || a.includes(b)
+            return a === b || a.split('_')[1] === b
         }
 
-        return this.items.find(item => {
-            return filter(item.name, name) || filter(item['kismet'].class, name)
+        const item = this.items.find(item => {
+            return (
+                filter(item.name, name) ||
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                filter(new item()['kismet'].class, name)
+            )
         })
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        return item ? new item() : undefined
     }
 
     public findVariable (name: string | undefined): SequenceVariable {
@@ -69,18 +78,23 @@ class InputTextManager {
     }
 }
 
-class BaseTextParser<T extends boolean = true> {
+class BaseTextParser<
+    T extends boolean = true,
+    O extends TextParserOptions<T> | undefined =
+        | TextParserOptions<T>
+        | undefined
+> {
     protected manager: InputTextManager
-    protected options?: TextParserOptions<T>
+    protected options: O
 
-    constructor (items: SequenceItemType[], options?: TextParserOptions<T>) {
+    constructor (items: SequenceItemType[], options?: O) {
         this.manager = new InputTextManager(items)
 
-        this.options = options
+        this.options = options!
     }
 
     protected convert<R extends BaseItem> (item: R | undefined) {
-        return (this.options?.toString ? item?.toString() : item) as
+        return (this.options?.convertToString ? item?.toString() : item) as
             | If<T, string, R>
             | undefined
     }
@@ -94,8 +108,22 @@ class BaseTextParser<T extends boolean = true> {
 }
 
 export interface TextParserOptions<T> {
-    toString?: T
+    convertToString?: T
     sequence?: Omit<SequenceOptions<SequenceItemType, SchemaItemNames>, 'name'>
+}
+
+export interface TextSequenceParsedItem {
+    name: string
+    id?: string
+    inputName?: string
+    outputName?: string
+    variables?: string
+}
+
+export interface TextSequenceParserOptions<T> extends TextParserOptions<T> {
+    newLinesSeperation: number
+    extractItem: (item: string) => TextSequenceParsedItem
+    extractSequenceOrder: (block: string) => string[][]
 }
 
 export class InputTextNodeParser<
@@ -112,7 +140,7 @@ export class InputTextNodeParser<
     }
 
     public parseNodeName (name: string) {
-        return this.manager.findName(name)?.toString()
+        return this.convert(this.manager.findName(name))
     }
 
     public parseNode (input: string) {
@@ -128,24 +156,39 @@ export class InputTextNodeParser<
 
 export class InputTextSequenceParser<
     T extends boolean = true
-> extends BaseTextParser<T> {
-    public splitChar = ['->', '>']
+> extends BaseTextParser<T, TextSequenceParserOptions<T>> {
+    /**
+     * @default /->|>/
+     */
+    public static splitChar: string | RegExp = /->|>/
+
     /**
      * The character to use for seperating properties in {@link InputTextSequenceParser.parsePropertyChain}
      */
     public propertyChar = '.'
-    public connectionChar = ':'
 
-    constructor (items: SequenceItemType[], options?: TextParserOptions<T>) {
+    constructor (
+        items: SequenceItemType[],
+        options: TextSequenceParserOptions<T>
+    ) {
         super(items, options)
     }
 
+    private applyRawArguments (args: string) {
+        return args.split(',').map(arg => destructureProperty(arg))
+    }
+
     /**
-     * Check if the input can be a sequence string
+     * Check if the input can be a sequence string.
+     * Uses {@link InputTextSequenceParser.splitChar} to check
      * @param input Unknown input to check
      */
     public isSequenceInput (input: string): boolean {
-        return this.splitChar.some(n => input.includes(n))
+        const char = InputTextSequenceParser.splitChar
+
+        return typeof char === 'string'
+            ? input.includes(char)
+            : char.test(input)
     }
 
     // TODO change order of adding items to correctly display when using autoposition
@@ -167,10 +210,7 @@ export class InputTextSequenceParser<
         if (chain.length === 0) return undefined
 
         const beginItem = this.manager.findVariable(variableName)
-        beginItem.raw = variableArguments
-            .slice(0, -1)
-            .split(',')
-            .map(arg => destructureProperty(arg))
+        beginItem.raw = this.applyRawArguments(variableArguments.slice(0, -1))
 
         const sequenceItems = chain.flatMap(line => {
             const match = line.match(/(?!>)(\w+)/g)
@@ -217,5 +257,66 @@ export class InputTextSequenceParser<
         })
 
         return this.convert(sequence)
+    }
+
+    // TODO: allow variable items in properties
+    public parseSequence (input: string): Sequence {
+        const sequence = this.createSequence()
+        const idItems: Record<string, SequenceItemType> = {}
+
+        const { newLinesSeperation, extractItem, extractSequenceOrder } =
+            this.options
+
+        const blocks = input.split('\n'.repeat(newLinesSeperation))
+
+        blocks.forEach(block => {
+            extractSequenceOrder(block).forEach(items => {
+                const newItems = items.map(rawItem => {
+                    const { name, id, inputName, outputName, variables } =
+                        extractItem(rawItem.trim())
+                    const item =
+                        id && idItems[`${name}_${id}`]
+                            ? idItems[`${name}_${id}`]
+                            : this.manager.findName(name)
+
+                    if (!item)
+                        throw new Error(`No item found with the name ${name}`)
+
+                    if (variables)
+                        item.raw.push(...this.applyRawArguments(variables))
+
+                    return {
+                        item,
+                        names: [outputName, inputName],
+                    }
+                })
+
+                sequence.addItems(
+                    newItems.map(({ item, names }, index) => {
+                        const [outputName, inputName] = names
+                        console.log(names)
+                        const output = newItems[index + 1]
+                            ? {
+                                  name: inputName!,
+                                  item: <SequenceNode>newItems[index + 1].item,
+                              }
+                            : undefined
+
+                        return output
+                            ? item.isSequenceNode()
+                                ? item.addOutputConnection(
+                                      { name: outputName! },
+                                      output
+                                  )
+                                : item.isEvent()
+                                ? item.on(outputName!, output)
+                                : item
+                            : item
+                    })
+                )
+            })
+        })
+
+        return sequence
     }
 }

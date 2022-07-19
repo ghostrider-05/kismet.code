@@ -126,6 +126,8 @@ export class Sequence extends BaseItem {
     }
 
     public addItem (item: SequenceItemType, overwriteSequence?: boolean): this {
+        if (this.items.find(i => i.linkId === item.linkId)) return this
+
         if (overwriteSequence ?? true) item.setSequence(this, false)
 
         this.items.push(item)

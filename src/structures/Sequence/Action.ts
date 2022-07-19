@@ -32,15 +32,13 @@ export class SequenceAction extends SequenceNode {
     ) {
         if (fromConnection && toConnection) {
             return true
-        } else if (!fromConnection) {
-            throw new KismetError('UNKNOWN_CONNECTION', [
-                names[0],
-                this['kismet']['class'],
-            ])
         } else {
+            const nameIndex = !fromConnection ? 0 : 1
+
             throw new KismetError('UNKNOWN_CONNECTION', [
-                names[1],
+                names[nameIndex],
                 this['kismet']['class'],
+                nameIndex ? 'input' : 'output',
             ])
         }
     }
