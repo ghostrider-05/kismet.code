@@ -275,15 +275,38 @@ export class InputTextSequenceParser<
                     const { name, id, inputName, outputName, variables } =
                         extractItem(rawItem.trim())
                     const item =
-                        id && idItems[`${name}_${id}`]
-                            ? idItems[`${name}_${id}`]
+                        id && idItems[id]
+                            ? idItems[id]
                             : this.manager.findName(name)
 
                     if (!item)
                         throw new Error(`No item found with the name ${name}`)
 
-                    if (variables)
-                        item.raw.push(...this.applyRawArguments(variables))
+                    if (variables) {
+                        item.raw.push(
+                            ...this.applyRawArguments(variables).filter(
+                                ([name, value]) => {
+                                    const isReference =
+                                        Object.keys(idItems).includes(value)
+
+                                    if (isReference) {
+                                        item.isSequenceNode()
+                                            ? item.setVariable(
+                                                  name,
+                                                  <SequenceVariable>(
+                                                      idItems[value]
+                                                  )
+                                              )
+                                            : undefined
+                                    }
+
+                                    return !isReference
+                                }
+                            )
+                        )
+                    }
+
+                    if (id) idItems[id] = item
 
                     return {
                         item,
@@ -294,7 +317,6 @@ export class InputTextSequenceParser<
                 sequence.addItems(
                     newItems.map(({ item, names }, index) => {
                         const [outputName, inputName] = names
-                        console.log(names)
                         const output = newItems[index + 1]
                             ? {
                                   name: inputName!,
@@ -303,7 +325,7 @@ export class InputTextSequenceParser<
                             : undefined
 
                         return output
-                            ? item.isSequenceNode()
+                            ? item.isSequenceActionNode()
                                 ? item.addOutputConnection(
                                       { name: outputName! },
                                       output

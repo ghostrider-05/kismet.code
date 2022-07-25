@@ -46,8 +46,15 @@ export class BaseItem {
         return this.type ? !this.isSequence() : false
     }
 
-    public isSequenceNode (): this is SequenceAction | SequenceCondition {
+    public isSequenceActionNode (): this is SequenceAction | SequenceCondition {
         return this.isAction() || this.isCondition()
+    }
+
+    public isSequenceNode (): this is
+        | SequenceAction
+        | SequenceCondition
+        | SequenceEvent {
+        return this.isSequenceActionNode() || this.isEvent()
     }
 
     public isVariable (): this is SequenceVariable {

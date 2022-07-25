@@ -59,6 +59,8 @@ const ObjInstanceVersions = new Map<string, number>()
     .set('SeqAct_ConvertToString', 2)
     .set('SeqAct_DrawText', 3)
     .set('SeqAct_SetInt', 2)
+    .set('SeqEvent_Touch', 2)
+    .set('SeqEvent_LevelLoaded', 3)
 
 export * from '../../types/enums.js'
 export {

@@ -83,8 +83,10 @@ export class BaseSequenceItem extends BaseItem {
             ObjectArchetype: options.ObjectArchetype,
             ParentSequence: sequence,
             ObjInstanceVersion:
-                options.ObjInstanceVersion ??
                 ObjInstanceVersions.get(Class) ??
+                (this.type === Constants.NodeType.EVENTS
+                    ? undefined
+                    : options.ObjInstanceVersion) ??
                 1,
             DrawConfig: {
                 width: options.Draw?.width ?? 0,

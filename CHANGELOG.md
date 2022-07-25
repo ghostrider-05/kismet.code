@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+- **BaseItem**: fix event in type guards
 - **BaseSequenceItem**: set display name in constructor options
 - **BaseSequenceItem**: add `fromJSON` method
 - **BaseSequenceItem**/**SequenceNode**: add `raw` property and methods
