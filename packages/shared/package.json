@@ -1,0 +1,25 @@
+{
+  "name": "@kismet.ts/shared",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghostrider-05/kismet.ts.git"
+  },
+  "author": "ghostrider-05",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghostrider-05/kismet.ts/issues"
+  },
+  "homepage": "https://github.com/ghostrider-05/kismet.ts#readme"
+}

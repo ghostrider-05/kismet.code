@@ -10,6 +10,9 @@ src/dist/
 src/test*/
 nodes.json
 
+# Turbo
+.turbo
+
 # Other
 *.cs
 *.txt

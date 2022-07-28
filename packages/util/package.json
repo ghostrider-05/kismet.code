@@ -1,0 +1,25 @@
+{
+  "name": "@kismet.ts/util",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghostrider-05/kismet.ts.git"
+  },
+  "author": "ghostrider-05",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghostrider-05/kismet.ts/issues"
+  },
+  "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
+  "dependencies": {
+    "clipboardy": "^3.0.0"
+  }
+}
