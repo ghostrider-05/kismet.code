@@ -11,7 +11,7 @@ import {
     VariableConnection,
 } from '../../src/index.js'
 
-import type { ClassConstructor } from '../../types/index.js'
+import type { ClassConstructor } from '@kismet.ts/shared'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type builderOptions<T extends ClassConstructor<any, [any]>> = Partial<

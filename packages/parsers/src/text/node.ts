@@ -1,5 +1,5 @@
-import { BaseSequenceItem } from '@kismet.ts/core'
-import { indent, KismetItemFormatter } from '@kismet.ts/shared'
+import { BaseSequenceItem, SequenceItemType } from '@kismet.ts/core'
+import { destructureProperty, indent, KismetItemFormatter } from '@kismet.ts/shared'
 
 import { BaseTextParser } from './internals/baseParser.js'
 

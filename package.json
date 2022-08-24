@@ -6,7 +6,7 @@
   "types": "./src/dist/src/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config ./src/dist/jest.config.js",
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config ./dist/jest.config.js",
     "test:update": "npm run build && npm test",
     "build": "tsc",
     "prestart": "npm run build",

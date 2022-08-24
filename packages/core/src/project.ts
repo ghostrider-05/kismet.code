@@ -1,20 +1,15 @@
 import { ClassConstructor, cast } from '@kismet.ts/shared'
 
+import { BaseSequenceItem } from './item/index.js'
 import {
-    BaseSequenceItem,
-    Comment,
-    CommentFrame,
+    projectOptions,
     Sequence,
-} from './Sequence/index.js'
+    SequencePositionOptions,
+    SchemaItemNames,
+    SequenceItemType
+} from './structures/index.js'
 
 import { ProcessManager, ProcessId } from './managers/index.js'
-
-import type {
-    projectOptions,
-    SchemaItemNames,
-    SequenceItemType,
-    SequencePositionOptions,
-} from './structures/types.js'
 
 export class KismetFile {
     public readonly id: ProcessId
@@ -52,31 +47,6 @@ export class KismetFile {
     }
 
     /**
-     * Default Rocket League nodes (actions, conditions, events) + default UDK nodes
-     * @version 2.13
-     */
-    public static Items = {
-        Actions,
-        Conditions,
-        Variables,
-        Events,
-
-        Comment,
-        CommentFrame,
-    }
-
-    /**
-     * Convert the default items ({@link KismetFile.Items}) to an array of items
-     * @returns The converted nodes
-     */
-    public static listDefaultItems () {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { Comment, CommentFrame, ...input } = KismetFile.Items
-
-        return KismetFile.listItems(<never>input)
-    }
-
-    /**
      * Convert nodes to an array of items
      * @see {@link KismetFile.listDefaultItems} to list the default items
      * @param input An object that holds the custom items
@@ -99,10 +69,7 @@ export class KismetFile {
      */
     public static listItems<T extends SequenceItemType> (
         input: Record<
-            Exclude<
-                keyof typeof KismetFile['Items'],
-                'Comment' | 'CommentFrame'
-            >,
+            'Actions' | 'Conditions' | 'Events' | 'Variables',
             Record<string, SequenceItemType | Record<string, SequenceItemType>>
         >
     ): SequenceItemType[] {
@@ -133,24 +100,6 @@ export class KismetFile {
         })
 
         return items
-    }
-
-    /**
-     * Copy any kismet node to the clipboard
-     * @param item The item to copy
-     */
-    public static async copy (item: SequenceItemType | Sequence): Promise<void> {
-        const input = item.toString()
-
-        return await clipboard.write(input)
-    }
-
-    /**
-     * Copy this project kismet file to the clipboard.
-     * Copies {@link KismetFile.toString}.
-     */
-    public async copyKismet (): Promise<void> {
-        return await clipboard.write(this.toString())
     }
 
     public toString (): string {

@@ -1,9 +1,8 @@
+import { Constants } from '@kismet.ts/shared'
+
 import { ProcessId, ProcessManager } from './ProcessManager.js'
-import { Sequence } from '../Sequence/index.js'
-
-import { Constants } from '../../shared/index.js'
-
-import type {
+import { 
+    Sequence,     
     KismetPosition,
     layoutOptions,
     PositionStyleOptions,
@@ -11,8 +10,8 @@ import type {
     SequenceItemType,
     SequencePositionManagerOptions,
     SequenceSchemaOptions,
-    SequenceSchemaVariableOptions,
-} from '../../types/index.js'
+    SequenceSchemaVariableOptions, 
+} from '../structures/index.js'
 
 const { PositionStyleOption, VariablePositionStyleOption } = Constants
 
@@ -72,7 +71,7 @@ export class SequencePositionManager {
         if (
             !connectedVars ||
             connectedVars.length === 0 ||
-            item['kismet'].class !== itemClass
+            item.ClassData.Class !== itemClass
         )
             return []
 
@@ -120,7 +119,7 @@ export class SequencePositionManager {
         if (!schema) return []
 
         const items = schema.event
-            ? sequence.listConnectedItems(
+            ? sequence.util.listConnectedItems(
                   schema.event.id,
                   schema.event.connectionName
               )
@@ -209,8 +208,10 @@ export class SequencePositionManager {
         }
 
         positions.forEach(pos => {
-            const idIndex = sequence.indexOf(pos.id)
-            ;(sequence['items'][idIndex] as SequenceItemType)?.setPosition(pos)
+            const idIndex = sequence.util.indexOf(pos.id);
+            const item = sequence['items'][idIndex] as SequenceItemType;
+
+            sequence.update(item.setPosition(pos))
         })
 
         return sequence

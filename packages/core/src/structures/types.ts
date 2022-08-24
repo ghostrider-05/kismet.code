@@ -1,5 +1,11 @@
 import { ArrayUnion, Constants, Enum} from '@kismet.ts/shared'
 
+import type { BaseSequenceItem } from '../item/index.js'
+import type { SequenceAction } from './Action.js'
+import type { SequenceCondition } from './Condition.js'
+import type { SequenceEvent } from './Event.js'
+import type { SequenceVariable } from './Variable.js'
+
 export interface KismetVectorComponents {
     x: number
     y: number

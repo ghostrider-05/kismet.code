@@ -1,4 +1,6 @@
-import { NodeType } from './Constants.js'
+import { KismetBoolean, NodeType } from './Constants.js'
+
+export type KismetFormatterInput = string | number | boolean | null | undefined
 
 /**
  * Util class for formatting a kismet item
@@ -32,8 +34,17 @@ export class KismetItemFormatter {
      * @param value 
      * @returns The variable in the format: `{name}={value}`
      */
-    public static variable (name: string, value: string | number | undefined): string | undefined {
-        if (value == undefined) return
+    public static variable<Defined extends boolean = false> (
+        name: string,
+        value: KismetFormatterInput
+    ): Defined extends true ? string : string | undefined {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        if (value == undefined || value == null) return
+
+        if (typeof value === 'boolean') {
+            value = <KismetFormatterInput>(value ? KismetBoolean.True : KismetBoolean.False)
+        }
 
         return `${name}=${value}`
     }
@@ -44,7 +55,7 @@ export class KismetItemFormatter {
      * @param Class 
      * @param variables The formatted 
      */
-    public static format (name: string, Class: string, variables: (string | [string, string | number | undefined])[]): string {
+    public static format (name: string, Class: string, variables: (string | [string, KismetFormatterInput])[]): string {
         return [
             KismetItemFormatter.firstLine(name, Class),
             ...variables
@@ -55,6 +66,14 @@ export class KismetItemFormatter {
             KismetItemFormatter.lastLine()
         ].join(KismetItemFormatter.joinCharacter)
     }
+}
+
+export function convertVariablesRecordToArray <
+    T = undefined
+> (variables: Record<string, T>): [string, T][] {
+    return Object.keys(variables).map(key => {
+        return [key, variables[key]]
+    })
 }
 
 /**
@@ -86,17 +105,18 @@ export function getNodeType (Class: string): NodeType | undefined {
 }
 
 /**
- * Get the class and package name from an archetype
+ * Get the class, class type and package name from an archetype
  * @param archetype The archetype of the item
  */
 export function readArchetype (
     archetype: string
-): Record<'Class' | 'Package', string> {
+): Record<'Class' | 'ClassType' | 'Package', string> {
     const [Class, defaultClass] = archetype.split("'")
     const [Package] = defaultClass.split('.')
 
     return {
         Class,
+        ClassType: `Class'${Package}.${Class}'`,
         Package,
     }
 }

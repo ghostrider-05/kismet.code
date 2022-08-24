@@ -1,4 +1,4 @@
-import { KismetError } from '../../shared/index.js'
+import { KismetError } from '@kismet.ts/shared'
 
 export class ProcessId {
     private readonly id: string

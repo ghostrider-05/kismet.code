@@ -1,6 +1,4 @@
-import type { Sequence } from '../Sequence/base.js'
-
-import type { KismetPosition } from '../../types/index.js'
+import type { Sequence, KismetPosition } from '../structures/index.js'
 
 export class SequenceGridManager {
     public grid: Partial<KismetPosition> = {}
@@ -49,11 +47,11 @@ export class SequenceGridManager {
             item.isSequenceItem()
                 ? sequence.updateItem(
                       item,
-                      item.setPosition(this.applyGridPosition(item['kismet']))
+                      item.setPosition(this.applyGridPosition(item.position))
                   )
                 : item.isSequence()
                 ? this.applyGridToSequence(item)
-                : void 0
+                : undefined
         })
 
         return sequence

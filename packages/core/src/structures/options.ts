@@ -1,10 +1,15 @@
-import {
-    ProcessId,
+import { Constants } from '@kismet.ts/shared'
+
+import type {
     SequenceAction,
     SequenceCondition,
 } from '../structures/index.js'
 
-import { PositionStyleOption, VariablePositionStyleOption } from './enums.js'
+import type { ProcessId } from '../managers/index.js'
+
+import type { KismetObjectCommentOptions } from '../item/index.js'
+
+// import { PositionStyleOption, VariablePositionStyleOption } from './enums.js'
 
 /**
  * Options for layouts
@@ -17,7 +22,7 @@ import { PositionStyleOption, VariablePositionStyleOption } from './enums.js'
  *
  * @default 'none'
  */
-export type PositionStyleOptions = PositionStyleOption
+export type PositionStyleOptions = Constants.PositionStyleOption
 
 /**
  * Position options for variables
@@ -29,7 +34,7 @@ export type PositionStyleOptions = PositionStyleOption
  *
  * @default 'inherit'
  */
-export type VariablePositionStyleOptions = VariablePositionStyleOption
+export type VariablePositionStyleOptions = Constants.VariablePositionStyleOption
 
 export interface layoutOptions {
     startX?: number
