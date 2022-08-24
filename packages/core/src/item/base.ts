@@ -256,6 +256,6 @@ export class BaseSequenceItem extends BaseItem {
                 x: Number(input['ObjPosX']),
                 y: Number(input['ObjPosY']),
             },
-        }).setComment(comment).linkId
+        }).setComment(comment)
     }
 }

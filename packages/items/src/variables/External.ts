@@ -1,12 +1,4 @@
-import { SequenceVariable } from '../../structures/index.js'
-
-import { 
-    addVariable
-} from '../../shared/index.js'
-
-import type { 
-    KismetVariableOptions 
-} from '../../types/index.js'
+import { SequenceVariable, KismetVariableOptions } from "@kismet.ts/core"
 
 export class ExternalVariable extends SequenceVariable {
     public expectedType: string | null = null
@@ -21,20 +13,20 @@ export class ExternalVariable extends SequenceVariable {
     }
 
     public setExternalVariable<T extends SequenceVariable> (options?: { label?: string, type?: T }): this {
-        this.expectedType = options?.type?.['kismet']['classType'] ?? null
+        this.expectedType = options?.type?.ClassData.ClassType ?? null
         this.variableLabel = options?.label ?? null
 
         return this
     }
 
     public override toString (): string {
-        const kismet = super.toString()
-
         const variables = [
             (this.expectedType ? ['ExpectedType', this.expectedType] : []),
             (this.variableLabel ? ['VariableLabel', `"${this.variableLabel}"`] : [])
         ].filter(n => n.length > 0) as [string, string][]
 
-        return addVariable(kismet, variables)
+        this.raw.push(...variables)
+
+        return super.toString()
     }
 }

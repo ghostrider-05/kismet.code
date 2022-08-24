@@ -2,8 +2,9 @@ import { existsSync, readdirSync } from 'fs'
 import { mkdir } from 'fs/promises'
 import { resolve } from 'path'
 
-import { arrayUnionInput, isType } from '../../shared/index.js'
-import type { PathInput } from '../../types/index.js'
+import { arrayUnionInput, isType } from '@kismet.ts/shared'
+
+import type { PathInput } from '../extractor/files.js'
 
 export function _validateNodeInput (json: Record<string, unknown>): boolean {
     return (
@@ -23,8 +24,10 @@ export function _validateNodeInput (json: Record<string, unknown>): boolean {
 }
 
 export function _validatePaths (
-    input: Partial<Omit<PathInput, 'packages'>>
+    input: Partial<Omit<PathInput, 'packages'>>,
+    debug?: boolean
 ): boolean {
+    if (debug) console.log('Input paths: ', JSON.stringify(input))
     const paths = Object.keys(input)
         .map(key => input[key as keyof typeof input])
         .filter(n => n)

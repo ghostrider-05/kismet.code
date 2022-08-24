@@ -186,6 +186,8 @@ export class ClassManager {
             blenderOptions: this.options?.blenderOptions,
             groupItems: this.options?.groupItems ?? false,
             blender: this.options?.blender ?? false,
+            writeIndexFile: this.options?.writeIndexFile ?? true,
+            version: this.options?.version ?? null,
             isMainFolder: exportPath === './src/items/',
         })
     }

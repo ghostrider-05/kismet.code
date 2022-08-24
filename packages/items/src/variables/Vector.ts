@@ -1,13 +1,4 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js"
-
-import { 
-    addVariable 
-} from "../../shared/index.js"
-
-import type { 
-    KismetVariableOptions,
-    KismetVectorComponents
-} from "../../types/index.js"
+import { SequenceVariable, KismetVariableOptions, KismetVectorComponents } from "@kismet.ts/core"
 
 export class VectorVariable extends SequenceVariable {
     public value: KismetVectorComponents;
@@ -36,6 +27,8 @@ export class VectorVariable extends SequenceVariable {
         const { x, y, z } = this.value
         const components = `(X=${x},Y=${y},Z=${z})`
 
-        return addVariable(super.toString(), [['VectValue', components]])
+        this.raw.push(['VectValue', components])
+
+        return super.toString()
     }
 }

@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Sequence, SequenceItemType, SequenceNode, SequenceVariable } from '@kismet.ts/core'
+import { destructureProperty } from '@kismet.ts/shared'
+
 import { BaseTextParser } from './internals/baseParser.js'
 
 import type { TextSequenceParserOptions } from './options.js'
 
 export class InputTextSequenceParser<
     T extends boolean = true
-> extends BaseTextParser<T, TextSequenceParserOptions<T>> {
+> extends BaseTextParser<T> {
     /**
      * @default /->|>/
      */
@@ -15,11 +19,16 @@ export class InputTextSequenceParser<
      */
     public propertyChar = '.'
 
+    protected override options: TextSequenceParserOptions<T>
+
     constructor (
         items: SequenceItemType[],
         options: TextSequenceParserOptions<T>
     ) {
         super(items, options)
+        this.manager.variables = options.variables
+
+        this.options = options
     }
 
     private applyRawArguments (args: string) {
@@ -67,10 +76,12 @@ export class InputTextSequenceParser<
             const propertyName = match?.[1] ?? line
             const variable = this.manager.findVariable(propertyType)
 
-            const action = new GetProperty().setProperty(
-                'PropertyName',
-                propertyName
-            )
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-expect-error TODO: fix
+            const action = new this.manager.variables['GetProperty']().setProperty({
+                name: 'PropertyName',
+                value: propertyName
+            })
 
             return [variable, action]
         })

@@ -9,11 +9,13 @@ node_modules
 dist
 src/test*/
 nodes.json
+classes.json
 
 # Turbo
 .turbo
 
 # Other
+*-config.json
 *.cs
 *.txt
 *.py

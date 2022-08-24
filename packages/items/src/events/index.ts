@@ -33,6 +33,7 @@ import { CarTouchBall } from './Classes/CarTouchBall.js'
 import { CinematicIntroSequenceFinished } from './Classes/CinematicIntroSequenceFinished.js'
 import { CountDownCompleted } from './Classes/CountDownCompleted.js'
 import { CountDownStart } from './Classes/CountDownStart.js'
+import { DynamicMapEventUpdate } from './Classes/DynamicMapEventUpdate.js'
 import { GameEventStateChanged } from './Classes/GameEventStateChanged.js'
 import { GameTimeChanged } from './Classes/GameTimeChanged.js'
 import { GarageComplexState } from './Classes/GarageComplexState.js'
@@ -93,6 +94,7 @@ export {
 	CinematicIntroSequenceFinished,
 	CountDownCompleted,
 	CountDownStart,
+	DynamicMapEventUpdate,
 	GameEventStateChanged,
 	GameTimeChanged,
 	GarageComplexState,
@@ -160,6 +162,7 @@ export const TAGame = {
 	CinematicIntroSequenceFinished,
 	CountDownCompleted,
 	CountDownStart,
+	DynamicMapEventUpdate,
 	GameEventStateChanged,
 	GameTimeChanged,
 	GarageComplexState,

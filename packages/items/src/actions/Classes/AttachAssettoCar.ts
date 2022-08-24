@@ -1,22 +1,21 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class AttachAssettoCar extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_AttachAssetToCar_TA'TAGame.Default__SeqAct_AttachAssetToCar_TA'",
             inputs: {
-			    "input": [],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	StaticMeshToAttach:'StaticMeshToAttach',
-		SkeletalMeshToAttach:'SkeletalMeshToAttach',
-		ParticleSystemToAttach:'ParticleSystemToAttach',
-		BoneToAttachTo:'BoneToAttachTo'
+        StaticMeshToAttach:'StaticMeshToAttach',
+        SkeletalMeshToAttach:'SkeletalMeshToAttach',
+        ParticleSystemToAttach:'ParticleSystemToAttach',
+        BoneToAttachTo:'BoneToAttachTo'
     }
 }

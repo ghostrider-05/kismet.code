@@ -1,19 +1,16 @@
+import { BaseItem, Sequence, SequenceItemType } from '@kismet.ts/core'
+import type { If } from '@kismet.ts/shared'
+
 import { InputTextManager } from './inputManager.js'
-import { TextParserOptions } from '../options.js'
+import type { TextParserOptions } from '../options.js'
 
-export class BaseTextParser<
-    T extends boolean = true,
-    O extends TextParserOptions<T> | undefined =
-        | TextParserOptions<T>
-        | undefined
-> {
+export class BaseTextParser<T extends boolean = true> {
     protected manager: InputTextManager
-    protected options: O
 
-    constructor (items: SequenceItemType[], options?: O) {
-        this.manager = new InputTextManager(items)
+    constructor (items: SequenceItemType[], protected options?: Partial<TextParserOptions<T>>) {
+        this.manager = new InputTextManager(items, {})
 
-        this.options = options!
+        this.options = options ?? {}
     }
 
     protected convert<R extends BaseItem> (item: R | undefined) {

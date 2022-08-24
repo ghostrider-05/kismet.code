@@ -1,13 +1,4 @@
-import { SequenceVariable } from '../../structures/index.js'
-
-import { 
-    addVariable, 
-    boolToKismet
-} from '../../shared/index.js'
-
-import type { 
-    KismetVariableOptions 
-} from '../../types/index.js'
+import { SequenceVariable, KismetBoolean, KismetVariableOptions } from "@kismet.ts/core"
 
 export class InterpData extends SequenceVariable {
     public bakeAndPrune = false
@@ -28,10 +19,8 @@ export class InterpData extends SequenceVariable {
     }
 
     public override toString (): string {
-        const kismet = super.toString()
-
-        return addVariable(kismet, [
-            ['bShouldBakeAndPrune', boolToKismet(this.bakeAndPrune)]
-        ])
+        this.raw.push(['bShouldBakeAndPrune', KismetBoolean.toKismet(this.bakeAndPrune)])
+        
+        return super.toString()
     }
 }

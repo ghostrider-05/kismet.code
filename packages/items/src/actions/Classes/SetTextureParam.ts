@@ -1,21 +1,20 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class SetTextureParam extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_SetMatInstTexParam'Engine.Default__SeqAct_SetMatInstTexParam'",
             inputs: {
-			    "input": [],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	MatInst:'MatInst',
-		NewTexture:'NewTexture',
-		ParamName:'ParamName'
+        MatInst:'MatInst',
+        NewTexture:'NewTexture',
+        ParamName:'ParamName'
     }
 }

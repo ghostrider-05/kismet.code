@@ -132,6 +132,7 @@ import { CarMatinee } from './Classes/CarMatinee.js'
 import { CheckRotationAngle } from './Classes/CheckRotationAngle.js'
 import { CinematicIntroStartNextSequence } from './Classes/CinematicIntroStartNextSequence.js'
 import { CompleteFTECheckpoint } from './Classes/CompleteFTECheckpoint.js'
+import { ConcatenateStrings } from './Classes/ConcatenateStrings.js'
 import { ControlCarMovement } from './Classes/ControlCarMovement.js'
 import { Counter } from './Classes/Counter.js'
 import { CreateAttachComponent } from './Classes/CreateAttachComponent.js'
@@ -140,6 +141,7 @@ import { DisableForceFeedbackinFXActor } from './Classes/DisableForceFeedbackinF
 import { DisplayMessage } from './Classes/DisplayMessage.js'
 import { DriveSpline } from './Classes/DriveSpline.js'
 import { DumpMovie } from './Classes/DumpMovie.js'
+import { DynamicMapEvent } from './Classes/DynamicMapEvent.js'
 import { EndTutorial } from './Classes/EndTutorial.js'
 import { ExitToMainMenu } from './Classes/ExitToMainMenu.js'
 import { ExplodeGameBall } from './Classes/ExplodeGameBall.js'
@@ -336,6 +338,7 @@ export {
 	CheckRotationAngle,
 	CinematicIntroStartNextSequence,
 	CompleteFTECheckpoint,
+	ConcatenateStrings,
 	ControlCarMovement,
 	Counter,
 	CreateAttachComponent,
@@ -344,6 +347,7 @@ export {
 	DisplayMessage,
 	DriveSpline,
 	DumpMovie,
+	DynamicMapEvent,
 	EndTutorial,
 	ExitToMainMenu,
 	ExplodeGameBall,
@@ -547,6 +551,7 @@ export const TAGame = {
 	CheckRotationAngle,
 	CinematicIntroStartNextSequence,
 	CompleteFTECheckpoint,
+	ConcatenateStrings,
 	ControlCarMovement,
 	Counter,
 	CreateAttachComponent,
@@ -555,6 +560,7 @@ export const TAGame = {
 	DisplayMessage,
 	DriveSpline,
 	DumpMovie,
+	DynamicMapEvent,
 	EndTutorial,
 	ExitToMainMenu,
 	ExplodeGameBall,

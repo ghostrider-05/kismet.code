@@ -25,6 +25,8 @@ export interface ExportOptions<T extends boolean = boolean>
     blenderOptions?: If<T, BlenderAddonGeneratorOptions> | undefined
     types?: Enum<Exclude<Constants.NodeType, Constants.NodeType.SEQUENCES>>[]
     classes?: boolean
+    version?: string | null
+    writeIndexFile?: boolean
     //sort?: 'package' | 'name' TODO: implement
 }
 

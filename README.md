@@ -11,6 +11,9 @@ Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! In
 
 ## Installation
 
+> **warning**
+> This project exports only ESM modules
+
 Node 16.6.0 or newer is required.
 
 ```txt

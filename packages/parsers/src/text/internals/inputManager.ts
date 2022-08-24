@@ -1,8 +1,8 @@
-export class InputTextManager {
-    public items: SequenceItemType[]
+import { SequenceItemType, SequenceVariable, ISingleStore } from "@kismet.ts/core"
 
-    constructor (items: SequenceItemType[]) {
-        this.items = items
+export class InputTextManager {
+    constructor (public items: SequenceItemType[], public variables: ISingleStore) {
+
     }
 
     private convertVarName (name: string, type: boolean) {
@@ -37,18 +37,20 @@ export class InputTextManager {
         if (!name) throw new Error('Unknown property variable')
 
         const variable =
-            Variables[<keyof typeof Variables>this.convertVarName(name, true)]
+            this.variables[<keyof typeof this.variables>this.convertVarName(name, true)]
 
         if (!variable) throw new Error('Unknown property variable: ' + name)
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error Variables extending do not need a paramater
         return new variable()
     }
 
     public findVariableType (variable: SequenceVariable): string | undefined {
-        const name = Object.keys(Variables).find(_key => {
-            const key = _key as keyof typeof Variables
+        const name = Object.keys(this.variables).find(_key => {
+            const key = _key as keyof typeof this.variables
 
-            return variable instanceof Variables[key]
+            return variable instanceof this.variables[key]
         })
 
         return name ? this.convertVarName(name, false) : undefined

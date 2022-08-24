@@ -1,13 +1,5 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js";
-
-import { 
-    addVariable, 
-    KismetError 
-} from "../../shared/index.js";
-
-import type { 
-    KismetVariableOptions 
-} from "../../types/index.js";
+import { SequenceVariable, KismetVariableOptions } from "@kismet.ts/core"
+import { KismetError } from "@kismet.ts/shared";
 
 export class FloatVariable extends SequenceVariable {
     public value = 0.0
@@ -39,7 +31,9 @@ export class FloatVariable extends SequenceVariable {
     }
 
     public override toString (): string {
-        return addVariable(super.toString(), [['FloatValue', this.value.toString()]])
+        this.raw.push(['FloatValue', this.value.toString()])
+
+        return super.toString()
     }
 }
 
@@ -50,7 +44,7 @@ export class RandomFloatVariable extends FloatVariable {
     constructor (options?: KismetVariableOptions & { allowIntegers?: boolean }) {
         super(options)
         
-        this.setKismetSetting('ObjectArchetype', `SeqVar_RandomFloat'Engine.Default__SeqVar_RandomFloat'`)
+        this.rawData.ObjectArchetype = `SeqVar_RandomFloat'Engine.Default__SeqVar_RandomFloat'`
     }
 
     public setMinValue (min: number): this {
@@ -69,11 +63,11 @@ export class RandomFloatVariable extends FloatVariable {
     }
 
     public override toString (): string {
-        const kismet = super.toString()
-
-        return addVariable(kismet, [
+        this.raw.push(...<[string, string][]>[
             ['Min', this.minValue.toString()],
             ['Max', this.maxValue.toString()]
         ])
+
+        return super.toString()
     }
 }

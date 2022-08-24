@@ -1,19 +1,18 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class SetApexClothingParameter extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_SetApexClothingParam'Engine.Default__SeqAct_SetApexClothingParam'",
             inputs: {
-			    "input": [],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	bEnableApexClothingSimulation:'bEnableApexClothingSimulation'
+        bEnableApexClothingSimulation:'bEnableApexClothingSimulation'
     }
 }

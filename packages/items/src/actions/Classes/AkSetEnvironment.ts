@@ -1,20 +1,19 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class AkSetEnvironment extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_AkEnvironment'AkAudio.Default__SeqAct_AkEnvironment'",
             inputs: {
-			    "input": [],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	Environment:'Environment',
-		Target:'Target'
+        Environment:'Environment',
+        Target:'Target'
     }
 }

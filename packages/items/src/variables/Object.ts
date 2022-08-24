@@ -1,14 +1,4 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js"
-
-import { 
-    addVariable,
-    boolToKismet
-} from "../../shared/index.js"
-
-import type { 
-    KismetVariableOptions,
-    UDKContentBrowserObject
-} from "../../types/index.js"
+import { SequenceVariable, KismetVariableOptions, UDKContentBrowserObject, SequenceItemType, KismetBoolean } from "@kismet.ts/core"
 
 export class ObjectVariable extends SequenceVariable {
     public value: UDKContentBrowserObject;
@@ -30,11 +20,9 @@ export class ObjectVariable extends SequenceVariable {
     }
 
     public override toString (): string {
-        const properties: [string, string][] = [
-            ['ObjValue', this.value === '' ? 'None' : this.value]
-        ]
+        this.raw.push(['ObjValue', this.value === '' ? 'None' : this.value])
 
-        return addVariable(super.toString(), properties)
+        return super.toString()
     }
 }
 
@@ -46,7 +34,7 @@ export class ObjectListVariable extends ObjectVariable {
 
         this.values = []
 
-        this.setKismetSetting('ObjectArchetype', `SeqVar_ObjectList'Engine.Default__SeqVar_ObjectList'`)
+        this.rawData.ObjectArchetype = `SeqVar_ObjectList'Engine.Default__SeqVar_ObjectList'`
     }
 
     public addItem (item: UDKContentBrowserObject): this {
@@ -63,8 +51,9 @@ export class ObjectListVariable extends ObjectVariable {
 
     public override toString (): string {
         const values: [string, string][] = this.values.map((value, i) => [`ObjList(${i})`, value])
+        this.raw.push(...values)
         
-        return addVariable(super.toString(), values)
+        return super.toString()
     }
 }
 
@@ -78,12 +67,11 @@ export class ObjectVolumeVariable extends ObjectVariable {
     constructor (options?: KismetVariableOptions) {
         super(options)
 
-        this.setKismetSetting('ObjectArchetype', `SeqVar_ObjectVolume'Engine.Default__SeqVar_ObjectVolume'`)
+        this.rawData.ObjectArchetype = `SeqVar_ObjectVolume'Engine.Default__SeqVar_ObjectVolume'`
     }
 
-    //TODO: extract classtype from a given class
-    public excludeClass (className: string, Package: string): this {
-        this.excludeClasses.push(`Class'${Package}.${className}'`)
+    public excludeClass (item: SequenceItemType): this {
+        this.excludeClasses.push(item.ClassData.ClassType)
 
         return this
     }
@@ -100,9 +88,11 @@ export class ObjectVolumeVariable extends ObjectVariable {
         })
         const properties:[string, string][] = [
             ...classList,
-            ['bCollidingOnly', boolToKismet(this.collidingOnly)]
+            ['bCollidingOnly', KismetBoolean.toKismet(this.collidingOnly)]
         ]
-        
-        return addVariable(super.toString(), properties)
+
+        this.raw.push(...properties)
+
+        return super.toString()
     }
 }

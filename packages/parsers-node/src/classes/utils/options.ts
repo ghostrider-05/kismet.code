@@ -7,6 +7,8 @@ export const defaultOptions: Required<ExportOptions> = {
     json: false,
     blenderOptions: {},
     classes: false,
+    writeIndexFile: true,
+    version: null,
     types: ['actions', 'conditions', 'events', 'variables'],
 }
 

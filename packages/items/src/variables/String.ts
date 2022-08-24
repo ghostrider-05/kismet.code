@@ -1,13 +1,5 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js"
-
-import { 
-    addVariable,
-    quote
-} from "../../shared/index.js"
-
-import type { 
-    KismetVariableOptions 
-} from "../../types/index.js"
+import { SequenceVariable, KismetVariableOptions } from "@kismet.ts/core"
+import { quote } from "@kismet.ts/shared"
 
 export class StringVariable extends SequenceVariable {
     public value = ''
@@ -31,6 +23,8 @@ export class StringVariable extends SequenceVariable {
             ['StrValue', quote(this.value)]
         ] : []
 
-        return addVariable(super.toString(), properties)
+        this.raw.push(...properties)
+
+        return super.toString()
     }
 }

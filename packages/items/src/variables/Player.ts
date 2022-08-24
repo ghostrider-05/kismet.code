@@ -1,13 +1,7 @@
+import { KismetBoolean, KismetVariableOptions } from "@kismet.ts/core"
+
 import { ObjectVariable } from "./Object.js"
 
-import { 
-    addVariable,
-    boolToKismet
-} from "../../shared/index.js"
-
-import type { 
-    KismetVariableOptions 
-} from "../../types/index.js"
 
 export class PlayerVariable extends ObjectVariable {
     public allPlayers = true
@@ -16,7 +10,7 @@ export class PlayerVariable extends ObjectVariable {
     constructor (options?: KismetVariableOptions) {
         super(options)
 
-        this.setKismetSetting('ObjectArchetype', `SeqVar_Player'Engine.Default__SeqVar_Player'`)
+        this.rawData.ObjectArchetype = `SeqVar_Player'Engine.Default__SeqVar_Player'`
     }
 
     public setAllPlayer (enabled: boolean): this {
@@ -34,9 +28,11 @@ export class PlayerVariable extends ObjectVariable {
     public override toString (): string {
         const properties: [string, string][] = [
             ['PlayerIdx', this.playerIndex.toString()],
-            ['bAllPlayers', boolToKismet(this.allPlayers)]
+            ['bAllPlayers', KismetBoolean.toKismet(this.allPlayers)]
         ]
 
-        return addVariable(super.toString(), properties)
+        this.raw.push(...properties)
+
+        return super.toString()
     }
 }

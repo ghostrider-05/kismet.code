@@ -1,25 +1,24 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class ToggleConstraintDrive extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_ToggleConstraintDrive'Engine.Default__SeqAct_ToggleConstraintDrive'",
             inputs: {
-			    "input": [
-			        "(LinkDesc=\"Enable Drive\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)",
-			        "(LinkDesc=\"Disable All Drive\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
-			    ],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [
+                    "(LinkDesc=\"Enable Drive\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)",
+                    "(LinkDesc=\"Disable All Drive\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
+                ],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	bEnableAngularPositionDrive:'bEnableAngularPositionDrive',
-		bEnableAngularVelocityDrive:'bEnableAngularVelocityDrive',
-		bEnableLinearPositionDrive:'bEnableLinearPositionDrive',
-		bEnableLinearvelocityDrive:'bEnableLinearvelocityDrive'
+        bEnableAngularPositionDrive:'bEnableAngularPositionDrive',
+        bEnableAngularVelocityDrive:'bEnableAngularVelocityDrive',
+        bEnableLinearPositionDrive:'bEnableLinearPositionDrive',
+        bEnableLinearvelocityDrive:'bEnableLinearvelocityDrive'
     }
 }

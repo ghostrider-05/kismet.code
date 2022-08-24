@@ -1,4 +1,4 @@
-import { Constants } from '../../../shared/index.js'
+import { Constants } from '@kismet.ts/shared'
 
 export const getIcon = (
     type: typeof Constants.NodeType[keyof typeof Constants.NodeType]

@@ -4,7 +4,7 @@ import { Constants, capitalize, If } from '@kismet.ts/shared'
 
 import { getExportFile } from './files.js'
 import { catchFileWriteError, writeEmptyFile, writeFilteredFile } from './node.js'
-import * as classTemplate from '../extractor/templates/templates.js'
+import * as classTemplate from '../extractor/templates.js'
 import { nodeToJSON } from '../extractor/read.js'
 
 import {
@@ -58,6 +58,8 @@ export interface PackageWriteOptions<T extends boolean = true> {
     exportPath: string
     classes: Record<string, JsonFile[]>
     externalClasses: Partial<UnrealJsonReadFile>[]
+    writeIndexFile: boolean
+    version: string | null
     json: UnrealJsonReadFileNode[]
     groupItems: boolean
     blender: T
@@ -142,17 +144,30 @@ export async function writePackages<T extends boolean = true> (
     options: PackageWriteOptions<T>
 ): Promise<void> {
     const exportedPaths: string[] = []
-    const { classes, json, blender, blenderOptions, externalClasses } = options
+    const { classes, json, blender, blenderOptions, externalClasses, version } = options
 
     for (const category of Object.keys(classes)) {
-        const categoryPath = await writeCategory(category, options)
+        if (classes[category].length > 0) {
+            const categoryPath = await writeCategory(category, options)
 
-        exportedPaths.push(categoryPath)
+            exportedPaths.push(categoryPath)
+        }
     }
 
     const writer = setup(options.exportPath)
 
-    await writer(exportedPaths, './index.ts', exportedPaths.join('\n'))
+    if (version) {
+        await writeFilteredFile(
+            createPath(options.exportPath + '/version.ts'),
+            `export const version = '${version}'`
+        )
+
+        exportedPaths.push(`export * from './version.js'`)
+    }
+
+    if (options.writeIndexFile) {
+        await writer(exportedPaths, './index.ts', exportedPaths.join('\n'))
+    }
     await writer(json, `/${FileName.JSON}.json`)
     await writer(externalClasses, `/${FileName.Classes}.json`)
 

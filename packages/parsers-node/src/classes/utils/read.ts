@@ -1,9 +1,9 @@
-import { Constants } from '../../shared/index.js'
+import { Constants } from '@kismet.ts/shared'
 
 import type {
     RawUnrealJsonDefaultVariables,
     RawUnrealJsonVariable,
-} from '../../types/index.js'
+} from '../extractor/files.js'
 
 export function convertNodeName (name: string | null | undefined) {
     return name

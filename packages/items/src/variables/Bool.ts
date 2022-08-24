@@ -1,12 +1,4 @@
-import { SequenceVariable } from "../../structures/Sequence/Variable.js"
-
-import { 
-    addVariable
-} from "../../shared/index.js"
-
-import type { 
-    KismetVariableOptions 
-} from "../../types/index.js"
+import { SequenceVariable, KismetVariableOptions } from "@kismet.ts/core"
 
 export class BoolVariable extends SequenceVariable {
     public value: boolean;
@@ -28,8 +20,10 @@ export class BoolVariable extends SequenceVariable {
     }
 
     public override toString (): string {
-        return addVariable(super.toString(), [
-            ['bValue', this.value ? '1' : '0']
-        ])
+        return this.setProperty({ 
+            name: 'bValue', 
+            value: this.value ? '1' : '0' 
+        })
+        .toString()
     }
 }

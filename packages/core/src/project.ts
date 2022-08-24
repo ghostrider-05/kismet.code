@@ -6,10 +6,18 @@ import {
     Sequence,
     SequencePositionOptions,
     SchemaItemNames,
-    SequenceItemType
+    SequenceItemTypeof,
 } from './structures/index.js'
 
 import { ProcessManager, ProcessId } from './managers/index.js'
+
+type IStoreInputValue<T extends IStoreValue<SequenceItemTypeof>> = T extends SequenceItemTypeof ? T : never
+export type IStoreValue<T extends SequenceItemTypeof> = T | { [x: string]: T }
+
+export type IStore<
+    T extends IStoreValue<SequenceItemTypeof> = SequenceItemTypeof
+> = Record<string, IStoreValue<IStoreInputValue<T>>>
+export type ISingleStore<T extends typeof BaseSequenceItem = SequenceItemTypeof> = Record<string, T>
 
 export class KismetFile {
     public readonly id: ProcessId
@@ -67,20 +75,19 @@ export class KismetFile {
      *  }
      * }) // [MyAction]
      */
-    public static listItems<T extends SequenceItemType> (
+    public static listItems<T extends SequenceItemTypeof> (
         input: Record<
             'Actions' | 'Conditions' | 'Events' | 'Variables',
-            Record<string, SequenceItemType | Record<string, SequenceItemType>>
+            IStore
         >
-    ): SequenceItemType[] {
+    ): SequenceItemTypeof[] {
         const items = Object.keys(input).flatMap(key => {
             const category = input[key as keyof typeof input]
 
             const classes = Object.keys(category)
                 .filter(cKey => {
                     const Class = category[cKey as keyof typeof category] as
-                        | BaseSequenceItem
-                        | Record<string, BaseSequenceItem>
+                        | IStore<SequenceItemTypeof>
 
                     const isInstance = Class instanceof BaseSequenceItem
                     if (isInstance) return true

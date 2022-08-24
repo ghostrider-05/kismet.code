@@ -31,6 +31,13 @@ export type SequenceItemType =
     | SequenceVariable
     | SequenceEvent
 
+export type SequenceItemTypeof =
+    | typeof BaseSequenceItem
+    | typeof SequenceAction
+    | typeof SequenceCondition
+    | typeof SequenceVariable
+    | typeof SequenceEvent
+
 export type SequenceItemTypeName = Enum<Constants.NodeType>
 
 export type KismetVariableValue = string | number | boolean | null | undefined

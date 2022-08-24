@@ -13,7 +13,7 @@ export async function createLocalClasses (inputOptions: LocalClassesCreateOption
     const manager = new ClassManager().setOptions(options)
 
     await _validateSubPaths(exportPath, options.types)
-    if (!_validatePaths(inputOptions)) return
+    if (!_validatePaths({ importPath }, inputOptions.debug)) return
 
     for await (const Package of fs.readdirSync(importPath)) {
         await manager.readPackage({ name: Package, paths: inputOptions })

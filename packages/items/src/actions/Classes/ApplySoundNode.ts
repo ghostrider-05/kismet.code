@@ -1,20 +1,19 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { SequenceAction } from "../../../../../src/structures/Sequence/index.js";
-import type { BaseKismetActionRequiredOptions } from "../../../../../src/types/index.js";
+import { SequenceAction, BaseKismetActionRequiredOptions } from "@kismet.ts/core";
 export class ApplySoundNode extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
+            ObjInstanceVersion: 3,
             ObjectArchetype: "SeqAct_ApplySoundNode'Engine.Default__SeqAct_ApplySoundNode'",
             inputs: {
-			    "input": [],
-			    "output": [],
-			    "variable": []
-			}
+                "input": [],
+                "output": [],
+                "variable": []
+            }
         })
     }
     static Variables = {
-    	PlaySound:'PlaySound',
-		ApplyNode:'ApplyNode'
+        PlaySound:'PlaySound',
+        ApplyNode:'ApplyNode'
     }
 }
