@@ -1,3 +1,3 @@
 # @kismet.ts/core
 
-![](https://img.shields.io/badge/compatibily-browser/serverless-blue)
+![compatibility](https://img.shields.io/badge/compatibility-browser/serverless-blue)
