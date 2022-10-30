@@ -1,17 +1,17 @@
 # Kismet.ts
 
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.ts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.ts/context:javascript)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts)
+<!-- [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ghostrider-05/kismet.ts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ghostrider-05/kismet.ts/context:javascript) -->
+<!-- ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ghostrider-05/kismet.ts) -->
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ghostrider-05/kismet.ts/Tests?label=tests)][github]
 [![Package version](https://img.shields.io/github/package-json/v/ghostrider-05/kismet.ts)][github]
-![Code Climate coverage](https://img.shields.io/codeclimate/coverage/ghostrider-05/kismet.ts)
+<!-- ![Code Climate coverage](https://img.shields.io/codeclimate/coverage/ghostrider-05/kismet.ts) -->
 <!-- TODO: Add documentation ping badge -->
 
 Build [kismet nodes][kismetUserGuide] for (the old and dusty) UDK using code! Intended for large .udk files to simplify the process of making kismet nodes
 
 ## Installation
 
-> **warning**
+> **Warning**
 > This project exports only ESM modules
 
 Node 16.6.0 or newer is required.

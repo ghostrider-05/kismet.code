@@ -23,7 +23,7 @@ export class ItemConnectionManager {
 
     public static createConnections (
         inputs: BaseKismetItemOptions['inputs'],
-        type: string
+        type?: string
     ): KismetConnections {
         let connections = ItemConnectionManager.emptyConnections
 
@@ -52,7 +52,7 @@ export class ItemConnectionManager {
     private static groupConnections (
         links: string[] | undefined,
         key: KismetConnectionType,
-        type: string
+        type?: string
     ) {
         if (!links)
             return {

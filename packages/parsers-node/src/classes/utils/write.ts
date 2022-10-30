@@ -24,7 +24,7 @@ const createPath = (path: string, end?: string) => {
     return resolve('.', './' + path.concat(end ?? ''))
 }
 
-function _fileContent (node: UnrealJsonReadFile) {
+export function fillClassTemplate (node: UnrealJsonReadFile) {
     let content = null
 
     switch (node.type) {
@@ -91,13 +91,13 @@ export const writeNode = async (
         Class: undefined,
     }
 
-    const nodeContent = _fileContent(node)
+    const nodeContent = fillClassTemplate(node)
     if (!nodeContent) return
 
     await catchFileWriteError(async () => {
         await writeFilteredFile(resolve('.', options.path), nodeContent)
 
-        if (options.json && !!nodeContent) {
+        if (options.json /*&& !!nodeContent*/) {
             output.jsonNode = nodeToJSON(node)
         }
 

@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Sequence, SequenceItemType, SequenceNode, SequenceVariable } from '@kismet.ts/core'
-import { destructureProperty } from '@kismet.ts/shared'
+import { Sequence, SequenceItemType, SequenceItemTypeof, SequenceNode, SequenceVariable } from '@kismet.ts/core'
+import { capitalize, constructItem, destructureProperty, indent } from '@kismet.ts/shared'
 
 import { BaseTextParser } from './internals/baseParser.js'
+import { TextNodeParser } from './node.js'
 
 import type { TextSequenceParserOptions } from './options.js'
 
-export class InputTextSequenceParser<
+export class TextSequenceParser<
     T extends boolean = true
 > extends BaseTextParser<T> {
     /**
+     * The character / expression used to split items in a line.
+     * Note: if you want to have the options with a '>', change this to '->' or the options would be split
      * @default /->|>/
      */
     public static splitChar: string | RegExp = /->|>/
@@ -19,29 +22,33 @@ export class InputTextSequenceParser<
      */
     public propertyChar = '.'
 
-    protected override options: TextSequenceParserOptions<T>
-
     constructor (
         items: SequenceItemType[],
-        options: TextSequenceParserOptions<T>
+        protected override options: TextSequenceParserOptions<T>
     ) {
         super(items, options)
         this.manager.variables = options.variables
+    }
 
-        this.options = options
+    public static formatBase (input: string): string {
+        const format = (t: string) => t.endsWith(')') ? t : `${t}()`
+
+        if (input[0].toUpperCase() === input[0]) return format(input)
+        else return format(capitalize(input)!)
     }
 
     private applyRawArguments (args: string) {
+        if (!args.includes(',')) return [destructureProperty(args)]
         return args.split(',').map(arg => destructureProperty(arg))
     }
 
     /**
      * Check if the input can be a sequence string.
-     * Uses {@link InputTextSequenceParser.splitChar} to check
+     * Uses {@link TextSequenceParser.splitChar} to check
      * @param input Unknown input to check
      */
     public isSequenceInput (input: string): boolean {
-        const char = InputTextSequenceParser.splitChar
+        const char = TextSequenceParser.splitChar
 
         return typeof char === 'string'
             ? input.includes(char)
@@ -76,9 +83,7 @@ export class InputTextSequenceParser<
             const propertyName = match?.[1] ?? line
             const variable = this.manager.findVariable(propertyType)
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-expect-error TODO: fix
-            const action = new this.manager.variables['GetProperty']().setProperty({
+            const action = constructItem<SequenceItemType, SequenceItemTypeof>(this.manager.variables['GetProperty']).setProperty({
                 name: 'PropertyName',
                 value: propertyName
             })
@@ -199,5 +204,51 @@ export class InputTextSequenceParser<
         })
 
         return sequence
+    }
+
+    protected parseRawSubsequence (parent: Sequence, item: string, depth: number) {
+        const stripIndents = ( text: string, amount?: number) => {
+            return text.split('\n').map(line => line.slice(indent(amount).length)).join('\n')
+        } 
+        const children = item.split(new RegExp(`/\n${indent(depth)}(?=Begin Object)/g`))
+            .filter(n => TextNodeParser.isNodeInput(stripIndents(n, depth)))
+            .map(n => stripIndents(n, depth))
+
+
+        const { subSequence } = parent.addSubSequence({
+            name: this.parseRawItem(item).name
+        })
+
+        this.parseRawSequenceItems(subSequence, children, true, depth)
+    }
+
+    protected parseRawSequenceItems (sequence: Sequence, items: string[], subSequences = true, depth: number) {
+        for (const item of items) {
+            const constructedItem = this.parseRawItem(item)
+
+            if (constructedItem.ClassData.Class === 'Sequence') {
+                if (subSequences === false) {
+                    continue
+                }
+
+                this.parseRawSubsequence(sequence, item, depth + 1)
+            } else {
+                sequence.addItem(constructedItem)
+            }
+        }
+    }
+
+    public parseRawSequence (input: string, options?: { parseSubSequences?: boolean }) {
+        const sequence = this.createSequence()
+        const items = input.split(/\n(?=Begin Object)/g)
+            .filter(n => n.length > 0)
+
+        this.parseRawSequenceItems(sequence, items, options?.parseSubSequences, 0)
+
+        return this.convert(sequence)
+    }
+
+    public parseRawSingleSequence (input: string) {
+        return this.parseRawSequence(input, { parseSubSequences: false })
     }
 }

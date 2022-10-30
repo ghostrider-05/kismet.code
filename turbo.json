@@ -1,5 +1,28 @@
 {
     "$schema": "https://turborepo.org/schema.json",
-    "baseBranch": "origin/master",
-    "pipeline": {}
+    "pipeline": {
+        "prestart": {
+            "dependsOn": ["^prestart"],
+            "outputs": [
+                "dist/**"
+            ]
+        },
+        "lint": {
+            "dependsOn": ["prestart"],
+            "outputs": []
+        },
+        "test": {
+            "dependsOn": ["prestart", "lint"],
+            "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+        },
+        "release": {
+            "dependsOn": [
+                "^dependencies",
+                "prestart",
+                "lint",
+                "test"
+            ],
+            "inputs": ["dist/**", "build/**"]
+        }
+    }
 }

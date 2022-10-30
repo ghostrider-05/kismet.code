@@ -99,13 +99,15 @@ export interface SequenceBaseConstructorOptions<S> {
     layout?: SequencePositionOptions<S>
     name?: string
     mainSequence?: boolean
+    index?: number
     project?: ProcessId
     defaultView?: Required<SequenceViewOptions>
 }
 
 export type SequenceOptions<T, S> = Omit<
     SequenceBaseConstructorOptions<S>,
-    'mainSequence'
+    | 'mainSequence'
+    | 'index'
 > & {
     objects?: T[]
     name: string

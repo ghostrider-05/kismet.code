@@ -1,4 +1,4 @@
-import { KismetFile, ISingleStore, IStore } from '@kismet.ts/core'
+import { KismetFile, ISingleStore, IStore, SequenceItemTypeof, SequenceItemType } from '@kismet.ts/core'
 
 import * as Actions from './actions/index.js'
 import * as Events from './events/index.js'

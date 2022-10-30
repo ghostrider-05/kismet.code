@@ -10,11 +10,14 @@ dist
 src/test*/
 nodes.json
 classes.json
+.temp
+.cache
 
 # Turbo
 .turbo
 
 # Other
+git-*
 *-config.json
 *.cs
 *.txt

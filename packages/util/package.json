@@ -2,12 +2,11 @@
   "name": "@kismet.ts/util",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": ["./dist/src/"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "tsc --project ./tsconfig.json"
   },
   "repository": {
     "type": "git",

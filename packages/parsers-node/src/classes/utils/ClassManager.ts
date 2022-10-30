@@ -92,7 +92,7 @@ async function readPackage (
     return { items, externalClasses }
 }
 
-function getSuperClasses (name: string, items: Partial<UnrealJsonReadFile>[]) {
+export function getSuperClasses (name: string, items: (Partial<UnrealJsonReadFile> | UnrealJsonReadFileNode)[]) {
     const Extends = items.find(i => i.name === name)?.Extends
     const Classes = [name]
     let latests: string | undefined = Extends

@@ -88,13 +88,13 @@ export class Sequence extends BaseItem {
     constructor (options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
         super(NodeType.SEQUENCES)
 
-        const { name, mainSequence, defaultView, layout, project } =
+        const { name, mainSequence, defaultView, layout, project, index } =
             options ?? {}
 
-        this.name = name ?? 'Sub_Sequence'
-        this.id = ProcessManager.id('Sequence', { id: project })
+        this.id = ProcessManager.id('Sequence', { id: project, index })
 
         this.mainSequence = mainSequence ?? false
+        this.name = name ?? (this.mainSequence ? DefaultMainSequenceName : 'Sub_Sequence')
 
         this.kismet = {
             x: 0,

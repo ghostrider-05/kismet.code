@@ -1,6 +1,6 @@
 import clipboardy from 'clipboardy'
 
-export const clipboard = class ClipboardUtil {
+export class ClipboardUtil {
     public static async read (): Promise<string> {
         return await clipboardy.read()
     }

@@ -1,5 +1,5 @@
-import { clipboard } from './clipboard.js'
+import { ClipboardUtil } from './clipboard.js'
 
 export class NodeUtil {
-    public static clipboard = clipboard
+    public static clipboard = ClipboardUtil
 }

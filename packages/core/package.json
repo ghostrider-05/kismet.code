@@ -1,11 +1,13 @@
 {
   "name": "@kismet.ts/core",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.1.1",
+  "description": "The core package for creating kismet code",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "type": "module",
-  "files": ["./dist/src/"],
+  "files": [
+    "./dist/src/"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "tsc --project ./tsconfig.json"
@@ -21,6 +23,6 @@
   },
   "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
   "dependencies": {
-    "@kismet.ts/shared": "file:packages/shared"
+    "@kismet.ts/shared": "^0.1.1"
   }
 }

@@ -1,3 +1,3 @@
 # kismet.ts
 
-Exports the main repo. See the [main readme](../../README.md) for more details.
+![compatibility](https://img.shields.io/badge/compatibility-node.js-green)

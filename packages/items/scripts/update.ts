@@ -20,8 +20,13 @@ await createLocalClasses ({
     importPath: config.importPath,
     exportPath: './src/',
     types: [NodeType.ACTIONS, NodeType.CONDITIONS, NodeType.EVENTS ],
-    blender: false,
-    classes: false,
+    blender: true,
+    blenderOptions: {
+        copy: false,
+        log: true,
+        register: true
+    },
+    classes: true,
     debug: true,
     version: prompt.version,
     writeIndexFile: false

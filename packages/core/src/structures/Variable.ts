@@ -20,11 +20,12 @@ export class SequenceVariable extends BaseSequenceItem {
     }
 
     public override toString (): string {
-        return this.setProperty({ 
-                name: 'VarName',
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                value: quote(this.variableName!)
-            })
-            .toString()
+        if (this.variableName) this.setProperty({ 
+            name: 'VarName',
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            value: quote(this.variableName!)
+        })
+        
+        return super.toString()
     }
 }

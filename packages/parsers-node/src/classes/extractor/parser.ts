@@ -9,7 +9,6 @@ import type {
     PathCreateOptions,
 } from './files.js'
 
-
 export class LocalClassesParser {
     public options: LocalClassesCreateOptions
 

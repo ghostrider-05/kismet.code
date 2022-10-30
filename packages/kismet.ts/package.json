@@ -1,0 +1,27 @@
+{
+  "name": "kismet.ts",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghostrider-05/kismet.ts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghostrider-05/kismet.ts/issues"
+  },
+  "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
+  "dependencies": {
+    "@kismet.ts/core": "file:packages/core",
+    "@kismet.ts/items": "file:packages/items",
+    "@kismet.ts/parsers": "file:packages/parsers",
+    "@kismet.ts/shared": "file:packages/shared",
+    "@kismet.ts/util": "file:packages/util"
+  }
+}

@@ -1,3 +1,4 @@
+import { indent } from '../util/util.js'
 import { KismetBoolean, NodeType } from './Constants.js'
 
 export type KismetFormatterInput = string | number | boolean | null | undefined
@@ -46,7 +47,7 @@ export class KismetItemFormatter {
             value = <KismetFormatterInput>(value ? KismetBoolean.True : KismetBoolean.False)
         }
 
-        return `${name}=${value}`
+        return `${indent()}${name}=${value}`
     }
 
     /**
@@ -102,6 +103,18 @@ export function getNodeType (Class: string): NodeType | undefined {
     ]
 
     return prefixes.find(({ prefix }) => Class.startsWith(prefix))?.type
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+class A { constructor (...args: any[]) {
+    /** */
+}}
+
+/**
+ * @beta
+ */
+export function constructItem <R extends A, T extends typeof A> (item: T): R {
+    return new item() as R
 }
 
 /**

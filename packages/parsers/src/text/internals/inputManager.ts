@@ -1,4 +1,5 @@
 import { SequenceItemType, SequenceVariable, ISingleStore } from "@kismet.ts/core"
+import { constructItem } from "@kismet.ts/shared"
 
 export class InputTextManager {
     constructor (public items: SequenceItemType[], public variables: ISingleStore) {
@@ -22,15 +23,11 @@ export class InputTextManager {
         const item = this.items.find(item => {
             return (
                 filter(item.name, name) ||
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
-                filter(new item()['kismet'].class, name)
+                filter(item.ClassData.Class, name)
             )
         })
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        return item ? new item() : undefined
+        return item ?? undefined
     }
 
     public findVariable (name: string | undefined): SequenceVariable {
@@ -41,9 +38,7 @@ export class InputTextManager {
 
         if (!variable) throw new Error('Unknown property variable: ' + name)
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error Variables extending do not need a paramater
-        return new variable()
+        return constructItem(variable)
     }
 
     public findVariableType (variable: SequenceVariable): string | undefined {
