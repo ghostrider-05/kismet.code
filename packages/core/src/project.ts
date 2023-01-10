@@ -38,6 +38,11 @@ export class KismetFile {
      */
     public layout?: SequencePositionOptions<SchemaItemNames>
 
+    /**
+     * The sequences of streamed levels in this project that will be connected to this file.
+     */
+    public streamedLevels?: KismetFile[]
+
     constructor (options: projectOptions<SchemaItemNames>) {
         const { projectName, layout } = options
 
@@ -107,6 +112,37 @@ export class KismetFile {
         })
 
         return items
+    }
+
+    /**
+     * Log data in a project to the console
+     * @returns if the input was logged
+     */
+    public static debug (input: string, project: KismetFile): boolean {
+        return ProcessManager.debug(input, project.id)?.completed ?? false
+    }
+
+    /**
+     * Log text to the console if the 'debug' option in this project is enabled
+     * @param input 
+     */
+    public debug (input: string): void {
+        KismetFile.debug(input, this)
+    }
+
+    private debugSequences (): void {
+        /**
+         * Logs the levels + their subsequences
+         */
+    }
+
+    private search (input: string, type: string, scope: 'sequence' | 'level' | 'all') {
+        /**
+         * Search for an item in the selected scope
+         * Returns the matched items
+         */
+
+        this.debug(`Searching in ${scope} on ${type}: ${input}`)
     }
 
     public toString (): string {

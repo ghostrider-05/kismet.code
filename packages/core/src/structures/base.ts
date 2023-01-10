@@ -84,6 +84,7 @@ export class Sequence extends BaseItem {
     private kismet: { x: number; y: number }
     private positionManager: SequencePositionManager
     private readonly mainSequence: boolean
+    public hasBreakpoint = false
 
     constructor (options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
         super(NodeType.SEQUENCES)
@@ -197,7 +198,7 @@ export class Sequence extends BaseItem {
             if (item.isSequenceNode()) {
                 this.updateItem(item, item.setBreakpoint(false))
             } else if (includeSubsequences && item.isSequence()) {
-                item.clearAllBreakpoints(true)
+                this.updateItem(item, item.clearAllBreakpoints(true))
             }
         })
 
@@ -224,6 +225,15 @@ export class Sequence extends BaseItem {
         const id = typeof item !== 'string' && 'linkId' in item ? item.id : item
 
         return this.resolveId(id)
+    }
+
+    /**
+     * Set / remove a breakpoint on this sequence
+     */
+    public setBreakpoint (enabled: boolean): this {
+        this.hasBreakpoint = enabled
+
+        return this
     }
 
     /**
@@ -294,6 +304,8 @@ export class Sequence extends BaseItem {
             this.items,
             this.rawData
         )
+
+        if (this.hasBreakpoint) variables.push(['bIsBreakpoinSet', 'True'])
 
         return variables.reduce(
             (prev, curr) => ({

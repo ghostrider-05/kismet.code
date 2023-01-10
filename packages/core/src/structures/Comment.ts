@@ -3,7 +3,7 @@ import { convertVariablesRecordToArray } from '@kismet.ts/shared'
 import { BaseSequenceItem } from '../item/index.js'
 import { KismetBoolean, KismetColor } from '../util/index.js'
 
-import type { KismetVariableValue } from './types.js'
+import type { KismetPosition, KismetVariableValue } from './types.js'
 
 const DEFAULT_COMMENT_FRAME_SIZE_X = 248
 const DEFAULT_COMMENT_FRAME_SIZE_Y = 184
@@ -91,6 +91,12 @@ export class Comment extends BaseSequenceItem {
         }
 
         this.filled = true
+
+        return this
+    }
+
+    public setSize (size: KismetPosition): this {
+        this.size = size
 
         return this
     }

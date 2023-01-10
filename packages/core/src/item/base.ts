@@ -7,6 +7,7 @@ import {
     readArchetype,
     KismetError,
     getNodeType,
+    typeguards,
 } from '@kismet.ts/shared'
 
 import { BaseItem } from './_base.js'
@@ -43,6 +44,12 @@ export interface BaseKismetItemRawData {
     ObjInstanceVersion: number
 }
 
+export interface KismetComment {
+    comment?: string
+    supressAutoComment?: boolean
+    outputCommentToScreen?: boolean
+}
+
 function validateItemOptions (options: BaseKismetItemOptions): void {
     const { ObjectArchetype } = options
 
@@ -52,11 +59,7 @@ function validateItemOptions (options: BaseKismetItemOptions): void {
 }
 
 export class BaseSequenceItem extends BaseItem {
-    public commentOptions: {
-        comment?: string
-        supressAutoComment?: boolean
-        outputCommentToScreen?: boolean
-    } = {}
+    public commentOptions: KismetComment = {}
 
     public connections: KismetConnections
     public sequence: string
@@ -67,6 +70,7 @@ export class BaseSequenceItem extends BaseItem {
     public raw: [string, KismetVariableValue][] = []
     public rawData: BaseKismetItemRawData;
 
+    private _connectionKeys: (keyof KismetConnections)[] = ['input', 'output', 'variable']
     private _category: string | undefined = undefined
     protected inputs: BaseKismetItemOptions['inputs']
 
@@ -115,6 +119,9 @@ export class BaseSequenceItem extends BaseItem {
                 {}
             ) ?? {}),
             ...this.rawData,
+            ObjInstanceVersion: this.rawData.ObjInstanceVersion < 0 
+                ? undefined 
+                : this.rawData.ObjInstanceVersion,
             ParentSequence: this.sequence,
             Name: quote(this.rawName),
             DrawWidth: 0,
@@ -147,6 +154,45 @@ export class BaseSequenceItem extends BaseItem {
         }
     }
 
+    /**
+     * Break all object links to other items.
+     * 
+     * Same as the editor right click > Break all links to Object(s)
+     */
+    public breakAllLinks (): void {
+        for (const key of this._connectionKeys) {
+            this.connections[key] = this.connections[key].map(link => link.breakAllLinks())
+        }
+    }
+
+    /**
+     * Hide all connection sockets that have no connections currently.
+     * 
+     * Same as the editor right click > Hide unused connectors
+     */
+    public hideUnusedConnections (): void {
+        for (const key of this._connectionKeys) {
+            this.connections[key] = this.connections[key].map(link => {
+                return !link.isUsed ? link.setHidden(true) : link
+            })
+        }
+    }
+
+    /**
+     * Show all connection sockets.
+     * 
+     * Same as the editor right click > Show all connectors
+     */
+    public showAllConnections (): void {
+        for (const key of this._connectionKeys) {
+            this.connections[key] = this.connections[key].map(link => link.setHidden(false))
+        }
+    }
+
+    /**
+     * Check whether another item is of the same type as this item
+     * @param item 
+     */
     public equals (item: SequenceItemType): boolean {
         return item.rawData.ObjectArchetype === this.rawData.ObjectArchetype
     }
@@ -163,22 +209,38 @@ export class BaseSequenceItem extends BaseItem {
         return connections?.find(c => c.name === connectionName) ?? null
     }
 
-    public setComment ({
-        comment,
-        supressAutoComment,
-        outputCommentToScreen,
-    }: {
+    /**
+     * Set a comment on this item. This comment will be visible in the editor
+     * @param comment The text of the comment or the text in combination with comment options 
+     */
+    public setComment (comment: string | {
         comment?: string
         supressAutoComment?: boolean
         outputCommentToScreen?: boolean
     }): this {
-        this.commentOptions.comment = comment
-        this.commentOptions.supressAutoComment = supressAutoComment
-        this.commentOptions.outputCommentToScreen = outputCommentToScreen
+        const { isBoolean, isString } = typeguards
+
+        if (isString(comment)) {
+            this.commentOptions.comment = comment
+        } else {
+            const { comment: c, outputCommentToScreen, supressAutoComment } = comment
+
+            if (isString(c))
+                this.commentOptions.comment = c
+            if (isBoolean(supressAutoComment)) 
+                this.commentOptions.supressAutoComment = supressAutoComment
+            if (isBoolean(outputCommentToScreen))
+                this.commentOptions.outputCommentToScreen = outputCommentToScreen
+        }
 
         return this
     }
 
+    /**
+     * Set a new position for this item
+     * @param position The new position coordinates
+     * @param offset Whether to use the new position as an offset to the current position (default: false)
+     */
     public setPosition (position: KismetPosition, offset?: boolean): this {
         const { x, y } = position
 
@@ -188,6 +250,11 @@ export class BaseSequenceItem extends BaseItem {
         return this
     }
 
+    /**
+     * Set a variable if the variable has no variable connection. 
+     * Used for properties you can set in the properties screen in the editor.
+     * @param properties The properties to set. Will not overwrite currently set properties
+     */
     public setProperty (...properties: { name: string, value: KismetVariableValue }[]): this {
         for (const property of properties.filter(p => p.value != undefined)) {
             const { name, value } = property
@@ -198,6 +265,11 @@ export class BaseSequenceItem extends BaseItem {
         return this
     }
 
+    /**
+     * Change the sequence of this item
+     * @param sequence The new sequence of this item: the linkId or the sequence itself
+     * @param addToSequence If 'sequence' is the new sequence, whether to add the item to the sequence
+     */
     public setSequence (
         sequence: string | Sequence,
         addToSequence?: boolean

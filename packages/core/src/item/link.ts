@@ -1,6 +1,7 @@
 import {
     cast,
     Constants,
+    KismetError,
     KismetItemFormatter,
 } from '@kismet.ts/shared'
 
@@ -126,6 +127,20 @@ export class BaseKismetConnection {
         return `(${output})`
     }
 
+    /**
+     * Whether the socket currently is being used by having at least one connection with another socket
+     */
+    public get isUsed (): boolean {
+        return this.linkedIds.length > 0
+    }
+
+    /**
+     * Add a new socket link connection
+     * @param linkId The linkId of the (other) item to connect to
+     * @param index The index of the input variable socket that will be connected to. 
+     * Empty or 0 if the socket is the first input socket on the item
+     * @param hidden Change the hidden state of this socket
+     */
     public addLink (linkId: string, index?: number, hidden?: boolean): this {
         this.links ??= []
 
@@ -144,6 +159,24 @@ export class BaseKismetConnection {
 
         this.links.push(link)
         this.linkedIds.push(linkId)
+
+        return this
+    }
+
+    public breakLinkTo (linkId: string): this {
+        const index = this.linkedIds.findIndex(id => id === linkId);
+
+        if (index < 0) new KismetError('UNKNOWN_CONNECTION', [linkId, 'connection ' + this.name , this.type])
+
+        this.linkedIds.splice(index, 1)
+        this.links?.splice(index, 1)
+
+        return this
+    }
+
+    public breakAllLinks (): this {
+        this.linkedIds = []
+        this.links = []
 
         return this
     }

@@ -10,6 +10,8 @@ dist
 src/test*/
 nodes.json
 classes.json
+db.json
+*tree.json
 .temp
 .cache
 

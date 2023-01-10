@@ -92,10 +92,7 @@ export class SequenceUtil {
      * @param id The link id of the item to search
      */
     public indexOf (id: string): number {
-        const item = this.sequence.items.find(i => i.linkId === id)
-
-        if (!item) return -1
-        else return this.sequence.items.indexOf(item)
+        return this.sequence.items.findIndex(i => i.linkId === id)
     }
 
     /**
