@@ -3,7 +3,7 @@ export class SetPostProcess extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetPostProcess_TA'TAGame.Default__SeqAct_SetPostProcess_TA'",
             inputs: {
                 "input": [],

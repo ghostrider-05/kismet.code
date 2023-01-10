@@ -3,7 +3,7 @@ export class AkSetSwitch extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AkSetSwitch'AkAudio.Default__SeqAct_AkSetSwitch'",
             inputs: {
                 "input": [

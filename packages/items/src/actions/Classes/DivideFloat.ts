@@ -3,7 +3,7 @@ export class DivideFloat extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_DivideFloat'Engine.Default__SeqAct_DivideFloat'",
             inputs: {
                 "input": [],

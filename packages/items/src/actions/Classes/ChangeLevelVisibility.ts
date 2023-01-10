@@ -3,7 +3,7 @@ export class ChangeLevelVisibility extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_LevelVisibility'Engine.Default__SeqAct_LevelVisibility'",
             inputs: {
                 "input": [

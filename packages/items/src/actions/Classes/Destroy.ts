@@ -3,7 +3,7 @@ export class Destroy extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Destroy'Engine.Default__SeqAct_Destroy'",
             inputs: {
                 "input": [],

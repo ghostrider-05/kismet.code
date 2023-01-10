@@ -3,7 +3,7 @@ export class SpawnFXActor extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SpawnFXActor_TA'TAGame.Default__SeqAct_SpawnFXActor_TA'",
             inputs: {
                 "input": [],

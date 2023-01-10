@@ -3,7 +3,7 @@ export class AttachToEvent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AttachToEvent'Engine.Default__SeqAct_AttachToEvent'",
             inputs: {
                 "input": [],

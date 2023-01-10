@@ -3,7 +3,7 @@ export class SetSoundMode extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetSoundMode'Engine.Default__SeqAct_SetSoundMode'",
             inputs: {
                 "input": [

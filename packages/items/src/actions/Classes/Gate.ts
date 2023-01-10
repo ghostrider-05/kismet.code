@@ -3,7 +3,7 @@ export class Gate extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Gate'Engine.Default__SeqAct_Gate'",
             inputs: {
                 "input": [

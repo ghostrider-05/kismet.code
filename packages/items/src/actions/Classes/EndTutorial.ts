@@ -3,7 +3,7 @@ export class EndTutorial extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_EndTutorial_TA'TAGame.Default__SeqAct_EndTutorial_TA'",
             inputs: {
                 "input": [

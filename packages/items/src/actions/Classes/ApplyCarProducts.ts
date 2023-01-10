@@ -3,7 +3,7 @@ export class ApplyCarProducts extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ApplyCarProducts_TA'TAGame.Default__SeqAct_ApplyCarProducts_TA'",
             inputs: {
                 "input": [],

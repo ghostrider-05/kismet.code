@@ -3,7 +3,7 @@ export class SetActiveAnimChild extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetActiveAnimChild'Engine.Default__SeqAct_SetActiveAnimChild'",
             inputs: {
                 "input": [

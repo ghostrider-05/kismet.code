@@ -3,7 +3,7 @@ export class SetLoadout extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetLoadout_TA'TAGame.Default__SeqAct_SetLoadout_TA'",
             inputs: {
                 "input": [],

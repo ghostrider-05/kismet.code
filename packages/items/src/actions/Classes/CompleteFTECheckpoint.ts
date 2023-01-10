@@ -3,7 +3,7 @@ export class CompleteFTECheckpoint extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CompleteFTECheckpoint_TA'TAGame.Default__SeqAct_CompleteFTECheckpoint_TA'",
             inputs: {
                 "input": [],

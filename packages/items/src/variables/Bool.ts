@@ -20,10 +20,11 @@ export class BoolVariable extends SequenceVariable {
     }
 
     public override toString (): string {
-        return this.setProperty({ 
-            name: 'bValue', 
-            value: this.value ? '1' : '0' 
+        this.setProperty({
+            name: 'bValue',
+            value: this.value ? '1' : '0'
         })
-        .toString()
+        
+        return super.toString();
     }
 }

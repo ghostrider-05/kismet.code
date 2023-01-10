@@ -3,7 +3,7 @@ export class SetReplayFX extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetReplayFX_TA'TAGame.Default__SeqAct_SetReplayFX_TA'",
             inputs: {
                 "input": [

@@ -3,7 +3,7 @@ export class Toggle extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Toggle'Engine.Default__SeqAct_Toggle'",
             inputs: {
                 "input": [

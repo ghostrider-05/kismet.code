@@ -3,7 +3,7 @@ export class ToggleConstraintDrive extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ToggleConstraintDrive'Engine.Default__SeqAct_ToggleConstraintDrive'",
             inputs: {
                 "input": [

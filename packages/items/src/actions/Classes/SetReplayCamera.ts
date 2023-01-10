@@ -3,7 +3,7 @@ export class SetReplayCamera extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetReplayCamera_TA'TAGame.Default__SeqAct_SetReplayCamera_TA'",
             inputs: {
                 "input": [],

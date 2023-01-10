@@ -3,7 +3,7 @@ export class IsBenchmarking extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_IsBenchmarking'Engine.Default__SeqCond_IsBenchmarking'",
                 inputs: {
                 "input": [],

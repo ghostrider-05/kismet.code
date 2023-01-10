@@ -3,7 +3,7 @@ export class CommitMapChange extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CommitMapChange'Engine.Default__SeqAct_CommitMapChange'",
             inputs: {
                 "input": [

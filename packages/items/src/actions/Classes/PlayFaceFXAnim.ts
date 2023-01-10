@@ -3,7 +3,7 @@ export class PlayFaceFXAnim extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_PlayFaceFXAnim'Engine.Default__SeqAct_PlayFaceFXAnim'",
             inputs: {
                 "input": [

@@ -3,7 +3,7 @@ export class SetVectorParam extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetMatInstVectorParam'Engine.Default__SeqAct_SetMatInstVectorParam'",
             inputs: {
                 "input": [],

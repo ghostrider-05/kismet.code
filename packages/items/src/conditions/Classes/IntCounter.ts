@@ -3,7 +3,7 @@ export class IntCounter extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_Increment'Engine.Default__SeqCond_Increment'",
                 inputs: {
                 "input": [],

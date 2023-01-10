@@ -3,7 +3,7 @@ export class SeqCond_SwitchBase extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_SwitchBase'Engine.Default__SeqCond_SwitchBase'",
                 inputs: {
                 "input": [],

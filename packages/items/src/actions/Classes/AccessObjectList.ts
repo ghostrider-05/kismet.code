@@ -3,7 +3,7 @@ export class AccessObjectList extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AccessObjectList'Engine.Default__SeqAct_AccessObjectList'",
             inputs: {
                 "input": [

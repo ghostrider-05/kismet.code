@@ -3,7 +3,7 @@ export class SetStadiumTeamColors extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetStadiumTeamColors_TA'TAGame.Default__SeqAct_SetStadiumTeamColors_TA'",
             inputs: {
                 "input": [],

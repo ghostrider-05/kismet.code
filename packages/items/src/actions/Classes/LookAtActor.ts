@@ -3,7 +3,7 @@ export class LookAtActor extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_LookAtActor_TA'TAGame.Default__SeqAct_LookAtActor_TA'",
             inputs: {
                 "input": [

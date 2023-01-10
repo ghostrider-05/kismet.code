@@ -3,7 +3,7 @@ export class GameURLHasOption extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GameURLHasOption_TA'TAGame.Default__SeqAct_GameURLHasOption_TA'",
             inputs: {
                 "input": [

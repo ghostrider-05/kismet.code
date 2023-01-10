@@ -3,7 +3,7 @@ export class AkStartAmbientSound extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AkStartAmbientSound'AkAudio.Default__SeqAct_AkStartAmbientSound'",
             inputs: {
                 "input": [

@@ -3,7 +3,7 @@ export class GetGameBall extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetGameBall_TA'TAGame.Default__SeqAct_GetGameBall_TA'",
             inputs: {
                 "input": [],

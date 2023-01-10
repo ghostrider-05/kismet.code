@@ -36,7 +36,6 @@ import { CountDownStart } from './Classes/CountDownStart.js'
 import { DynamicMapEventUpdate } from './Classes/DynamicMapEventUpdate.js'
 import { GameEventStateChanged } from './Classes/GameEventStateChanged.js'
 import { GameTimeChanged } from './Classes/GameTimeChanged.js'
-import { GarageComplexState } from './Classes/GarageComplexState.js'
 import { GoalScored } from './Classes/GoalScored.js'
 import { InputSequence } from './Classes/InputSequence.js'
 import { IntroMenu } from './Classes/IntroMenu.js'
@@ -50,7 +49,6 @@ import { PreviewMusicStingerVisualizer } from './Classes/PreviewMusicStingerVisu
 import { ReplayTime } from './Classes/ReplayTime.js'
 import { RoundStart } from './Classes/RoundStart.js'
 import { ScoreChanged } from './Classes/ScoreChanged.js'
-import { ShowGarageComplex } from './Classes/ShowGarageComplex.js'
 import { StadiumTeamColorsChanged } from './Classes/StadiumTeamColorsChanged.js'
 import { StartHighlightReel } from './Classes/StartHighlightReel.js'
 import { ActivateTutorialHelper } from './Classes/ActivateTutorialHelper.js'
@@ -97,7 +95,6 @@ export {
 	DynamicMapEventUpdate,
 	GameEventStateChanged,
 	GameTimeChanged,
-	GarageComplexState,
 	GoalScored,
 	InputSequence,
 	IntroMenu,
@@ -111,7 +108,6 @@ export {
 	ReplayTime,
 	RoundStart,
 	ScoreChanged,
-	ShowGarageComplex,
 	StadiumTeamColorsChanged,
 	StartHighlightReel,
 	ActivateTutorialHelper,
@@ -165,7 +161,6 @@ export const TAGame = {
 	DynamicMapEventUpdate,
 	GameEventStateChanged,
 	GameTimeChanged,
-	GarageComplexState,
 	GoalScored,
 	InputSequence,
 	IntroMenu,
@@ -179,7 +174,6 @@ export const TAGame = {
 	ReplayTime,
 	RoundStart,
 	ScoreChanged,
-	ShowGarageComplex,
 	StadiumTeamColorsChanged,
 	StartHighlightReel,
 	ActivateTutorialHelper,

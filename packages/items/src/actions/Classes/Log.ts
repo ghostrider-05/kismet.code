@@ -3,7 +3,7 @@ export class Log extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Log'Engine.Default__SeqAct_Log'",
             inputs: {
                 "input": [],

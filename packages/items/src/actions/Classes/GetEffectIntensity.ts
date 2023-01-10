@@ -3,7 +3,7 @@ export class GetEffectIntensity extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetEffectIntensity_TA'TAGame.Default__SeqAct_GetEffectIntensity_TA'",
             inputs: {
                 "input": [

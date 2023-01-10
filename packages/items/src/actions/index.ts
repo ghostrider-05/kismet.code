@@ -173,6 +173,7 @@ import { MainMenuSwitch } from './Classes/MainMenuSwitch.js'
 import { MatchCountdown } from './Classes/MatchCountdown.js'
 import { MoveActor } from './Classes/MoveActor.js'
 import { NotifyEventOnTutorial } from './Classes/NotifyEventOnTutorial.js'
+import { RegisterMapDragon } from './Classes/RegisterMapDragon.js'
 import { ReinitializeRBPhysics } from './Classes/ReinitializeRBPhysics.js'
 import { RotateActor } from './Classes/RotateActor.js'
 import { ScreenFade } from './Classes/ScreenFade.js'
@@ -379,6 +380,7 @@ export {
 	MatchCountdown,
 	MoveActor,
 	NotifyEventOnTutorial,
+	RegisterMapDragon,
 	ReinitializeRBPhysics,
 	RotateActor,
 	ScreenFade,
@@ -592,6 +594,7 @@ export const TAGame = {
 	MatchCountdown,
 	MoveActor,
 	NotifyEventOnTutorial,
+	RegisterMapDragon,
 	ReinitializeRBPhysics,
 	RotateActor,
 	ScreenFade,

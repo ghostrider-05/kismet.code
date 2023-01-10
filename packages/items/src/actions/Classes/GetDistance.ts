@@ -3,7 +3,7 @@ export class GetDistance extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetDistance'Engine.Default__SeqAct_GetDistance'",
             inputs: {
                 "input": [],

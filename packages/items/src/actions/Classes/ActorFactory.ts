@@ -3,7 +3,7 @@ export class ActorFactory extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ActorFactory'Engine.Default__SeqAct_ActorFactory'",
             inputs: {
                 "input": [

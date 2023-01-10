@@ -3,7 +3,7 @@ export class DriveSpline extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_DriveSpline_TA'TAGame.Default__SeqAct_DriveSpline_TA'",
             inputs: {
                 "input": [

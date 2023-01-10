@@ -3,7 +3,7 @@ export class IsPIE extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_IsPIE'Engine.Default__SeqCond_IsPIE'",
                 inputs: {
                 "input": [],

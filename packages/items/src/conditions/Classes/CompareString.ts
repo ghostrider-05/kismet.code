@@ -3,7 +3,7 @@ export class CompareString extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_CompareString_TA'TAGame.Default__SeqCond_CompareString_TA'",
                 inputs: {
                 "input": [],

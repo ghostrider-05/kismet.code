@@ -3,7 +3,7 @@ export class ReinitializeRBPhysics extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ReinitPhys_TA'TAGame.Default__SeqAct_ReinitPhys_TA'",
             inputs: {
                 "input": [],

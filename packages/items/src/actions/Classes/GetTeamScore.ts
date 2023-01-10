@@ -3,7 +3,7 @@ export class GetTeamScore extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetTeamScore_TA'TAGame.Default__SeqAct_GetTeamScore_TA'",
             inputs: {
                 "input": [],

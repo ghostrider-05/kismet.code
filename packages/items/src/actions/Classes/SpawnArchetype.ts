@@ -3,7 +3,7 @@ export class SpawnArchetype extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SpawnArchetype_X'ProjectX.Default__SeqAct_SpawnArchetype_X'",
             inputs: {
                 "input": [

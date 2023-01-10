@@ -3,7 +3,7 @@ export class Timer extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Timer'Engine.Default__SeqAct_Timer'",
             inputs: {
                 "input": [

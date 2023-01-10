@@ -3,7 +3,7 @@ export class AttachFX extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AttachFX_TA'TAGame.Default__SeqAct_AttachFX_TA'",
             inputs: {
                 "input": [

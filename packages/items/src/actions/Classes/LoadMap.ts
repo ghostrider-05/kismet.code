@@ -3,7 +3,7 @@ export class LoadMap extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_LoadMap_TA'TAGame.Default__SeqAct_LoadMap_TA'",
             inputs: {
                 "input": [],

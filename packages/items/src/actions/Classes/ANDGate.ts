@@ -3,7 +3,7 @@ export class ANDGate extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AndGate'Engine.Default__SeqAct_AndGate'",
             inputs: {
                 "input": [],

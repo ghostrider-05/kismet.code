@@ -3,7 +3,7 @@ export class SetScalarParameteronStaticMeshes extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetMeshMaterialScalarParameter_TA'TAGame.Default__SeqAct_SetMeshMaterialScalarParameter_TA'",
             inputs: {
                 "input": [],

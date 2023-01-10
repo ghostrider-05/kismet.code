@@ -3,7 +3,7 @@ export class SetVelocity extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetVelocity'Engine.Default__SeqAct_SetVelocity'",
             inputs: {
                 "input": [],

@@ -3,7 +3,7 @@ export class SpawnBot extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SpawnBot_TA'TAGame.Default__SeqAct_SpawnBot_TA'",
             inputs: {
                 "input": [

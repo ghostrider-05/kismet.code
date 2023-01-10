@@ -3,7 +3,7 @@ export class DrawText extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_DrawText'Engine.Default__SeqAct_DrawText'",
             inputs: {
                 "input": [

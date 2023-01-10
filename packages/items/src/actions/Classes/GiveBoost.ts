@@ -3,7 +3,7 @@ export class GiveBoost extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GiveBoost_TA'TAGame.Default__SeqAct_GiveBoost_TA'",
             inputs: {
                 "input": [

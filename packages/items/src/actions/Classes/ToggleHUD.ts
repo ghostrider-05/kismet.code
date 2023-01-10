@@ -3,7 +3,7 @@ export class ToggleHUD extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ToggleHUD'Engine.Default__SeqAct_ToggleHUD'",
             inputs: {
                 "input": [

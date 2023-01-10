@@ -3,7 +3,7 @@ export class ScreenFade extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ScreenFade_TA'TAGame.Default__SeqAct_ScreenFade_TA'",
             inputs: {
                 "input": [

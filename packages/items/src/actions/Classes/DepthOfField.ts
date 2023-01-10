@@ -3,7 +3,7 @@ export class DepthOfField extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetDOFParams'Engine.Default__SeqAct_SetDOFParams'",
             inputs: {
                 "input": [

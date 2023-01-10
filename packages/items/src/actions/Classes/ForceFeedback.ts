@@ -3,7 +3,7 @@ export class ForceFeedback extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ForceFeedback'Engine.Default__SeqAct_ForceFeedback'",
             inputs: {
                 "input": [

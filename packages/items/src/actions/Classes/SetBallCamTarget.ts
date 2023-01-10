@@ -3,7 +3,7 @@ export class SetBallCamTarget extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetBallCamTarget_TA'TAGame.Default__SeqAct_SetBallCamTarget_TA'",
             inputs: {
                 "input": [

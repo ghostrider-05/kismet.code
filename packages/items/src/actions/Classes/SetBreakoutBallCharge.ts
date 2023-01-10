@@ -3,7 +3,7 @@ export class SetBreakoutBallCharge extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetBreakoutBallCharge_TA'TAGame.Default__SeqAct_SetBreakoutBallCharge_TA'",
             inputs: {
                 "input": [],

@@ -3,7 +3,7 @@ export class SetRigidBodyIgnoreVehicles extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetRigidBodyIgnoreVehicles'Engine.Default__SeqAct_SetRigidBodyIgnoreVehicles'",
             inputs: {
                 "input": [

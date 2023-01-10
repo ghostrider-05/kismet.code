@@ -3,7 +3,7 @@ export class AkPostEvent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AkPostEvent'AkAudio.Default__SeqAct_AkPostEvent'",
             inputs: {
                 "input": [

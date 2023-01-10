@@ -3,7 +3,7 @@ export class CastToFloat extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CastToFloat'Engine.Default__SeqAct_CastToFloat'",
             inputs: {
                 "input": [],

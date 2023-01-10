@@ -3,7 +3,7 @@ export class TriggerFXActor extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_TriggerFXActor_X'ProjectX.Default__SeqAct_TriggerFXActor_X'",
             inputs: {
                 "input": [

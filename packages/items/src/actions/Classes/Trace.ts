@@ -3,7 +3,7 @@ export class Trace extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Trace'Engine.Default__SeqAct_Trace'",
             inputs: {
                 "input": [],

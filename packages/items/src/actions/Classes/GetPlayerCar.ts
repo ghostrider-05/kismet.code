@@ -3,7 +3,7 @@ export class GetPlayerCar extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetPlayerCar_TA'TAGame.Default__SeqAct_GetPlayerCar_TA'",
             inputs: {
                 "input": [],

@@ -3,7 +3,7 @@ export class PossessPawn extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Possess'Engine.Default__SeqAct_Possess'",
             inputs: {
                 "input": [],

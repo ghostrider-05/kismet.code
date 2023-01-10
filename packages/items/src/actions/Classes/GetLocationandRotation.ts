@@ -3,7 +3,7 @@ export class GetLocationandRotation extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetLocationAndRotation'Engine.Default__SeqAct_GetLocationAndRotation'",
             inputs: {
                 "input": [],

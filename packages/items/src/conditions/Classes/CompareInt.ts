@@ -3,7 +3,7 @@ export class CompareInt extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_CompareInt'Engine.Default__SeqCond_CompareInt'",
                 inputs: {
                 "input": [],

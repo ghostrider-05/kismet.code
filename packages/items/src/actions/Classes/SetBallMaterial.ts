@@ -3,7 +3,7 @@ export class SetBallMaterial extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetBallMaterial_TA'TAGame.Default__SeqAct_SetBallMaterial_TA'",
             inputs: {
                 "input": [

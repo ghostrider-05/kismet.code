@@ -3,7 +3,7 @@ export class DynamicMapEvent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_DynamicMapEvents_TA'TAGame.Default__SeqAct_DynamicMapEvents_TA'",
             inputs: {
                 "input": [

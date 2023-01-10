@@ -3,7 +3,7 @@ export class AkClearBanks extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AkClearBanks'AkAudio.Default__SeqAct_AkClearBanks'",
             inputs: {
                 "input": [

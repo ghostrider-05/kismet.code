@@ -3,7 +3,7 @@ export class ForceGarbageCollection extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ForceGarbageCollection'Engine.Default__SeqAct_ForceGarbageCollection'",
             inputs: {
                 "input": [],

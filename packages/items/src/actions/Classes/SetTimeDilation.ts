@@ -3,7 +3,7 @@ export class SetTimeDilation extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetTimeDilation_TA'TAGame.Default__SeqAct_SetTimeDilation_TA'",
             inputs: {
                 "input": [],

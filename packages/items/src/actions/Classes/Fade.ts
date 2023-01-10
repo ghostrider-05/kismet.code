@@ -3,7 +3,7 @@ export class Fade extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CameraFade'Engine.Default__SeqAct_CameraFade'",
             inputs: {
                 "input": [],

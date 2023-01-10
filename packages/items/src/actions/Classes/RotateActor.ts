@@ -3,7 +3,7 @@ export class RotateActor extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_RotateActor_TA'TAGame.Default__SeqAct_RotateActor_TA'",
             inputs: {
                 "input": [

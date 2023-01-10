@@ -3,7 +3,7 @@ export class GetRarityColor extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetRarityColor_TA'TAGame.Default__SeqAct_GetRarityColor_TA'",
             inputs: {
                 "input": [],

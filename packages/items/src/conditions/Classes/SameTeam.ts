@@ -3,7 +3,7 @@ export class SameTeam extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_IsSameTeam'Engine.Default__SeqCond_IsSameTeam'",
                 inputs: {
                 "input": [],

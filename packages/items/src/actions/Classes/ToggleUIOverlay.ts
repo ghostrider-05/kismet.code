@@ -3,7 +3,7 @@ export class ToggleUIOverlay extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ToggleUIOverlay_TA'TAGame.Default__SeqAct_ToggleUIOverlay_TA'",
             inputs: {
                 "input": [

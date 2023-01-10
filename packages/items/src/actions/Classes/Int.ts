@@ -3,7 +3,7 @@ export class Int extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetInt'Engine.Default__SeqAct_SetInt'",
             inputs: {
                 "input": [],

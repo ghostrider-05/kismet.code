@@ -3,7 +3,7 @@ export class MultiplyFloat extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_MultiplyFloat'Engine.Default__SeqAct_MultiplyFloat'",
             inputs: {
                 "input": [],

@@ -3,7 +3,7 @@ export class ExitToMainMenu extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ExitToMainMenu_TA'TAGame.Default__SeqAct_ExitToMainMenu_TA'",
             inputs: {
                 "input": [],

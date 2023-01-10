@@ -3,7 +3,7 @@ export class SetVectorParamMatInst extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetMatInstVectorParam_TA'TAGame.Default__SeqAct_SetMatInstVectorParam_TA'",
             inputs: {
                 "input": [],

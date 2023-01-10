@@ -3,7 +3,7 @@ export class AddInt extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AddInt'Engine.Default__SeqAct_AddInt'",
             inputs: {
                 "input": [],

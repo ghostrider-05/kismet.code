@@ -3,7 +3,7 @@ export class AkLoadBank extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AkLoadBank'AkAudio.Default__SeqAct_AkLoadBank'",
             inputs: {
                 "input": [

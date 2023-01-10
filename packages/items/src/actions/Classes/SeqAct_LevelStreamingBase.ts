@@ -3,7 +3,7 @@ export class SeqAct_LevelStreamingBase extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_LevelStreamingBase'Engine.Default__SeqAct_LevelStreamingBase'",
             inputs: {
                 "input": [

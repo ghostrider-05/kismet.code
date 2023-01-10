@@ -3,7 +3,7 @@ export class CompareBool extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_CompareBool'Engine.Default__SeqCond_CompareBool'",
                 inputs: {
                 "input": [],

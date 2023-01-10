@@ -3,7 +3,7 @@ export class AnalyzeMusicfromCSV extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AnalyzeMusicFromCsv_TA'TAGame.Default__SeqAct_AnalyzeMusicFromCsv_TA'",
             inputs: {
                 "input": [],

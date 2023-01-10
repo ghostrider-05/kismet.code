@@ -3,7 +3,7 @@ export class SetBreakoutPlatformDamage extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetBreakoutTileDamage_TA'TAGame.Default__SeqAct_SetBreakoutTileDamage_TA'",
             inputs: {
                 "input": [],

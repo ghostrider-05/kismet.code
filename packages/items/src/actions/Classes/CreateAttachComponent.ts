@@ -3,7 +3,7 @@ export class CreateAttachComponent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CreateAttachComponent_TA'TAGame.Default__SeqAct_CreateAttachComponent_TA'",
             inputs: {
                 "input": [],

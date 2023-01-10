@@ -3,7 +3,7 @@ export class PlaySound extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_PlaySound'Engine.Default__SeqAct_PlaySound'",
             inputs: {
                 "input": [

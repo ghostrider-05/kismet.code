@@ -3,7 +3,7 @@ export class ParticleEventGenerator extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ParticleEventGenerator'Engine.Default__SeqAct_ParticleEventGenerator'",
             inputs: {
                 "input": [

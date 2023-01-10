@@ -3,7 +3,7 @@ export class AttachAssettoCar extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_AttachAssetToCar_TA'TAGame.Default__SeqAct_AttachAssetToCar_TA'",
             inputs: {
                 "input": [],

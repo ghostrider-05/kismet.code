@@ -3,7 +3,7 @@ export class MatureLanguageAllowed extends SequenceCondition {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
                 ...options,
-                ObjInstanceVersion: 3,
+                ObjInstanceVersion: undefined,
                 ObjectArchetype: "SeqCond_MatureLanguage'Engine.Default__SeqCond_MatureLanguage'",
                 inputs: {
                 "input": [],

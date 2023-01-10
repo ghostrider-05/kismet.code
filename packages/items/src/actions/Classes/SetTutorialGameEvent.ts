@@ -3,7 +3,7 @@ export class SetTutorialGameEvent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetTutorialGameEvent_TA'TAGame.Default__SeqAct_SetTutorialGameEvent_TA'",
             inputs: {
                 "input": [],

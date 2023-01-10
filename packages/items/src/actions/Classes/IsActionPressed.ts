@@ -3,7 +3,7 @@ export class IsActionPressed extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_IsActionPressed_TA'TAGame.Default__SeqAct_IsActionPressed_TA'",
             inputs: {
                 "input": [

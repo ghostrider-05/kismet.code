@@ -3,7 +3,7 @@ export class SetWorldAttractorParam extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetWorldAttractorParam'Engine.Default__SeqAct_SetWorldAttractorParam'",
             inputs: {
                 "input": [],

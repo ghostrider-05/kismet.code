@@ -3,7 +3,7 @@ export class ChangeCollision extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_ChangeCollision'Engine.Default__SeqAct_ChangeCollision'",
             inputs: {
                 "input": [],

@@ -3,7 +3,7 @@ export class SetCameraTarget extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetCameraTarget'Engine.Default__SeqAct_SetCameraTarget'",
             inputs: {
                 "input": [],

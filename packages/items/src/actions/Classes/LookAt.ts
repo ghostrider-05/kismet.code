@@ -3,7 +3,7 @@ export class LookAt extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_CameraLookAt'Engine.Default__SeqAct_CameraLookAt'",
             inputs: {
                 "input": [],

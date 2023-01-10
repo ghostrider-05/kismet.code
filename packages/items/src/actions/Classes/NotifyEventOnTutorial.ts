@@ -3,7 +3,7 @@ export class NotifyEventOnTutorial extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_NotifyEventOnTutorial_TA'TAGame.Default__SeqAct_NotifyEventOnTutorial_TA'",
             inputs: {
                 "input": [

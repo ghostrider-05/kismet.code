@@ -3,7 +3,7 @@ export class DisplayMessage extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_DisplayMessage_TA'TAGame.Default__SeqAct_DisplayMessage_TA'",
             inputs: {
                 "input": [

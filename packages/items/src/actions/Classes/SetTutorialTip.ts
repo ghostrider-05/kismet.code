@@ -3,7 +3,7 @@ export class SetTutorialTip extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetTutorialTip_TA'TAGame.Default__SeqAct_SetTutorialTip_TA'",
             inputs: {
                 "input": [],

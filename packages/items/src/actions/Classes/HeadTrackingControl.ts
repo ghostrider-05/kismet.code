@@ -3,7 +3,7 @@ export class HeadTrackingControl extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_HeadTrackingControl'Engine.Default__SeqAct_HeadTrackingControl'",
             inputs: {
                 "input": [

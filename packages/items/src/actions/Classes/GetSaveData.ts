@@ -3,7 +3,7 @@ export class GetSaveData extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetSaveData_TA'TAGame.Default__SeqAct_GetSaveData_TA'",
             inputs: {
                 "input": [],

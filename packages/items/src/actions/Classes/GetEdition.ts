@@ -3,7 +3,7 @@ export class GetEdition extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetEdition_TA'TAGame.Default__SeqAct_GetEdition_TA'",
             inputs: {
                 "input": [

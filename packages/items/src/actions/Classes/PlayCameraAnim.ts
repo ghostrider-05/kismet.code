@@ -3,7 +3,7 @@ export class PlayCameraAnim extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_PlayCameraAnim'Engine.Default__SeqAct_PlayCameraAnim'",
             inputs: {
                 "input": [

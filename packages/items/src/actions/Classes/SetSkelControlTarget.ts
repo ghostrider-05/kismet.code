@@ -3,7 +3,7 @@ export class SetSkelControlTarget extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetSkelControlTarget'Engine.Default__SeqAct_SetSkelControlTarget'",
             inputs: {
                 "input": [],

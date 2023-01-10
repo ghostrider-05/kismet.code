@@ -3,7 +3,7 @@ export class String extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_SetString'Engine.Default__SeqAct_SetString'",
             inputs: {
                 "input": [],

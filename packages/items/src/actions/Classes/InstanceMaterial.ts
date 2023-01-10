@@ -3,7 +3,7 @@ export class InstanceMaterial extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_InstanceMaterial_TA'TAGame.Default__SeqAct_InstanceMaterial_TA'",
             inputs: {
                 "input": [],

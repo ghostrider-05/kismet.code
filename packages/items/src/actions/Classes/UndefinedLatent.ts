@@ -3,7 +3,7 @@ export class UndefinedLatent extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_Latent'Engine.Default__SeqAct_Latent'",
             inputs: {
                 "input": [],

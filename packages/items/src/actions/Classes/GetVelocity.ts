@@ -3,7 +3,7 @@ export class GetVelocity extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
-            ObjInstanceVersion: 3,
+            ObjInstanceVersion: undefined,
             ObjectArchetype: "SeqAct_GetVelocity'Engine.Default__SeqAct_GetVelocity'",
             inputs: {
                 "input": [],
