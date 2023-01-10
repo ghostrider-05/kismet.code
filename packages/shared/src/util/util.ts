@@ -170,3 +170,8 @@ export function pickExclude <
 
     return pick(obj, includedKeys)
 }
+
+export const typeguards = {
+    isBoolean: (t: unknown): t is boolean => typeof t === 'boolean',
+    isString: (t: unknown): t is string => typeof t === 'string'
+}
