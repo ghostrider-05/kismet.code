@@ -49,7 +49,7 @@ export default defineUserConfig({
         
         await fetch('https://raw.githubusercontent.com/ghostrider-05/kismet.ts-template/main/src/index.ts')
             .then(res => res.text())
-            .then(text => writeFileSync('./docs/.vuepress/public/example.ts', text))
+            .then(text => writeFileSync(join('docs', '.vuepress', 'public', 'example.ts'), text))
 
         for (const pkg of packages) {
             const packageName = pkg === 'kismet.ts' ? pkg : `@kismet.ts/${pkg}`
