@@ -8,6 +8,10 @@ const packages = readdirSync(resolve('.', './packages/'))
     .filter(name => existsSync(resolve('.', `./packages/${name}/docs/`)))
 const items: SidebarGroup[] = []
 
+await fetch('https://raw.githubusercontent.com/ghostrider-05/kismet.ts-template/main/src/index.ts')
+    .then(res => res.text())
+    .then(text => writeFileSync(join('docs', '.vuepress', 'example.ts'), text))
+
 export default defineUserConfig({
     title: 'Kismet.ts',
     description: 'Create kismet from code',
@@ -46,10 +50,6 @@ export default defineUserConfig({
                 if (page.path.startsWith('/../packages/')) 
                     app.pages[i] = { ...page, path: '/' + page.path.slice('/../packages/'.length).replace('docs/', '') }
             })
-        
-        await fetch('https://raw.githubusercontent.com/ghostrider-05/kismet.ts-template/main/src/index.ts')
-            .then(res => res.text())
-            .then(text => writeFileSync(join('docs', '.vuepress', 'public', 'example.ts'), text))
 
         for (const pkg of packages) {
             const packageName = pkg === 'kismet.ts' ? pkg : `@kismet.ts/${pkg}`
