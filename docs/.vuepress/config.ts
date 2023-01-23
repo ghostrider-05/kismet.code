@@ -1,5 +1,4 @@
-import { defaultTheme, defineUserConfig, SidebarGroup, App } from 'vuepress'
-import { createPage } from '@vuepress/core'
+import { defaultTheme, defineUserConfig, SidebarGroup } from 'vuepress'
 import fetch from 'node-fetch'
 import { existsSync, readdirSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
@@ -8,34 +7,6 @@ import { mkdir, rename } from 'fs/promises'
 const packages = readdirSync(resolve('.', './packages/'))
     .filter(name => existsSync(resolve('.', `./packages/${name}/docs/`)))
 const items: SidebarGroup[] = []
-
-interface LinkOptions { 
-    filter?: (name?: string) => boolean
-    name: string
-    parent?: string
-}
-
-const linkFiles = async (app: App, pkg: string, options: LinkOptions) => {
-    const { name, parent, filter } = options
-    const paths = {
-        filePath: resolve('.', `./packages/${pkg}/docs${parent ? `/${parent}` : ''}/${name}`),
-        path: `/${pkg}${parent != undefined ? `/${parent}` : ''}/${name.split('.')[0]}.html`
-    }
-
-    const page = await createPage(app, {
-        ...paths,
-        frontmatter: { prev: false, next: false },
-    })
-
-    app.pages.push(page)
-    if (filter?.(name) ?? true) {
-        (parent ? (items.at(-1)!.children.at(-1) as SidebarGroup) : items.at(-1))!.children.push({ 
-            text: page.title, 
-            link: paths.path, 
-            children: []
-        })
-    }
-}
 
 export default defineUserConfig({
     title: 'Kismet.ts',
