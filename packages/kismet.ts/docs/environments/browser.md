@@ -4,11 +4,16 @@ title: Web
 
 # Environment: Web (browser)
 
-For packages with the `browser / serverless` badge in the readme, the web is supported
+For packages with the `serverless` badge in the readme, the web browser is supported for certain packages.
 
-## Compatibility
+## Import script
 
 To load ESM modules on the web you can use the `import` syntax. In the script set the type attribute to `module`. This syntax is [supported in (at least) the latest version of all browsers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#browser_compatibility).
+
+## Supported packages
+
+By default the web will work for supported packages without dependencies.
+If a package has a dependency, do a search and replace for the imports with a CDN import link.
 
 ## Example
 

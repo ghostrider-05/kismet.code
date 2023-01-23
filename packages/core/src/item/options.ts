@@ -16,7 +16,7 @@ export interface BaseKismetItemOptions {
      */
     category?: string
     /**
-     * The sequence index for this node. The reference to this node will be {Class}_{index}.
+     * The sequence index for this node. The reference to this node will be \{Class\}_\{index\}.
      * If not specified, a new and available index will be chosen
      */
     index?: number

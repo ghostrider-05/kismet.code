@@ -32,5 +32,11 @@
   "dependencies": {
     "@kismet.ts/core": "^0.1.3",
     "@kismet.ts/shared": "^0.1.4"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "README.md",
+    "displayName": "@kismet.ts/items",
+    "tsconfig": "./tsconfig.json"
   }
 }

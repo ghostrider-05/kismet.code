@@ -23,5 +23,11 @@
     "@kismet.ts/parsers": "file:packages/parsers",
     "@kismet.ts/shared": "file:packages/shared",
     "@kismet.ts/util": "file:packages/util"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "README.md",
+    "displayName": "kismet.ts",
+    "tsconfig": "./tsconfig.json"
   }
 }

@@ -34,3 +34,4 @@ docs/parsers-node/
 docs/shared/
 docs/util/
 docs/.vuepress/public/example.ts
+docs/.vuepress/packages/

@@ -19,12 +19,21 @@ const kismet = parser.parsePropertyChain('Player().PRI.Team.Bla.Bla.Bla')
 
 > Format: While the begin variable can be any registered variable, such as `Object()`, the variable must start with an uppercase letter and with `()` before the first property.
 
+For good positions, disable all auto positions on the sequence and set the following spacing options:
+
+```ts
+const spacing = {
+    nodes: 500,
+    variable: 150
+}
+```
+
 ## Custom sequence
 
 First to parse a sequence define your combinations on two levels: how an item is structured and a series of items
 
 ```txt
-LevelLoaded:(Loaded and Visible, In) > CompareInt(ValueA=0, ValueB=1):(A < B, Show) > SeqAct_DrawText(String="hello world")
+LevelLoaded:(Loaded and Visible, In) -> CompareInt(ValueA=0, ValueB=1):(A < B, Show) -> SeqAct_DrawText(String="hello world")
 ```
 
 In the example above the items are separated by `->` and this is parsed as follows:

@@ -1,3 +1,6 @@
+# Basic sequence
+
+```ts
 import { Sequence, SequenceAction } from '../src/index.js'
 
 const sequence = new Sequence({
@@ -15,3 +18,4 @@ const output = sequence
     .toString()
 
 console.log(output)
+```

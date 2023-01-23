@@ -44,6 +44,7 @@ await createLocalClasses ({
         copy: false,
         log: true,
         register: true,
+        standalone: true,
         additionalNodes: nodes
     },
     classes: true,
@@ -63,18 +64,19 @@ const content = fs.readFileSync(config.database, { encoding: 'utf8' })
 
 fs.writeFileSync('./db.json', JSON.stringify(content, null, 4), { encoding: 'utf8' })
 
-const files: [string, string][] = [
+const files: [string, Promise<string> | string][] = [
     ['itemdb', JSON.stringify(content)],
     ['classes', fs.readFileSync('./src/classes.json', { encoding: 'utf8' })],
     ['nodes', fs.readFileSync('./src/nodes.json', { encoding: 'utf8' })],
-    ['blender', fs.readFileSync('./src/kismet-addon.py', { encoding: 'utf8' })],
+    ['blender', fs.promises.readFile('./src/kismet-addon.py', { encoding: 'utf8' })],
 ]
 
-await Promise.all(files.map(file => {
+await Promise.all(files.map(async file => {
     const [name, content] = file
-    
+    const body = await content
+
     return fetch(config.uploadPath + `?tag=${name}&version=${prompt.version}`, {
         method: 'PUT',
-        body: content
+        body
     })
 }))

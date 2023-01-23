@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/ghostrider-05/kismet.ts/issues"
   },
-  "homepage": "https://github.com/ghostrider-05/kismet.ts#readme"
+  "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "README.md",
+    "displayName": "@kismet.ts/shared",
+    "tsconfig": "./tsconfig.json"
+  }
 }

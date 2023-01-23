@@ -81,13 +81,14 @@ export class KismetFile {
      * }) // [MyAction]
      */
     public static listItems<T extends SequenceItemTypeof> (
-        input: Record<
+        input: Partial<Record<
             'Actions' | 'Conditions' | 'Events' | 'Variables',
             IStore
-        >
+        >>
     ): SequenceItemTypeof[] {
         const items = Object.keys(input).flatMap(key => {
             const category = input[key as keyof typeof input]
+            if (!category) return []
 
             const classes = Object.keys(category)
                 .filter(cKey => {

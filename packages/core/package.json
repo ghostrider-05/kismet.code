@@ -24,5 +24,11 @@
   "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
   "dependencies": {
     "@kismet.ts/shared": "^0.1.4"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "README.md",
+    "displayName": "@kismet.ts/core",
+    "tsconfig": "./tsconfig.json"
   }
 }

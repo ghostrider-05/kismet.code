@@ -1,6 +1,9 @@
-import { SequenceAction, BaseKismetActionRequiredOptions } from '../src/index.js'
+# Custom Action
 
-class MyAction extends SequenceAction {
+```ts
+import { SequenceAction, BaseKismetActionRequiredOptions } from '@kismet.ts/core'
+
+export class MyAction extends SequenceAction {
     constructor (options?: BaseKismetActionRequiredOptions) {
         super({
             ...options,
@@ -18,3 +21,4 @@ const myAction = new MyAction()
     .setComment({ comment: 'Hello custom action!' })
 
 console.log(myAction.toString())
+```
