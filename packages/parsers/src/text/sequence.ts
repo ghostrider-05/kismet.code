@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Sequence, SequenceItemType, SequenceItemTypeof, SequenceNode, SequenceVariable } from '@kismet.ts/core'
-import { createStore } from '@kismet.ts/items'
 import { capitalize, constructItem, destructureProperty, indent } from '@kismet.ts/shared'
 
 import { BaseTextParser } from './internals/baseParser.js'
