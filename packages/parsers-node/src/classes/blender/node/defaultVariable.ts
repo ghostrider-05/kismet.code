@@ -48,6 +48,7 @@ const defaultNodeItems = (type: string) => {
             break
         case Constants.NodeType.EVENTS:
             output.push(...event)
+            output.push(breakpoint)
             break
         case 'base':
             output.push(...base)

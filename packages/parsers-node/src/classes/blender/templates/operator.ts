@@ -71,6 +71,9 @@ def validate_sockets (link):
     from_icon = link.from_socket.display_shape
     to_icon = link.to_socket.display_shape
 
+    if from_icon is None:
+        print('Warning, missing a from icon....')
+
     is_var_link = from_icon == '${linkIcon(
         'variables'
     )}' or to_icon == '${linkIcon('variables')}'
@@ -81,6 +84,12 @@ def validate_sockets (link):
         )}' and to_icon == '${linkIcon('variables')}'
     else:
         return True
+
+def find_connected_index (scene, name):
+    if 'numberStorage' in scene:
+        item = scene.numberStorage.get(name)
+        if item is not None:
+            return item.number      
 
 class NODE_OT_export_kismet(bpy.types.Operator):
     bl_idname = "udk.export_active_kismet"
@@ -114,9 +123,14 @@ class NODE_OT_export_kismet(bpy.types.Operator):
             'bl_'
         ]
 
+        if 'numberStorage' in context.scene:
+            self.report({ 'INFO' }, 'Found objects in this scene that might be connected to this sequence')
+        else:
+            self.report({ 'WARNING' }, 'No objects found in the current scene.')
+
         if len(node_tree.nodes) == 0:
             self.report({ 'INFO' }, 'No kismet nodes to copy in this sequence...')
-            return
+            return { 'CANCELLED' }
 
         for node in node_tree.nodes:
             node_index = find_index(node.name, indexes)
@@ -138,7 +152,8 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 
             if '_SequenceItemVariableNames' in node and node._SequenceItemVariableNames is not None:
                 for _item_name in node._SequenceItemVariableNames:
-                    node_variables.append(f"{_item_name}={node[_item_name]}")
+                    if _item_name in node:
+                        node_variables.append(f"{_item_name}={node[_item_name]}")
 
             # TODO: check when variables required quotes, StringProperty?
             if node.ObjComment != '':
@@ -247,11 +262,11 @@ class NODE_OT_export_kismet(bpy.types.Operator):
 ${options.copy ? '        paperclip.copy(sequence_text.rstrip())' : ''}
 ${options.log ? '        print(sequence_text.rstrip())' : ''}
 
-        self.report({ 'INFO' }, ${
+        self.report({ 'INFO' }, '${
             options.copy
                 ? 'Copied kismet nodes'
                 : 'Logged kismet nodes to console'
-        })
+        }')
 
         return { 'FINISHED' }
 

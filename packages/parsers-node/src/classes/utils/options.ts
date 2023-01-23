@@ -9,6 +9,7 @@ export const defaultOptions: Required<ExportOptions> = {
     classes: false,
     writeIndexFile: true,
     version: null,
+    classVersion: {},
     types: ['actions', 'conditions', 'events', 'variables'],
 }
 

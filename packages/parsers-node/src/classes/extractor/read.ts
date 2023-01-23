@@ -60,13 +60,13 @@ export function readNodeFile (
     }
 }
 
-export function nodeToJSON (node: UnrealJsonReadFile): UnrealJsonReadFileNode {
+export function nodeToJSON (node: UnrealJsonReadFile, skipLinks = false): UnrealJsonReadFileNode {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { staticProperties, defaultproperties, links, ...json } = node
 
-    const inputLinks = nodeLinks.node(links.input),
-        outputLinks = nodeLinks.node(links.output),
-        variableLinks = nodeLinks.variable(links.variable)
+    const inputLinks = nodeLinks.node(skipLinks ? [] : links.input),
+        outputLinks = nodeLinks.node(skipLinks ? [] : links.output),
+        variableLinks = nodeLinks.variable(skipLinks ? [] : links.variable)
 
     const props = defaultproperties
         .map(prop => {

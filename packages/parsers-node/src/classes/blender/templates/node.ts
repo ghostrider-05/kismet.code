@@ -46,9 +46,6 @@ ${formatConnections(node, classes)}
         print("Removing node ", self, ", Goodbye!")
 
 ${formatVariableSockets(node)}
-    
-    # Optional: custom label
-    # Explicit user label overrides this, but here we can define a label dynamically
     def draw_label(self):
         return ${displayName(node)}
 `

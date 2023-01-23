@@ -1,10 +1,13 @@
 {
   "name": "@kismet.ts/util",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.1.1",
+  "description": "Node.js util package for kismet",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
-  "files": ["./dist/src/"],
+  "type": "module",
+  "files": [
+    "./dist/src/"
+  ],
   "scripts": {
     "prestart": "tsc --project ./tsconfig.json"
   },
@@ -19,6 +22,13 @@
   },
   "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
   "dependencies": {
+    "@kismet.ts/core": "^0.1.3",
     "clipboardy": "^3.0.0"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "README.md",
+    "displayName": "@kismet.ts/shared",
+    "tsconfig": "./tsconfig.json"
   }
 }

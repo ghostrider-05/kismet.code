@@ -159,6 +159,7 @@ export const formatVariableNames = (
 export const formatVariableSockets = (node: UnrealJsonReadFileNode) => {
     const prefix = '        '
     const sockets = node.variables
+        .filter(n => n.category !== null)
         .map(variable => {
             return prefix + `layout.prop(self, "${variable.name}")`
         })

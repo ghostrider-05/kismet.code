@@ -10,7 +10,7 @@ import { ClassManager } from '../utils/ClassManager.js'
 export async function createLocalClasses (inputOptions: LocalClassesCreateOptions): Promise<true | undefined> {
     const { importPath, exportPath } = inputOptions
     const options = _defaultExportOptions(inputOptions)
-    const manager = new ClassManager().setOptions(options)
+    const manager = new ClassManager(options)
 
     await _validateSubPaths(exportPath, options.types)
     if (!_validatePaths({ importPath }, inputOptions.debug)) return
@@ -21,5 +21,7 @@ export async function createLocalClasses (inputOptions: LocalClassesCreateOption
 
     // Generate export files to export all the classes
     await manager.writePackages(exportPath)
+    inputOptions.cb?.(manager.externalClasses)
+
     return true
 }

@@ -24,24 +24,27 @@ const createPath = (path: string, end?: string) => {
     return resolve('.', './' + path.concat(end ?? ''))
 }
 
-export function fillClassTemplate (node: UnrealJsonReadFile) {
+export type ClassVersionOption = number | { [T in UnrealJsonReadFile['type']]?: number } | undefined
+
+export function fillClassTemplate (node: UnrealJsonReadFile, version?: ClassVersionOption) {
     let content = null
+    const v = typeof version === 'number' ? version : version?.[node.type]
 
     switch (node.type) {
         case NodeType.ACTIONS:
-            content = classTemplate.actions(node)
+            content = classTemplate.actions(node, v)
             break
         case NodeType.CONDITIONS:
-            content = classTemplate.conditions(node)
+            content = classTemplate.conditions(node, v)
             break
         case NodeType.EVENTS:
-            content = classTemplate.events(node)
+            content = classTemplate.events(node, v)
             break
         case NodeType.VARIABLES:
-            content = classTemplate.variables(node)
+            content = classTemplate.variables(node, v)
             break
         default:
-            console.log('Invalid type for class:' + node.Class)
+            // console.log('Invalid type for class:' + node.Class)
             break
     }
 
@@ -52,6 +55,7 @@ export interface NodeWriteOptions {
     json?: boolean
     path: string
     Package: string
+    version?: ClassVersionOption
 }
 
 export interface PackageWriteOptions<T extends boolean = true> {
@@ -91,7 +95,7 @@ export const writeNode = async (
         Class: undefined,
     }
 
-    const nodeContent = fillClassTemplate(node)
+    const nodeContent = fillClassTemplate(node, options.version)
     if (!nodeContent) return
 
     await catchFileWriteError(async () => {

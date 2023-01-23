@@ -18,9 +18,24 @@ export interface TextSequenceParsedItem {
     variables?: string
 }
 
-export interface TextSequenceParserOptions<T> extends TextParserOptions<T> {
-    variables: ISingleStore
+export interface TextSequenceParserBaseOptions<T> extends TextParserOptions<T> {
+    variables?: ISingleStore
+}
+
+export interface TextSequenceParseSplitOptions {
     newLinesSeperation: number
     extractItem: (item: string) => TextSequenceParsedItem
     extractSequenceOrder: (block: string) => string[][]
 }
+
+export type TextSequenceParserOptions<T> = TextSequenceParserBaseOptions<T> & (
+    | {}
+    | TextSequenceParseSplitOptions
+)
+
+// export interface TextSequenceParserOptions<T> extends TextParserOptions<T> {
+//     variables: ISingleStore
+//     newLinesSeperation: number
+//     extractItem: (item: string) => TextSequenceParsedItem
+//     extractSequenceOrder: (block: string) => string[][]
+// }

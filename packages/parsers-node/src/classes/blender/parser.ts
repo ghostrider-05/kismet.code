@@ -15,11 +15,28 @@ import {
 } from './templates/index.js'
 
 export interface BlenderAddonGeneratorOptions {
+    /**
+     * Whether to include the paperclip import or not
+     */
     copy?: boolean
+    /**
+     * Whether to log the kismet sequence to the console
+     */
     log?: boolean
+    /**
+     * Whether to add the class registration function
+     */
     register?: boolean
+    /**
+     * Whether the plugin is standalone or not.
+     * If true, will attach a bl_info object with metadata.
+     */
+    standalone?: boolean
+    /**
+     * Add extra nodes to the blender addon
+     */
+    additionalNodes?: UnrealJsonReadFileNode[]
 }
-
 
 export class BlenderAddonGenerator {
     public static create (
@@ -27,6 +44,7 @@ export class BlenderAddonGenerator {
         classes: Partial<UnrealJsonReadFile>[],
         options?: BlenderAddonGeneratorOptions
     ) {
+        nodes = nodes.concat(options?.additionalNodes ?? [])
         console.log('Blender nodes: ' + nodes.length)
 
         const categories = createCategories(nodes)
@@ -34,7 +52,7 @@ export class BlenderAddonGenerator {
         const nodeTemplate = (node: UnrealJsonReadFileNode) =>
             classTemplate(node, classes)
         const content = [
-            baseTemplate(options?.copy ?? true),
+            baseTemplate(options?.copy ?? true, options?.standalone ?? true),
             ...nodes.map(nodeTemplate),
             operatorTemplate({
                 copy: options?.copy ?? true,

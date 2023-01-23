@@ -2,6 +2,11 @@ import { KismetConnectionType, } from '@kismet.ts/core'
 import { Constants, Enum, If } from '@kismet.ts/shared'
 
 import type { BlenderAddonGeneratorOptions } from '../blender/parser.js'
+import { ClassVersionOption } from '../utils/write.js'
+
+export {
+    ClassVersionOption
+}
 
 export interface JsonFile extends Record<string, string> {
     name: string
@@ -25,12 +30,15 @@ export interface ExportOptions<T extends boolean = boolean>
     blenderOptions?: If<T, BlenderAddonGeneratorOptions> | undefined
     types?: Enum<Exclude<Constants.NodeType, Constants.NodeType.SEQUENCES>>[]
     classes?: boolean
+    classVersion?: ClassVersionOption
     version?: string | null
     writeIndexFile?: boolean
     //sort?: 'package' | 'name' TODO: implement
 }
 
-export type LocalClassesCreateOptions = PathInput & ExportOptions
+export type LocalClassesCreateOptions = PathInput & ExportOptions & {
+    cb?: (nodes: Partial<UnrealJsonReadFile>[]) => void
+}
 
 export interface PathCreateOptions {
     check?: boolean

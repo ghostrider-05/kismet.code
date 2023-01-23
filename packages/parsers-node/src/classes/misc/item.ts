@@ -1,4 +1,4 @@
-import { BaseSequenceItem } from "@kismet.ts/core";
+import { BaseSequenceItem, SequenceItemType } from "@kismet.ts/core";
 import { Constants, readArchetype } from "@kismet.ts/shared";
 
 import { RawUnrealJsonDefaultVariables, UnrealJsonReadFile } from "../extractor/index.js";
@@ -23,23 +23,29 @@ export interface ClassFileCreateOptions {
  * @param options 
  */
 export function createClassFile (item: BaseSequenceItem, options: ClassFileCreateOptions): string | null {
-    const { category, defaultproperties, placeable, type } = options
+    const file = createClassFileData(item, options)
 
-    const file: UnrealJsonReadFile = {
+    return fillClassTemplate(file)
+}
+
+export function createClassFileData (item: SequenceItemType, options?: Partial<ClassFileCreateOptions>): UnrealJsonReadFile {
+    const { category, defaultproperties, placeable, type } = options ?? {}
+    const { Class, Package } = readArchetype(item.rawData.ObjectArchetype)
+
+    return {
         archetype: item.rawData.ObjectArchetype,
         name: item.rawName,
-        ...readArchetype(item.rawData.ObjectArchetype),
-        category,
+        Class,
+        Package,
+        category: category ?? '',
         links: <UnrealJsonReadFile['links']>item['inputs'],
-        type,
+        type: <Constants.NodeType>(type ?? item.type!),
         staticProperties: '',
         structures: [],
         enums: {},
         placeable: placeable ?? false,
         Extends: 'Object',
-        defaultproperties,
+        defaultproperties: defaultproperties ?? [],
         variables: []
     }
-
-    return fillClassTemplate(file)
 }

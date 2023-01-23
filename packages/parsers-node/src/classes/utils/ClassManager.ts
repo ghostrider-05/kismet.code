@@ -81,6 +81,7 @@ async function readPackage (
                 path: nodePath,
                 json: options.json || options.blender,
                 Package: name,
+                version: options.classVersion
             })) ?? {}
 
         items.push({
@@ -92,8 +93,12 @@ async function readPackage (
     return { items, externalClasses }
 }
 
-export function getSuperClasses (name: string, items: (Partial<UnrealJsonReadFile> | UnrealJsonReadFileNode)[]) {
-    const Extends = items.find(i => i.name === name)?.Extends
+export function getSuperClasses (
+    name: string, 
+    items: (RawUnrealJsonFile | Partial<UnrealJsonReadFile> | UnrealJsonReadFileNode)[],
+) {
+    const key = 'extends' in items[0] ? 'extends' : 'Extends'
+    const Extends = items.find(i => i.name === name)?.[<never>key]
     const Classes = [name]
     let latests: string | undefined = Extends
 
@@ -108,7 +113,7 @@ export function getSuperClasses (name: string, items: (Partial<UnrealJsonReadFil
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         Classes.push(latests!)
 
-        latests = items.find(i => i.name === latests)?.Extends
+        latests = items.find(i => i.name === latests)?.[<never>key]
     }
 
     return extendingClasses(Classes)
@@ -134,6 +139,10 @@ export class ClassManager {
     public json: UnrealJsonReadFileNode[] = []
     public externalClasses: Partial<UnrealJsonReadFile>[] = []
     public options?: ExportOptions = undefined
+
+    constructor (options: ExportOptions) {
+        this.options = options
+    }
 
     public setOptions (options: ExportOptions): this {
         this.options = options

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Sequence, SequenceItemType, SequenceItemTypeof, SequenceNode, SequenceVariable } from '@kismet.ts/core'
+import { createStore } from '@kismet.ts/items'
 import { capitalize, constructItem, destructureProperty, indent } from '@kismet.ts/shared'
 
 import { BaseTextParser } from './internals/baseParser.js'
 import { TextNodeParser } from './node.js'
 
-import type { TextSequenceParserOptions } from './options.js'
+import type { TextSequenceParserOptions, TextSequenceParseSplitOptions } from './options.js'
 
 export class TextSequenceParser<
     T extends boolean = true
@@ -27,7 +28,23 @@ export class TextSequenceParser<
         protected override options: TextSequenceParserOptions<T>
     ) {
         super(items, options)
-        this.manager.variables = options.variables
+
+        const createStore = (v: unknown, type: string) => v as NonNullable<typeof options.variables>
+        this.manager.variables = options.variables ?? createStore(items, 'variables')
+    }
+
+    protected get splitOptions (): TextSequenceParseSplitOptions {
+        if ('newLinesSeperation' in this.options) {
+            const { newLinesSeperation, extractItem, extractSequenceOrder } = this.options
+
+            return {
+                newLinesSeperation,
+                extractItem,
+                extractSequenceOrder
+            }
+        } else {
+            throw new Error('Missing options for parsing sequences')
+        }
     }
 
     public static formatBase (input: string): string {
@@ -65,8 +82,9 @@ export class TextSequenceParser<
      * Player().PRI.Team.<Integer>TeamIndex
      * Player(bAllPlayers=False).PRI.Team
      */
-    public parsePropertyChain (input: string) {
+    public parsePropertyChain (input: string, spacing?: { nodes: number, variable: number }) {
         const sequence = this.createSequence()
+        let position = 0
 
         const [baseVariable, ...chain] = input.split(this.propertyChar)
         const [variableName, variableArguments] = baseVariable.split('(')
@@ -74,6 +92,7 @@ export class TextSequenceParser<
         if (chain.length === 0) return undefined
 
         const beginItem = this.manager.findVariable(variableName)
+            .setPosition({ x: position - ((spacing?.nodes ?? 0) > 0 ? spacing!.nodes / 2 : 0), y: spacing?.variable ?? 0 })
         beginItem.raw = this.applyRawArguments(variableArguments.slice(0, -1))
 
         const sequenceItems = chain.flatMap(line => {
@@ -82,11 +101,14 @@ export class TextSequenceParser<
                 (match?.length ?? 0) > 1 ? match?.[0] : 'Object'
             const propertyName = match?.[1] ?? line
             const variable = this.manager.findVariable(propertyType)
+                .setPosition({ x: position, y: spacing?.variable ?? 0 })
 
-            const action = constructItem<SequenceItemType, SequenceItemTypeof>(this.manager.variables['GetProperty']).setProperty({
-                name: 'PropertyName',
-                value: propertyName
-            })
+            const action = constructItem<SequenceItemType, SequenceItemTypeof>(this.manager.variables['GetProperty'])
+                .setProperty({ name: 'PropertyName', value: propertyName })
+                .setComment({ supressAutoComment: false })
+                .setPosition({ x: position, y: 0 })
+
+            if (spacing?.nodes) position += spacing.nodes
 
             return [variable, action]
         })
@@ -124,12 +146,18 @@ export class TextSequenceParser<
     }
 
     // TODO: allow variable items in properties
+    /**
+     * Parse a sequence following a custom set of parsing rules.
+     * You need to declare all options in `TextSequenceParseSplitOptions` 
+     * for the options in this parser to be able to use this method.
+     * @param input The input to use for parsing
+     */
     public parseSequence (input: string): Sequence {
         const sequence = this.createSequence()
         const idItems: Record<string, SequenceItemType> = {}
 
         const { newLinesSeperation, extractItem, extractSequenceOrder } =
-            this.options
+            this.splitOptions
 
         const blocks = input.split('\n'.repeat(newLinesSeperation))
 

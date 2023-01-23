@@ -1,5 +1,5 @@
 import { KismetConnectionType } from '@kismet.ts/core'
-import { Constants, KismetError, quote } from '@kismet.ts/shared'
+import { Constants, indent, KismetError, quote } from '@kismet.ts/shared'
 
 import {
     UnrealJsonReadFileNode,
@@ -106,11 +106,14 @@ export const formatConnections = (
             let prefix = ''
 
             switch (key) {
-                case Constants.ConnectionType.INPUT:
-                case Constants.ConnectionType.VARIABLE:
+                case ConnectionType.INPUT:
                     prefix = 'self.inputs'
                     break
-                case Constants.ConnectionType.OUTPUT:
+                case ConnectionType.VARIABLE:
+                    if (node.type !== NodeType.EVENTS) prefix = 'self.inputs'
+                    else prefix = 'self.outputs'
+                    break
+                case ConnectionType.OUTPUT:
                     prefix = 'self.outputs'
                     break
                 default:
@@ -128,16 +131,16 @@ export const formatConnections = (
                             : prefix
                     const socketName = nodeSocketName(connection.name)
 
-                    return `        ${socketName} = ${finalPrefix}.new('${
-                        variableBlenderType(classes, connection.expectedType)
+                    return `${indent(2)}${socketName} = ${finalPrefix}.new('${
+                        finalPrefix === 'self.inputs' ? 'MultiSocketInput' :  variableBlenderType(classes, connection.expectedType)
                             .socket
                     }', ${
                         node.type === Constants.NodeType.VARIABLES
                             ? quote(connection.name)
                             : connection.name
-                    })\n        ${socketName}.display_shape = '${linkIcon(
+                    })\n${indent(2)}${socketName}.display_shape = '${linkIcon(
                         key
-                    )}'\n        ${socketName}.link_limit = 250\n`
+                    )}'\n${finalPrefix === 'self.inputs' ? `${indent(2)}${socketName}.hide_value = hide_variable_values\n` : ''}`
                 })
                 .join('\n')
         })
