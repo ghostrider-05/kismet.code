@@ -9,7 +9,6 @@
     "./dist/src/"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "tsc --project ./tsconfig.json"
   },
   "repository": {

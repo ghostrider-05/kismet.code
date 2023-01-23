@@ -21,6 +21,9 @@ jobs:
 
       - name: ESLint & Prettier
         run: npm run lint
+
+      - name: Tests
+        run: npm run test
       
       # TODO: write
       # - name: Tests

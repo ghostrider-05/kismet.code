@@ -9,7 +9,8 @@
   ],
   "type": "module",
   "scripts": {
-    "prestart": "tsc --project ./tsconfig.json"
+    "prestart": "tsc --project ./tsconfig.json",
+    "test": "npx vitest run"
   },
   "repository": {
     "type": "git",

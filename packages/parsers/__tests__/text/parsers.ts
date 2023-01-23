@@ -1,5 +1,5 @@
 import { TextSequenceParser, TextNodeParser } from '../../src/index.js'
-import { Items, listDefaultItems } from '@kismet.ts/items'
+import { Items, listDefaultItems } from '../../../items/dist/src/index.js'
 import { constructItem, Constants } from '@kismet.ts/shared'
 import { SequenceItemTypeof } from '@kismet.ts/core';
 
