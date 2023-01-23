@@ -29,6 +29,6 @@ footer: Made by ghostrider-05
 
 ## Example
 
-@[code](./.vuepress/public/example.ts)
+@[code](../docs/.vuepress/public/example.ts)
 
 Want to directly run this example? Check out the [template](https://github.com/ghostrider-05/kismet.ts-template)
