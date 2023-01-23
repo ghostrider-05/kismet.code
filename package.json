@@ -1,23 +1,21 @@
 {
-  "name": "kismet.ts",
-  "version": "1.0.0-beta.5",
+  "name": "@kismet.ts/config",
+  "version": "0.1.0",
   "description": "Make kismet from code",
   "main": "./src/dist/src/index.js",
   "types": "./src/dist/src/index.d.ts",
   "type": "module",
+  "private": true,
   "scripts": {
-    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --config ./src/dist/jest.config.js",
-    "test:update": "npm run build && npm test",
-    "build": "tsc",
-    "prestart": "npm run build",
-    "start": "node . —experimental-json-modules",
-    "lint": "npx eslint . --ext .cjs,.ts,.tsx",
-    "prettier": "npx prettier --check .",
-    "format": "npx prettier --write . && npx eslint . --ext .cjs,.ts,.tsx --fix",
-    "parser:build": "node ./src/dist/src/parser/run.js"
-  },
-  "bin": {
-    "create-custom-kismet-nodes": "node ./src/dist/src/parser/run.js"
+    "blender": "npm run prestart -w packages/parsers-node && npm run update -w packages/items",
+    "docs:dev": "vuepress dev docs",
+    "docs:ref": "npx tsc && npm run prestart && node ./dist/scripts/typedoc.js",
+    "docs:build": "npm run docs:ref && vuepress build docs",
+    "test": "turbo run test",
+    "prestart": "turbo run prestart",
+    "start": "node --experimental-json-modules .",
+    "lint": "turbo run lint",
+    "release": "turbo run release"
   },
   "keywords": [
     "udk",
@@ -32,22 +30,24 @@
   "bugs": {
     "url": "https://github.com/ghostrider-05/kismet.ts/issues"
   },
-  "files": [
-    "src/dist/src"
-  ],
   "devDependencies": {
-    "@types/jest": "^28.1.1",
-    "@types/node": "^16.6.1",
-    "@typescript-eslint/eslint-plugin": "^5.27.1",
-    "@typescript-eslint/parser": "^5.27.1",
-    "dotenv": "^16.0.1",
-    "eslint": "^8.17.0",
-    "eslint-config-prettier": "^8.5.0",
-    "jest": "^28.1.1",
-    "prettier": "^2.6.2",
-    "typescript": "^4.7.3"
+    "@types/node": "^16.11.56",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "turbo": "^1.7.0",
+    "typedoc": "^0.23.24",
+    "typedoc-plugin-markdown": "^3.14.0",
+    "typescript": "^4.9.4",
+    "vitest": "^0.27.3",
+    "vuepress": "^2.0.0-beta.60"
   },
-  "dependencies": {
-    "clipboardy": "^3.0.0"
+  "workspaces": [
+    "packages/*"
+  ],
+  "typedoc": {
+    "name": "Kismet.ts"
   }
 }

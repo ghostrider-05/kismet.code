@@ -6,11 +6,32 @@ node_modules
 .vscode
 
 # Output files
-src/dist/
+dist
 src/test*/
 nodes.json
+classes.json
+db.json
+*tree.json
+.temp
+.cache
+
+# Turbo
+.turbo
 
 # Other
+git-*
+*-config.json
 *.cs
 *.txt
 *.py
+
+# Docs
+docs/core/
+docs/items/
+docs/kismet.ts/
+docs/parsers/
+docs/parsers-node/
+docs/shared/
+docs/util/
+docs/.vuepress/example.ts
+docs/.vuepress/packages/

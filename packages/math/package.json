@@ -1,0 +1,26 @@
+{
+    "name": "@kismet.ts/math",
+    "version": "0.1.0",
+    "description": "",
+    "main": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts",
+    "files": ["./dist/src/"],
+    "scripts": {
+      "prestart": "tsc --project ./tsconfig.json"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ghostrider-05/kismet.ts.git"
+    },
+    "author": "ghostrider-05",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/ghostrider-05/kismet.ts/issues"
+    },
+    "homepage": "https://github.com/ghostrider-05/kismet.ts#readme",
+    "dependencies": {
+      "@kismet.ts/core": "^0.1.2",
+      "@kismet.ts/items": "^0.1.2"
+    }
+  }
+  
