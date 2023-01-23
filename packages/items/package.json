@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "prestart": "tsc --project ./tsconfig.json",
+    "prestart:script": "tsc --project ./tsconfig-scripts.json",
     "update": "npm run prestart && node --experimental-json-modules ./dist/scripts/update.js",
     "create-tree": "npm run prestart && node --experimental-json-modules ./dist/scripts/tree.js"
   },
