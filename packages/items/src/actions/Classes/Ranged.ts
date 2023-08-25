@@ -9,7 +9,7 @@ export class Ranged extends SequenceAction {
                 "input": [],
                 "output": [],
                 "variable": [
-                    "(ExpectedType=class'SeqVar_Int',LinkedVariables=none,LinkDesc=\"Index\",LinkVar=None,PropertyName=None,bWriteable=false,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=none,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
+                    "(ExpectedType=class'SeqVar_Int',LinkDesc=\"Index\",LinkVar=None,PropertyName=None,bWriteable=false,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=None,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
                 ]
             }
         })

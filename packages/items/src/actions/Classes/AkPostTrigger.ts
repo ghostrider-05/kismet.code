@@ -7,7 +7,7 @@ export class AkPostTrigger extends SequenceAction {
             ObjectArchetype: "SeqAct_AkPostTrigger'AkAudio.Default__SeqAct_AkPostTrigger'",
             inputs: {
                 "input": [
-                    "(LinkDesc=\"Post\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=none,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
+                    "(LinkDesc=\"Post\",bHasImpulse=false,QueuedActivations=0,bDisabled=false,bDisabledPIE=false,LinkedOp=None,DrawY=0,bHidden=false,ActivateDelay=0.0,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
                 ],
                 "output": [],
                 "variable": []

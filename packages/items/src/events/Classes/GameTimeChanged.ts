@@ -8,7 +8,7 @@ export class GameTimeChanged extends SequenceEvent {
                 "input": [],
                 "output": [],
                 "variable": [
-                    "(ExpectedType=Class'Engine.SeqVar_Float',LinkedVariables=none,LinkDesc=\"Call Time Percent\",LinkVar=None,PropertyName=CallTimePercent,bWriteable=true,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=none,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
+                    "(ExpectedType=Class'Engine.SeqVar_Float',LinkDesc=\"Call Time Percent\",LinkVar=None,PropertyName=CallTimePercent,bWriteable=true,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=None,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
                 ]
             },
             ...options

@@ -9,7 +9,7 @@ export class ApplyCarProducts extends SequenceAction {
                 "input": [],
                 "output": [],
                 "variable": [
-                    "(ExpectedType=Class'Engine.SeqVar_Object',LinkedVariables=none,LinkDesc=\"CarPreviewActor\",LinkVar=None,PropertyName=CarPreviewActor,bWriteable=false,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=none,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
+                    "(ExpectedType=Class'Engine.SeqVar_Object',LinkDesc=\"CarPreviewActor\",LinkVar=None,PropertyName=CarPreviewActor,bWriteable=false,bSequenceNeverReadsOnlyWritesToThisVar=false,bModifiesLinkedObject=false,bHidden=false,MinVars=1,MaxVars=255,DrawX=0,CachedProperty=None,bAllowAnyType=false,bMoving=false,bClampedMax=false,bClampedMin=false,OverrideDelta=0)"
                 ]
             }
         })

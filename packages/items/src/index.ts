@@ -45,6 +45,16 @@ export function listDefaultItems () {
     return KismetFile.listItems(Items)
 }
 
+/**
+ * Convert the default items ({@link Items}) to an array of items and constructs the classes
+ * @returns The constructed nodes
+ */
+export function listItems (): SequenceItemType[] {
+    return listDefaultItems()
+        .map(item => constructItem(item))
+}
+
+/** @deprecated use {@link listItems} instead */
 export const defaultItems: SequenceItemType[] = listDefaultItems()
     .map(item => constructItem(item))
 

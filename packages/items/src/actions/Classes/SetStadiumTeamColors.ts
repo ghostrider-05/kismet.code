@@ -13,6 +13,7 @@ export class SetStadiumTeamColors extends SequenceAction {
         })
     }
     static Variables = {
+        bSwapTeamColors:'bSwapTeamColors',
         BlueColors:'BlueColors',
         OrangeColors:'OrangeColors'
     }
