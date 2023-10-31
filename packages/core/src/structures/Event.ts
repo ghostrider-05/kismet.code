@@ -1,6 +1,6 @@
 import { Constants, KismetError } from '@kismet.ts/shared'
 
-import { ItemConnection, SequenceNode, BaseKismetItemOptions } from '../item/index.js'
+import { SequenceNode, BaseKismetItemOptions } from '../item/index.js'
 import { KismetBoolean } from '../util/Boolean.js'
 
 import type { KismetEventOptions } from './options.js'
@@ -39,20 +39,17 @@ export class SequenceEvent<T extends {} = {}> extends SequenceNode {
             item: T
         }
     ): this {
-        const connection = this.getConnection('output', name) as ItemConnection
-        const itemConnection = to.item.getConnection(
-            'input',
-            to.name
-        ) as ItemConnection
+        const connection = this.connections.get('output', name)
+        const itemConnection = to.item.connections.get('input', to.name)
 
         if (!to.item.isSequenceNode()) {
             new KismetError('INVALID_NODE_ARGUMENT')
         }
 
-        if (connection && (to.name ? itemConnection : true)) {
+        if (connection && itemConnection) {
             connection.addLink(
                 to.item.linkId,
-                to.item.connections?.input.indexOf(itemConnection)
+                itemConnection.index
             )
         } else {
             new KismetError('UNKNOWN_CONNECTION', [

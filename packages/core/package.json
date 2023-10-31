@@ -9,7 +9,8 @@
     "./dist/src/"
   ],
   "scripts": {
-    "prestart": "tsc --project ./tsconfig.json"
+    "prestart": "tsc --project ./tsconfig.json",
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,23 @@
+{
+  "name": "@kismet.ts/docs",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "docs:dev": "vuepress dev src",
+    "docs:ref": "cd ../.. && pnpm prestart && node ./dist/typedoc.js --out apps/docs/src/ && cd apps/docs/",
+    "docs:build": "pnpm docs:ref && vuepress build src"
+  },
+  "keywords": [],
+  "author": "ghostrider-05",
+  "license": "ISC",
+  "dependencies": {
+    "@kismet.ts/core": "link:packages\\core",
+    "@kismet.ts/items": "link:packages\\items"
+  },
+  "devDependencies": {
+    "@vuepress/client": "2.0.0-beta.67",
+    "vue": "^3.3.7",
+    "vuepress": "2.0.0-beta.67"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "include": ["./**/*.ts"],
+    "compilerOptions": {
+        "lib": ["ESNext"],
+        "rootDir": ".",
+        "types": ["@cloudflare/workers-types/2022-11-30/"]
+    }
+}

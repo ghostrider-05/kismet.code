@@ -46,6 +46,7 @@ import { GarageReveal } from './Classes/GarageReveal.js'
 import { PodiumStart } from './Classes/PodiumStart.js'
 import { PreviewGoalExplosion } from './Classes/PreviewGoalExplosion.js'
 import { PreviewMusicStingerVisualizer } from './Classes/PreviewMusicStingerVisualizer.js'
+import { PreviewPostMatchCelebration } from './Classes/PreviewPostMatchCelebration.js'
 import { ReplayTime } from './Classes/ReplayTime.js'
 import { RoundStart } from './Classes/RoundStart.js'
 import { ScoreChanged } from './Classes/ScoreChanged.js'
@@ -105,6 +106,7 @@ export {
 	PodiumStart,
 	PreviewGoalExplosion,
 	PreviewMusicStingerVisualizer,
+	PreviewPostMatchCelebration,
 	ReplayTime,
 	RoundStart,
 	ScoreChanged,
@@ -171,6 +173,7 @@ export const TAGame = {
 	PodiumStart,
 	PreviewGoalExplosion,
 	PreviewMusicStingerVisualizer,
+	PreviewPostMatchCelebration,
 	ReplayTime,
 	RoundStart,
 	ScoreChanged,

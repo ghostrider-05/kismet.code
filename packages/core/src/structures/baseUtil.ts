@@ -2,7 +2,7 @@
 import type { Sequence } from './base.js'
 import { KismetBoolean } from '../util/index.js'
 
-import type { KismetVariableValue, SequenceItemType } from './types.js'
+import type { KismetTreeOverview, KismetVariableValue, SequenceItemType } from './types.js'
 
 export class SequenceUtil {
     constructor (private sequence: Sequence) {
@@ -108,7 +108,7 @@ export class SequenceUtil {
         const item = sequence.resolveId(itemId)
 
         if (item?.isSequenceItem()) {
-            const ids = item.connections?.output.flatMap(link =>
+            const ids = item.connections.sockets.output.flatMap(link =>
                 link.name === (outputConnection ?? link.name)
                     ? link.linkedIds
                     : []
@@ -124,7 +124,7 @@ export class SequenceUtil {
                 const newIds: string[] = cItems
                     .flatMap(i =>
                         i?.isSequenceItem() && !idsToFilter.includes(i.linkId)
-                            ? i.connections?.output.flatMap(
+                            ? i.connections.sockets.output.flatMap(
                                   link => link.linkedIds
                               )
                             : undefined
@@ -140,5 +140,29 @@ export class SequenceUtil {
 
             return idsToFilter
         } else return []
+    }
+
+    public snapPosition <T extends Sequence | SequenceItemType[]> (input: T): T {
+        const items = Array.isArray(input) 
+            ? this.sequence.grid.applyGridToItems(input) 
+            : this.sequence.grid.applyGridToSequence(input)
+
+        return items as T
+    }
+
+    public createTree (): KismetTreeOverview {
+        const sub = (seq: Sequence): KismetTreeOverview => {
+            const { name, subSequences, items } = seq
+
+            if (subSequences.length === 0) return { name, items: items.length }
+            else return {
+                name,
+                items: items.length,
+                mainSequence: seq.isMainSequence(),
+                subSequences: subSequences.map(s => sub(s))
+            }
+        }
+
+        return sub(this.sequence)
     }
 }

@@ -61,6 +61,7 @@ export interface RecursiveTreeItem extends Variable {
     Package: Package;
     Class: string;
     archetype: string;
+    displayName: string;
 }
 
 export interface RecursiveTreeItemReference {
@@ -111,6 +112,7 @@ class RecursiveTreeClass {
     public classes: (RecursiveTreeItem & RecursiveTree)[] = []
 
     public get (ref: RecursiveTreeClassReference): RecursiveTree {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.classes.find(x => x.type === ref.cr)!;
     }
 
@@ -140,6 +142,7 @@ class RecursiveTreeClass {
     public convertToItems (nodes: Classes[]) {
         const items: (RecursiveTreeItem)[] = nodes.flatMap(node => {
             return node.variables.map(v => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { flags, ...variable } = v
                 return {
                     ...variable,
@@ -154,17 +157,25 @@ class RecursiveTreeClass {
     }
 }
 
-export function createRecursiveTree (nodes: Classes[], options: { className: string; max: number }): RecursiveTree & { classes: RecursiveTree[]; } {
-    const base = getSuper(options.className, nodes);
+interface RecursiveTreeOptions<T extends Record<string, unknown>> { 
+    className: string; 
+    max: number; 
+    metadata: T
+} 
+
+export function createRecursiveTree <T extends Record<string, unknown>> (nodes: Classes[], options: RecursiveTreeOptions<T>): RecursiveTree & { classes: RecursiveTree[]; } & T {
+    const { className, max, metadata } = options 
+    const base = getSuper(className, nodes);
     const tree = new RecursiveTreeClass();
 
     const out = {
-        name: options.className,
-        c: tree.convertToItems(base).map(i => tree.check(i, nodes, options.max - 1)),
+        name: className,
+        c: tree.convertToItems(base).map(i => tree.check(i, nodes, max - 1)),
     }
 
     return {
         ...out,
+        ...metadata,
         classes: tree.classes
     }
 }

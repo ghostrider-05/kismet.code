@@ -1,11 +1,11 @@
 import { BaseSequenceItem } from './base.js'
 import { KismetBoolean } from '../util/index.js'
-import type { VariableConnection } from './link.js'
 
 import type { SequenceVariable, KismetVariableValue, SequenceItemTypeName } from '../structures/index.js'
 
 
 import type { BaseKismetItemOptions } from './options.js'
+import { VariableConnection } from './link.js'
 
 export class SequenceNode extends BaseSequenceItem {
     public hasBreakpoint = false
@@ -28,23 +28,45 @@ export class SequenceNode extends BaseSequenceItem {
     public setVariable (
         variableName: string,
         value: SequenceVariable | string | number,
-        hidden?: boolean
+        hidden?: boolean,
+        expose?: boolean,
     ): this {
-        const connection = this.getConnection(
+        const connection = this.connections.get(
             'variable',
             variableName
-        ) as VariableConnection
+        )
 
         if (
-            connection &&
             typeof value !== 'string' &&
             typeof value !== 'number'
         ) {
-            connection.addLink(
-                value.linkId,
-                this.connections?.variable.indexOf(connection),
-                hidden
-            )
+            if (!connection) {
+                if (expose) {
+                    const vConn = new VariableConnection(
+                        `(ExpectedType=${value.ClassData.ClassType},LinkDesc="${variableName}",PropertyName="${variableName}")`,
+                        'variable',
+                        this.connections.sockets.variable.length,
+                        true,
+                    )
+
+                    this.connections.sockets.variable.push(vConn)
+                    
+                    vConn.addLink(
+                        value.linkId,
+                        vConn.index,
+                        hidden,
+                    )
+                    
+                } else {
+                    console.warn('Unable to find variable connection, nothing is added')
+                }
+            } else {
+                connection.addLink(
+                    value.linkId,
+                    connection.index,
+                    hidden
+                )
+            }
         } else if (!value.toString().includes('Begin')) {
             if (!this.variables.some(n => n.name === variableName)) {
                 this.variables.push({

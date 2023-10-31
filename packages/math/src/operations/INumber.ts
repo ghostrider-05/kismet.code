@@ -1,8 +1,10 @@
-import { Actions, Conditions, Variables } from "@kismet.ts/items";
+import { Items } from "@kismet.ts/items";
+
+const { Actions, Conditions, Variables } = Items
 
 export type NumberType = 'float' | 'integer'
 
-type NumberAction = 
+export type NumberAction = 
     | 'variable'
     | 'randomVariable'
     | 'multiply'
@@ -39,47 +41,20 @@ export const NumberMap = {
         compare: Conditions.CompareInt,
         counter: Conditions.IntCounter,
     }
-};
+} satisfies Record<NumberType, Record<NumberAction, object>>;
 
-export type INumberMap = {
+type INumberMap = {
     [T in NumberType]: {
         [A in NumberAction]: typeof NumberMap[T][A]
     } 
 }
 
-export type NumberVariable<N extends NumberType = NumberType> = InstanceType<INumberMap[N]['variable']>
-export type RandomNumberVariable<N extends NumberType = NumberType> = InstanceType<INumberMap[N]['randomVariable']>
+export type ActionVariable<N extends NumberType, A extends NumberAction> = InstanceType<INumberMap[N][A]>
+export type NumberVariable<N extends NumberType = NumberType> = ActionVariable<N, 'variable'>
+export type RandomNumberVariable<N extends NumberType = NumberType> = ActionVariable<N, 'randomVariable'>
 
-export type INumberOperation<T extends NumberType, K extends (keyof INumberMap[NumberType])> = {
-    [P in K]: InstanceType<INumberMap[T][P]>
-}[K]
+type INumber<N extends NumberType, K extends NumberAction> = INumberMap[N][K]
 
-export type INumber<N extends NumberType, K extends (keyof INumberMap[N])> = INumberMap[N][K]
-
-export function _get <N extends NumberType, K extends (keyof INumberMap[N])>(type: N, key: K): INumber<N, K> {
+export function _get <N extends NumberType, K extends NumberAction> (type: N, key: K): INumber<N, K> {
     return NumberMap[type][key]
 }
-
-// Most of this is jcalz answer, up until the magic.
-type UnionToIntersection<U> =
-  (U extends any ? (k: U) => void : never) extends ((k: infer I) => void)
-    ? I
-    : never;
-
-type LastOf<T> =
-    UnionToIntersection<T extends any ? () => T : never> extends () => infer R
-        ? R
-        : never;
-
-type Push<T extends any[], V> = [...T, V];
-
-type TuplifyUnion<T, L = LastOf<T>, N = [T] extends [never] ? true : false> =
-    true extends N
-        ? []
-        : Push<TuplifyUnion<Exclude<T, L>>, L>;
-
-// The magic happens here!
-export type Tuple<T, A extends T[] = []> =
-    TuplifyUnion<T>['length'] extends A['length']
-        ? [...A]
-        : Tuple<T, [T, ...A]>;

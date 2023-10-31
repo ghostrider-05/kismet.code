@@ -1,0 +1,15 @@
+name="kismet-cdn"
+main="./src/index.ts"
+compatibility_date="2023-05-14"
+
+kv_namespaces = [
+  { binding = "KISMET_KV", id = "89f9e0f8f12042469151882e25cb57c8" }
+]
+
+r2_buckets  = [
+  { binding = "KISMET_ASSETS", bucket_name = "assets" }
+]
+
+[vars]
+TAGS="itemdb,blender,classes,compact_tree,nodes,tree,history,nodes_automated"
+CACHE_DISABLED_MODE="dev"

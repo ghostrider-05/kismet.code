@@ -1,7 +1,6 @@
 import {
     convertVariablesRecordToArray,
     Constants,
-    mapObjectKeys,
     KismetItemFormatter,
     quote,
     readArchetype,
@@ -20,7 +19,6 @@ import { ProcessId, ProcessManager } from '../managers/index.js'
 import type {
     KismetConnectionType,
     KismetConnection,
-    KismetConnections,
 } from './link.js'
 
 import type {
@@ -50,18 +48,10 @@ export interface KismetComment {
     outputCommentToScreen?: boolean
 }
 
-function validateItemOptions (options: BaseKismetItemOptions): void {
-    const { ObjectArchetype } = options
-
-    if (!ObjectArchetype) new KismetError('INVALID_TYPE', [
-        ObjectArchetype, 'string'
-    ], { data: { 'item': 'BaseSequenceItem' }})
-}
-
 export class BaseSequenceItem extends BaseItem {
     public commentOptions: KismetComment = {}
 
-    public connections: KismetConnections
+    public connections: ItemConnectionManager
     public sequence: string
 
     public readonly id: ProcessId
@@ -70,14 +60,12 @@ export class BaseSequenceItem extends BaseItem {
     public raw: [string, KismetVariableValue][] = []
     public rawData: BaseKismetItemRawData;
 
-    private _connectionKeys: (keyof KismetConnections)[] = ['input', 'output', 'variable']
     private _category: string | undefined = undefined
-    protected inputs: BaseKismetItemOptions['inputs']
 
     constructor (
         options: BaseKismetItemOptions & { type?: SequenceItemTypeName }
     ) {
-        validateItemOptions(options)
+        BaseSequenceItem.validateOptions(options)
 
         const { Class } = readArchetype(options.ObjectArchetype)
         const type = options.type ?? getNodeType(Class)
@@ -86,9 +74,8 @@ export class BaseSequenceItem extends BaseItem {
         this.sequence = `Sequence'${options.sequence ?? DefaultMainSequenceName}'`
 
         this._category = options.category
-        this.inputs = options.inputs
 
-        this.connections = ItemConnectionManager.createConnections(
+        this.connections = new ItemConnectionManager(
             options.inputs,
             type
         )
@@ -112,22 +99,34 @@ export class BaseSequenceItem extends BaseItem {
         })
     }
 
-    private get baseJSON (): Record<string, KismetVariableValue> {
-        return {
-            ...(this.raw.reduce(
-                (prev, curr) => ({ ...prev, [curr[0]]: curr[1] }),
-                {}
-            ) ?? {}),
-            ...this.rawData,
-            ObjInstanceVersion: this.rawData.ObjInstanceVersion < 0 
-                ? undefined 
-                : this.rawData.ObjInstanceVersion,
-            ParentSequence: this.sequence,
-            Name: quote(this.rawName),
-            DrawWidth: 0,
-            MaxWidth: null,
-            DrawHeight: null,
+    protected static validateOptions (options: BaseKismetItemOptions): void {
+        const { ObjectArchetype } = options
+    
+        if (!ObjectArchetype) new KismetError('INVALID_TYPE', [
+            ObjectArchetype, 'string'
+        ], { data: { 'item': 'BaseSequenceItem' }})
+    }
+
+    private get commentJSON () {
+        type RawCommentKey = 
+            | 'ObjComment' 
+            | 'bSuppressAutoComment'
+            | 'bOutputObjCommentToScreen'
+
+        const json: Partial<Record<RawCommentKey, string | boolean>> = {};
+        const { comment, outputCommentToScreen, supressAutoComment } = this.commentOptions
+
+        if (typeof comment === 'string') {
+            json['ObjComment'] = quote(comment)
         }
+        if (supressAutoComment === false) {
+            json['bSuppressAutoComment'] = supressAutoComment
+        }
+        if (outputCommentToScreen) {
+            json['bOutputObjCommentToScreen'] = outputCommentToScreen
+        }
+
+        return json
     }
 
     public get rawName (): string {
@@ -147,7 +146,7 @@ export class BaseSequenceItem extends BaseItem {
         return `${this.ClassData.Class}'${this.rawName}'`
     }
 
-    public get position (): KismetPosition {
+    public get position (): Readonly<KismetPosition> {
         return {
             x: this.rawData.ObjPosX,
             y: this.rawData.ObjPosY
@@ -158,35 +157,30 @@ export class BaseSequenceItem extends BaseItem {
      * Break all object links to other items.
      * 
      * Same as the editor right click > Break all links to Object(s)
+     * @deprecated
      */
     public breakAllLinks (): void {
-        for (const key of this._connectionKeys) {
-            this.connections[key] = this.connections[key].map(link => link.breakAllLinks())
-        }
+        this.connections.breakAllLinks()
     }
 
     /**
      * Hide all connection sockets that have no connections currently.
      * 
      * Same as the editor right click > Hide unused connectors
+     * @deprecated
      */
     public hideUnusedConnections (): void {
-        for (const key of this._connectionKeys) {
-            this.connections[key] = this.connections[key].map(link => {
-                return !link.isUsed ? link.setHidden(true) : link
-            })
-        }
+        this.connections.hideUnused()
     }
 
     /**
      * Show all connection sockets.
      * 
      * Same as the editor right click > Show all connectors
+     * @deprecated
      */
     public showAllConnections (): void {
-        for (const key of this._connectionKeys) {
-            this.connections[key] = this.connections[key].map(link => link.setHidden(false))
-        }
+        this.connections.showAll()
     }
 
     /**
@@ -197,16 +191,17 @@ export class BaseSequenceItem extends BaseItem {
         return item.rawData.ObjectArchetype === this.rawData.ObjectArchetype
     }
 
+    public strictEquals (item: SequenceItemType): boolean {
+        return this.equals(item) && item.rawName === this.rawName;
+    }
+
+    /** @deprecated */
     public getConnection (
         type: KismetConnectionType,
         connectionName?: string
     ): (BaseKismetConnection | KismetConnection) | null {
-        const connections = this.connections?.[type] as
-            | BaseKismetConnection[]
-            | undefined
-
         if (!connectionName) return null
-        return connections?.find(c => c.name === connectionName) ?? null
+        else return this.connections.get(type, connectionName) ?? null
     }
 
     /**
@@ -278,34 +273,31 @@ export class BaseSequenceItem extends BaseItem {
             if (addToSequence ?? true) sequence.addItem(this, false)
             this.sequence = sequence.linkId
         } else if (typeof this.sequence === 'string') {
-            this.sequence = `Sequence'${sequence}'`
+            // TODO: replace with regex match?
+            this.sequence = sequence.startsWith('Sequence') ? sequence : `Sequence'${sequence}'`
         }
 
         return this
     }
 
     public toJSON (): Record<string, KismetVariableValue> {
-        const json = this.baseJSON
-
-        const connections =
-            (this.connections) ?? {}
-        mapObjectKeys(
-            connections,
-            (c, i) => [c.prefix(i), c.value] as [string, string]
-        ).forEach(type => {
-            if (type.length > 0) type.forEach(link => (json[link[0]] = link[1]))
-        })
-
-        const { comment, outputCommentToScreen, supressAutoComment } =
-            this.commentOptions
-
-        if (typeof comment === 'string') json['ObjComment'] = quote(comment)
-        if (supressAutoComment === false)
-            json['bSuppressAutoComment'] = supressAutoComment
-        if (outputCommentToScreen)
-            json['bOutputObjCommentToScreen'] = outputCommentToScreen
-
-        return json
+        return {
+            ...(this.raw.reduce(
+                (prev, curr) => ({ ...prev, [(prev[curr[0]] ? curr[0] + ' ' : curr[0])]: curr[1] }),
+                {} as Record<string, KismetVariableValue>
+            ) ?? {}),
+            ...this.rawData,
+            ObjInstanceVersion: this.rawData.ObjInstanceVersion < 0 
+                ? undefined 
+                : this.rawData.ObjInstanceVersion,
+            ParentSequence: this.sequence,
+            Name: quote(this.rawName),
+            DrawWidth: 0,
+            MaxWidth: null,
+            DrawHeight: null,
+            ...this.connections.toJSON(),
+            ...this.commentJSON,
+        }
     }
 
     public toString (): string {
@@ -374,8 +366,8 @@ export class BaseSequenceItem extends BaseItem {
             inputs: ItemConnectionManager.fromText(input),
             sequence: parentSequence?.match(/(?<=Sequence').+(?=')/)?.[0] ?? parentSequence,
             position: {
-                x: Number(input['ObjPosX']),
-                y: Number(input['ObjPosY']),
+                x: Number(input['ObjPosX'] ?? 0),
+                y: Number(input['ObjPosY'] ?? 0),
             },
         }).setComment(comment)
     }

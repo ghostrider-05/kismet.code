@@ -9,7 +9,7 @@ describe('sequence input: regex', () => {
   it('valid inputs', () => {
     expect(sequence.isSequenceInput('A -> B')).toBeTruthy()
     expect(sequence.isSequenceInput('A -> B -> C > D')).toBeTruthy()
-    expect(sequence.isSequenceInput('A > B')).toBeTruthy()
+    expect(sequence.isSequenceInput('A > B')).toBeFalsy()
   })
 
   it('invalid inputs', () => {
@@ -27,12 +27,13 @@ describe('sequence input: string', () => {
 
   it('invalid inputs', () => {
     expect(sequence.isSequenceInput('A')).toBeFalsy()
+    expect(sequence.isSequenceInput(kismetSequence)).toBeFalsy()
   })
 })
 
 describe('sequence property chain', () => {
   function findVariable (sequence: Sequence | undefined, type: string) {
-    const item =  sequence?.items.find(i => {
+    const item = sequence?.items.find(i => {
       return i.isVariable() && i.ClassData.Class.includes(type)
     })
 
@@ -40,14 +41,19 @@ describe('sequence property chain', () => {
   }
 
   it('invalid input', () => {
-    expect(sequence.parsePropertyChain('Player()-A')).toBeUndefined()
-    expect(sequence.parsePropertyChain('Player()')).toBeUndefined()
-    expect(sequence.parsePropertyChain('A')).toBeUndefined()
+    expect(() => sequence.parsePropertyChain('Player()-A')).toThrowError()
+    expect(() => sequence.parsePropertyChain('Player()')).toThrowError()
+    expect(() => sequence.parsePropertyChain('A')).toThrowError()
   })
 
   it('invalid base property', () => {
-    expect(() => sequence.parsePropertyChain('Player.A')).toThrowError()
-    expect(() => sequence.parsePropertyChain('player().A')).toThrowError()
+    expect(() => sequence.parsePropertyChain('Unknown_Property.A')).toThrowError()
+    expect(() => sequence.parsePropertyChain('_with_options().A')).toThrowError()
+  })
+
+  it('invalid property sequence', () => {
+    expect(() => sequence.parsePropertyChain('player')).toThrowError()
+    expect(() => sequence.parsePropertyChain('player()')).toThrowError()
   })
 
   it('base property options', () => {
@@ -58,10 +64,15 @@ describe('sequence property chain', () => {
     const item2 = sequence.parsePropertyChain('Player(PlayerIdx=1,bAllPlayers=False).A')
 
     expect(findVariable(item2, 'Player')?.raw).toEqual([['PlayerIdx', '1'], ['bAllPlayers', 'False']])
+    expect(item?.toString()).toContain('PlayerIdx=1')
+    expect(item?.toString()).toContain('bAllPlayers=False')
   })
 
   it('return type', () => {
     expect(findVariable(sequence.parsePropertyChain('Player().<Integer>Index'), 'Int')).toBeDefined()
+    expect(findVariable(sequence.parsePropertyChain('Player.<Integer>Index'), 'Int')).toBeDefined()
+    expect(findVariable(sequence.parsePropertyChain('player.<Integer>Index'), 'Int')).toBeDefined()
+
     expect(findVariable(sequence.parsePropertyChain('Player().<Int>Index'), 'Int')).toBeDefined()
     expect(findVariable(sequence.parsePropertyChain('Player().A.B.<Int>Index'), 'Int')).toBeDefined()
     expect(findVariable(sequence.parsePropertyChain('Player().<Float>Index'), 'Float')).toBeDefined()

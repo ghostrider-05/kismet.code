@@ -1,6 +1,7 @@
 import { Constants } from '@kismet.ts/shared'
 
 import type {
+    KismetPosition,
     SequenceAction,
     SequenceCondition,
 } from '../structures/index.js'
@@ -95,12 +96,20 @@ export interface SequenceViewOptions {
     zoom?: number
 }
 
+export interface SequenceGridOptions {
+    grid: number | KismetPosition
+    enabled?: boolean
+    window?: Record<keyof KismetPosition, [number, number]>
+}
+
 export interface SequenceBaseConstructorOptions<S> {
     layout?: SequencePositionOptions<S>
+    grid?: SequenceGridOptions
     name?: string
     mainSequence?: boolean
     index?: number
     project?: ProcessId
+    parent?: ProcessId
     defaultView?: Required<SequenceViewOptions>
 }
 

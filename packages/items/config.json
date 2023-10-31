@@ -1,0 +1,11 @@
+{
+    "readme": {
+        "icons": [
+            {
+                "text": "![version](https://img.shields.io/endpoint?url=https%3A%2F%2Fkismet-shield.ghostrider.workers.dev)",
+                "link": "https://kismet-shield.ghostrider.workers.dev/patch-url",
+                "external": true
+            }
+        ]
+    }
+}

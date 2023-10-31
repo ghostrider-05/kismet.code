@@ -1,10 +1,10 @@
 import type { 
     KismetPosition, 
-    Sequence, 
     SequenceItemType 
 } from '../structures/index.js'
 
 import type { KismetConnectionType } from '../item/index.js'
+import type { IKismetSerializeable } from './IKismetSerializeable.js'
 
 export type KismetGroupResolverIdType = string | number
 
@@ -31,6 +31,11 @@ export interface KismetGroupSchema {
         KismetGroupResolverIdType,
         Partial<Record<KismetConnectionType, { name: string }[]>> | undefined
     ][]
+
+    /**
+     * The offset position for each item in the group
+     */
+    position?: KismetPosition
 }
 
 export interface KismetGroupSerializeOptions {
@@ -79,7 +84,7 @@ function formatConnections (schema: KismetGroupSchema) {
     )
 }
 
-export class KismetGroup {
+export class KismetGroup implements IKismetSerializeable {
     private schema: KismetGroupSchema
 
     public name: string
@@ -158,22 +163,14 @@ export class KismetGroup {
     }
 
     /**
-     * Convert the group to sequence items and add the items to the provided sequence
-     * @param sequence The sequence to add the items to
-     * @param options The options to apply when adding the items to the sequence
+     * Convert the group to sequence items
      */
-    public serialize (
-        sequence: Sequence,
-        options?: KismetGroupSerializeOptions
-    ): Sequence {
-        return sequence.addItems(
-            this.schema.items.map(([item]) => {
-                if (!options) return item
+    public serialize () {
+        return this.schema.items.map(([item]) => {
+                const { position } = this.schema
 
-                const { position } = options
                 return position ? item.setPosition(position, true) : item
-            })
-        )
+        })
     }
 
     /**

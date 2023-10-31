@@ -2,9 +2,19 @@ import { KismetError } from '@kismet.ts/shared'
 
 export class ProcessId {
     private readonly id: string
+    private resolvedId: string
 
     constructor (id: string) {
         this.id = id
+        this.resolvedId = this._read()
+    }
+
+    private _read (): string {
+        return Buffer.from(this.id, 'base64').toString('utf-8')
+    }
+
+    private get resolved () {
+        return ProcessId.readResolvedId(this.resolvedId)
     }
 
     public equals (id: string): boolean {
@@ -16,7 +26,19 @@ export class ProcessId {
     }
 
     public resolveId (): string {
-        return Buffer.from(this.id, 'base64').toString('utf-8')
+        return this.resolvedId
+    }
+
+    public resolveName (): string {
+        return this.resolved.name
+    }
+
+    public resolveIndex (): number {
+        return this.resolved.count
+    }
+
+    public toString (): string {
+        return this.id
     }
 
     public static readResolvedId (resolvedId: string): {

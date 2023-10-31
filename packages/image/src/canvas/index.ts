@@ -1,4 +1,4 @@
-import { KismetPosition, SequenceItemType } from '@kismet.ts/core';
+import { KismetPosition, SequenceEvent, SequenceItemType } from '@kismet.ts/core';
 import { createCanvas, Canvas, SKRSContext2D } from '@napi-rs/canvas'
 import { writeFile } from 'fs/promises';
 
@@ -7,6 +7,8 @@ import { calculateNodeSize, displayName } from '../node/index.js';
 import { FontCanvas } from './font.js';
 
 export type DrawCommand = (ctx: SKRSContext2D) => void
+
+export type KismetSingleItemPosition = KismetPosition | { x: 'center'; y: number }
 
 export class SequenceCanvas {
     public canvas: Canvas;
@@ -26,7 +28,7 @@ export class SequenceCanvas {
         }
     }
 
-    constructor (width: number, height: number) {
+    constructor (width: number, height: number, private adjustCanvas?: { padding: number }) {
         this.canvas = createCanvas(width, height)
     }
 
@@ -79,7 +81,7 @@ export class SequenceCanvas {
         this.ctx.shadowOffsetY = 0;
     }
 
-    public drawActionNode (location: KismetPosition | { x: 'center'; y: number}, item: SequenceItemType): void {
+    public drawActionNode (location: KismetSingleItemPosition, item: SequenceItemType): void {
         const nameHeight = 25, varPadding = 10;
         this.ctx.lineWidth = 1;
         this.ctx.font = '100 16px Arial'
@@ -93,6 +95,10 @@ export class SequenceCanvas {
             },
             nameHeight: 25
         })
+
+        if (this.adjustCanvas && y > this.canvas.height) {
+            this.canvas.height = y + this.adjustCanvas.padding
+        }
 
         const leftX = location.x === 'center' ? (this.canvas.width - x) / 2 : location.x
 
@@ -165,6 +171,10 @@ export class SequenceCanvas {
                 }
             }
         }
+    }
+
+    public drawEventNode (location: KismetSingleItemPosition, event: SequenceEvent) {
+        this.drawActionNode(location, event)
     }
 
     public toBuffer (useData = false) {

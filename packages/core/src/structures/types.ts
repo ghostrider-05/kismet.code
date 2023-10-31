@@ -43,3 +43,10 @@ export type SequenceItemTypeName = Enum<Constants.NodeType>
 export type KismetVariableValue = string | number | boolean | null | undefined
 
 export type KismetVariableDefaultValue = `(${string})`
+
+export interface KismetTreeOverview { 
+    name: string
+    items: number
+    mainSequence?: boolean
+    subSequences?: KismetTreeOverview[]
+}

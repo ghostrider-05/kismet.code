@@ -37,24 +37,22 @@ export class KismetLimitedClipboard {
         if (max < 1) throw new Error();
     }
 
-    private createQueue <T> (groups: T[][]): IKismetCopyQueue<T> {
-        return {
-            stack: groups,
-            current: 0,
-            copy () {
-                return ClipboardUtil.write(this.stack[this.current].join('\n'))
-            },
-            next () {
-                if (this.current + 1 === this.stack.length) {
-                    this.current = 0
-                    this.stack = []
-                    this.next = undefined
-                    return
-                }
-
-                this.current += 1
-            }
+    private async* _queue (groups: SequenceItemType[][]): AsyncGenerator<void, null> {
+        for (const group of groups) {
+            yield await ClipboardUtil.write(group.join('\n'))
         }
+
+        return null
+    }
+
+    public async* queue (items: SequenceItemType[]): AsyncGenerator<void, null> {
+        const groups = chunk(items, this.max)
+
+        for (const group of groups) {
+            yield await ClipboardUtil.write(group.join('\n'))
+        }
+
+        return null
     }
 
     public createLinkedMap (sequence: Sequence): Map<string, string[]> {
@@ -70,10 +68,10 @@ export class KismetLimitedClipboard {
         return map
     }
 
-    public start (sequence: Sequence): IKismetCopyQueue<SequenceItemType> {
+    public start (sequence: Sequence) {
         if (!this.connectItems) {
             const items = <SequenceItemType[]>sequence.items.filter(x => !x.isSequence())
-            return this.createQueue(chunk(items, this.max))
+            return this._queue(chunk(items, this.max))
         } else {
             const ids = new Set<string>()
             const groups: SequenceItemType[][] = []
@@ -95,7 +93,7 @@ export class KismetLimitedClipboard {
                 index += 1;
             }
 
-            return this.createQueue(groups)
+            return this._queue(groups)
         }
     }
 }

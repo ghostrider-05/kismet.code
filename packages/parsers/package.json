@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {
     "prestart": "tsc --project ./tsconfig.json",
-    "test": "npx vitest run"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "@kismet.ts/shared": "^0.1.4"
   },
   "devDependencies": {
-    "@kismet.ts/items": "file:packages/items"
+    "@kismet.ts/items": "workspace:"
   },
   "typedoc": {
     "entryPoint": "./src/index.ts",

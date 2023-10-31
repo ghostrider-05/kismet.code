@@ -6,24 +6,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Install node.js v16
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js v18
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: Compile
-        run: npm run prestart
+        run: pnpm prestart
 
       - name: ESLint & Prettier
-        run: npm run lint
+        run: pnpm lint
 
       - name: Tests
-        run: npm run test
+        run: pnpm test
       
       # TODO: write
       # - name: Tests

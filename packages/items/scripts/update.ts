@@ -1,10 +1,9 @@
 import inquirer from 'inquirer';
 import * as fs from 'fs';
-import fetch from 'node-fetch';
 
 import { createLocalClasses, createClassFileData, nodeToJSON } from '@kismet.ts/parsers-node'
 import { Constants, constructItem, quote } from '@kismet.ts/shared'
-import { Variables } from '../src/index.js'
+import { Items } from '../src/index.js'
 
 import config from './update-config.json' assert { type: 'json' }
 import { KismetFile, SequenceItemType, SequenceItemTypeof } from '@kismet.ts/core';
@@ -20,7 +19,7 @@ const prompt: { version: string } = config.version ? { version: config.version }
 ])
 
 const nodes = KismetFile
-    .listItems({ Variables, Actions: {}, Conditions: {}, Events: {} })
+    .listItems({ Variables: Items.Variables, Actions: {}, Conditions: {}, Events: {} })
     .map(item => {
         const node = nodeToJSON(createClassFileData(constructItem(item)), true)
         const n = constructItem<SequenceItemType, SequenceItemTypeof>(item)
@@ -61,22 +60,5 @@ const content = fs.readFileSync(config.database, { encoding: 'utf8' })
     .map(line => exp.exec(line))
     .map(e => ({ [e?.at(1)?.toString() ?? '']: e?.at(2) }))
     .reduce((prev, e) => ({ ...prev, ...e}), {})
-
+console.log(JSON.stringify(content, null, 4))
 fs.writeFileSync('./db.json', JSON.stringify(content, null, 4), { encoding: 'utf8' })
-
-const files: [string, Promise<string> | string][] = [
-    ['itemdb', JSON.stringify(content)],
-    ['classes', fs.readFileSync('./src/classes.json', { encoding: 'utf8' })],
-    ['nodes', fs.readFileSync('./src/nodes.json', { encoding: 'utf8' })],
-    ['blender', fs.promises.readFile('./src/kismet-addon.py', { encoding: 'utf8' })],
-]
-
-await Promise.all(files.map(async file => {
-    const [name, content] = file
-    const body = await content
-
-    return fetch(config.uploadPath + `?tag=${name}&version=${prompt.version}`, {
-        method: 'PUT',
-        body
-    })
-}))

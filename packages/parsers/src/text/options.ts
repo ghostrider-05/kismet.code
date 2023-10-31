@@ -2,6 +2,7 @@ import type {
     ISingleStore, 
     SchemaItemNames, 
     SequenceItemType, 
+    SequenceItemTypeof, 
     SequenceOptions 
 } from "@kismet.ts/core"
 
@@ -19,7 +20,8 @@ export interface TextSequenceParsedItem {
 }
 
 export interface TextSequenceParserBaseOptions<T> extends TextParserOptions<T> {
-    variables?: ISingleStore
+    getPropertyAction: SequenceItemTypeof
+    variables: ISingleStore
 }
 
 export interface TextSequenceParseSplitOptions {
@@ -32,6 +34,10 @@ export type TextSequenceParserOptions<T> = TextSequenceParserBaseOptions<T> & (
     | {}
     | TextSequenceParseSplitOptions
 )
+
+export interface TextPropertySequenceParserOptions<T> extends TextSequenceParserBaseOptions<T> {
+    char?: string
+}
 
 // export interface TextSequenceParserOptions<T> extends TextParserOptions<T> {
 //     variables: ISingleStore

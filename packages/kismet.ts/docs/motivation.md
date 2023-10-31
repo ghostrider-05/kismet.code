@@ -12,4 +12,4 @@ I know it is a very niche corner of the internet and not many people will use it
 
 And the most important of them all, run kismet in blender!
 
-!["Example sequence in blender"](../../../docs/.vuepress/public/blender.png)
+!["Example sequence in blender"](../.vuepress/public/blender.png)

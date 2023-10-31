@@ -38,7 +38,7 @@ export function createClassFileData (item: SequenceItemType, options?: Partial<C
         Class,
         Package,
         category: category ?? '',
-        links: <UnrealJsonReadFile['links']>item['inputs'],
+        links: <UnrealJsonReadFile['links']>item.connections.rawInputs,
         type: <Constants.NodeType>(type ?? item.type!),
         staticProperties: '',
         structures: [],

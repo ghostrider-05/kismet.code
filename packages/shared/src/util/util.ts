@@ -125,6 +125,8 @@ export function quote (value: string): string {
     return `"${value}"`
 }
 
+export function capitalize (input: string): string;
+export function capitalize (input: undefined): null;
 export function capitalize (input?: string): string | null {
     if (!input) return null
     return input[0].toUpperCase() + input.slice(1)

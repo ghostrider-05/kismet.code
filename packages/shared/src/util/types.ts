@@ -10,3 +10,4 @@ export type Enum<T extends string> = T | `${T}`
 
 export type If<T extends boolean, U, P = undefined> = T extends true ? U : P
 
+export type ExtendingProperties<T, V> = keyof T extends infer K ? K extends keyof T ? T[K] extends V ? K : never : never : never

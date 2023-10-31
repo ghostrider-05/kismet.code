@@ -40,21 +40,21 @@ export class KismetItemFormatter {
         value: KismetFormatterInput
     ): Defined extends true ? string : string | undefined {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        if (value == undefined || value == null) return
+        //@ts-ignore Return type
+        if (value == undefined || value == null || name.length === 0) return
 
         if (typeof value === 'boolean') {
             value = <KismetFormatterInput>(value ? KismetBoolean.True : KismetBoolean.False)
         }
 
-        return `${indent()}${name}=${value}`
+        return `${indent()}${name.trimEnd()}=${value}`
     }
 
     /**
      * Format the whole kismet item
      * @param name
      * @param Class 
-     * @param variables The formatted 
+     * @param variables The formatted variables
      */
     public static format (name: string, Class: string, variables: (string | [string, KismetFormatterInput])[]): string {
         return [

@@ -1,6 +1,6 @@
 {
     "name": "@kismet.ts/parsers-node",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "A package for node.js parsers for kismet code",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",

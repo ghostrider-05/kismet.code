@@ -1,35 +1,41 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Sequence, SequenceItemType, SequenceItemTypeof, SequenceNode, SequenceVariable } from '@kismet.ts/core'
-import { capitalize, constructItem, destructureProperty, indent } from '@kismet.ts/shared'
+import { Sequence, SequenceItemType, SequenceNode, SequenceVariable } from '@kismet.ts/core'
+import { capitalize, destructureProperty, indent } from '@kismet.ts/shared'
 
 import { BaseTextParser } from './internals/baseParser.js'
 import { TextNodeParser } from './node.js'
 
 import type { TextSequenceParserOptions, TextSequenceParseSplitOptions } from './options.js'
+import { TextPropertySequenceParser } from './propertysequence.js'
 
 export class TextSequenceParser<
     T extends boolean = true
 > extends BaseTextParser<T> {
+    private propertySequence: TextPropertySequenceParser<T>;
+
     /**
      * The character / expression used to split items in a line.
      * Note: if you want to have the options with a '>', change this to '->' or the options would be split
-     * @default /->|>/
+     * @default ->
      */
-    public static splitChar: string | RegExp = /->|>/
+    public static splitChar: string | RegExp = '->'
 
     /**
-     * The character to use for seperating properties in {@link InputTextSequenceParser.parsePropertyChain}
+     * The character to use for seperating properties in {@link TextSequenceParser.parsePropertyChain}
+     * @deprecated
+     * @readonly
      */
-    public propertyChar = '.'
+    public get propertyChar () {
+        return this.propertySequence.char
+    }
 
     constructor (
         items: SequenceItemType[],
         protected override options: TextSequenceParserOptions<T>
     ) {
-        super(items, options)
+        super(items, options, options.variables)
 
-        const createStore = (v: unknown, type: string) => v as NonNullable<typeof options.variables>
-        this.manager.variables = options.variables ?? createStore(items, 'variables')
+        this.propertySequence = new TextPropertySequenceParser<T>(this.manager.items, this.options)
     }
 
     protected get splitOptions (): TextSequenceParseSplitOptions {
@@ -50,7 +56,7 @@ export class TextSequenceParser<
         const format = (t: string) => t.endsWith(')') ? t : `${t}()`
 
         if (input[0].toUpperCase() === input[0]) return format(input)
-        else return format(capitalize(input)!)
+        else return format(capitalize(input))
     }
 
     private applyRawArguments (args: string) {
@@ -75,73 +81,13 @@ export class TextSequenceParser<
     /**
      * Convert a series of get properties to an sequence
      * @param input The input sequence in text
-     * @returns
      * @example
      * Player().PRI.Team.TeamPlayer
      * Player().PRI.Team.<Integer>TeamIndex
      * Player(bAllPlayers=False).PRI.Team
      */
     public parsePropertyChain (input: string, spacing?: { nodes: number, variable: number }) {
-        const sequence = this.createSequence()
-        let position = 0
-
-        const [baseVariable, ...chain] = input.split(this.propertyChar)
-        const [variableName, variableArguments] = baseVariable.split('(')
-
-        if (chain.length === 0) return undefined
-
-        const beginItem = this.manager.findVariable(variableName)
-            .setPosition({ x: position - ((spacing?.nodes ?? 0) > 0 ? spacing!.nodes / 2 : 0), y: spacing?.variable ?? 0 })
-        beginItem.raw = this.applyRawArguments(variableArguments.slice(0, -1))
-
-        const sequenceItems = chain.flatMap(line => {
-            const match = line.match(/(?!>)(\w+)/g)
-            const propertyType =
-                (match?.length ?? 0) > 1 ? match?.[0] : 'Object'
-            const propertyName = match?.[1] ?? line
-            const variable = this.manager.findVariable(propertyType)
-                .setPosition({ x: position, y: spacing?.variable ?? 0 })
-
-            const action = constructItem<SequenceItemType, SequenceItemTypeof>(this.manager.variables['GetProperty'])
-                .setProperty({ name: 'PropertyName', value: propertyName })
-                .setComment({ supressAutoComment: false })
-                .setPosition({ x: position, y: 0 })
-
-            if (spacing?.nodes) position += spacing.nodes
-
-            return [variable, action]
-        })
-
-        sequence.addItems([...sequenceItems, beginItem])
-
-        sequence.items.forEach((item, index) => {
-            if (!item.isAction()) return // Type check
-            const target =
-                    index === 1
-                        ? beginItem
-                        : <SequenceVariable>sequenceItems.at(index - 3),
-                output = <SequenceVariable>sequenceItems.at(index - 1)
-
-            const newItem = (
-                index + 2 >= sequenceItems.length
-                    ? item
-                    : item.addOutputConnection(
-                          { name: 'Out' },
-                          {
-                              name: 'In',
-                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                              item: <SequenceNode>sequenceItems.at(index + 2)!,
-                          }
-                      )
-            )
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                .setVariable(this.manager.findVariableType(output)!, output)
-                .setVariable('Target', target)
-
-            sequence.update(newItem)
-        })
-
-        return this.convert(sequence)
+        return this.propertySequence.parse(input, spacing)
     }
 
     // TODO: allow variable items in properties
@@ -151,7 +97,7 @@ export class TextSequenceParser<
      * for the options in this parser to be able to use this method.
      * @param input The input to use for parsing
      */
-    public parseSequence (input: string): Sequence {
+    public parseSequence (input: string) {
         const sequence = this.createSequence()
         const idItems: Record<string, SequenceItemType> = {}
 
@@ -230,7 +176,7 @@ export class TextSequenceParser<
             })
         })
 
-        return sequence
+        return this.convert(sequence)
     }
 
     protected parseRawSubsequence (parent: Sequence, item: string, depth: number) {
@@ -277,5 +223,13 @@ export class TextSequenceParser<
 
     public parseRawSingleSequence (input: string) {
         return this.parseRawSequence(input, { parseSubSequences: false })
+    }
+
+    public parse (input: string) {
+        const { char } = this.propertySequence
+
+        return (this.isSequenceInput(input) ? this.parseSequence(input) : undefined)
+            ?? (input.includes(char) ? this.parsePropertyChain(input) : undefined)
+            ?? this.parseRawSequence(input)
     }
 }

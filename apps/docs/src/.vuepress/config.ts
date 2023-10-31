@@ -1,16 +1,18 @@
-import { defaultTheme, defineUserConfig, SidebarGroup } from 'vuepress'
-import fetch from 'node-fetch'
 import { existsSync, readdirSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
-import { mkdir, rename } from 'fs/promises'
 
-const packages = readdirSync(resolve('.', './packages/'))
-    .filter(name => existsSync(resolve('.', `./packages/${name}/docs/`)))
+import { defaultTheme, defineUserConfig, type SidebarGroup } from 'vuepress'
+
+const packageFolder = resolve('.', '../../packages')
+
+const packages = readdirSync(packageFolder)
+    .filter(name => existsSync(join(packageFolder, name, 'docs')))
+
 const items: SidebarGroup[] = []
 
 await fetch('https://raw.githubusercontent.com/ghostrider-05/kismet.ts-template/main/src/index.ts')
     .then(res => res.text())
-    .then(text => writeFileSync(join('docs', '.vuepress', 'example.ts'), text))
+    .then(text => writeFileSync(join('src', '.vuepress', 'example.ts'), text))
 
 export default defineUserConfig({
     title: 'Kismet.ts',
@@ -21,12 +23,14 @@ export default defineUserConfig({
     ],
     pagePatterns: [
         '**/*.md', 
-        '../packages/**/docs/*.md',
-        '../packages/**/docs/**/*.md',
         '!../packages/**/node_modules/**/*.md',
         '!.vuepress', 
         '!node_modules'
     ],
+    extendsPage(page, app) {
+        //@ts-ignore
+        page.data.packages = packages
+    },
     theme: defaultTheme({
         repo: 'ghostrider-05/kismet.ts',
         contributors: false,
@@ -45,12 +49,7 @@ export default defineUserConfig({
             }), {})
         },
     }),
-    async onInitialized(app) {
-        app.pages.forEach((page, i) => {
-                if (page.path.startsWith('/../packages/')) 
-                    app.pages[i] = { ...page, path: '/' + page.path.slice('/../packages/'.length).replace('docs/', '') }
-            })
-
+    async onInitialized() {
         for (const pkg of packages) {
             const packageName = pkg === 'kismet.ts' ? pkg : `@kismet.ts/${pkg}`
 
@@ -59,8 +58,7 @@ export default defineUserConfig({
                 link: `/${pkg}/reference/`
             }]})
 
-            
-            const files = readdirSync(resolve('.', `./packages/${pkg}/docs/`))
+            const files = readdirSync(join(packageFolder, pkg, 'docs'))
 
             if (files.some(file => file === 'index.md')) {
                 items.at(-1)!.children.push({ text: 'Getting started', link: `/${pkg}/index.html`, children: [] })
@@ -72,7 +70,7 @@ export default defineUserConfig({
                 } else if (!item.includes('.')) {
                     items.at(-1)?.children.push({ text: item, children: [] })
 
-                    const children = readdirSync(resolve('.', `./packages/${pkg}/docs/${item}`))
+                    const children = readdirSync(join(packageFolder, pkg, 'docs', item))
                         .filter(child => child.endsWith('.md'))
 
                     for (const subitem of children) {
@@ -82,23 +80,4 @@ export default defineUserConfig({
             }
         }
     },
-    async onGenerated () {
-        const folder = join('docs', '.vuepress', 'packages')
-        const dist = join('docs', '.vuepress', 'dist')
-
-        for (const pkg of readdirSync(resolve('.', folder))) {
-            if (!existsSync(join(dist, pkg))) await mkdir(join(dist, pkg))
-
-            for (const name of readdirSync(resolve('.', join(folder, pkg, 'docs')))) {
-                if (name.endsWith('.html')) {
-                    await rename(join(folder, pkg, 'docs', name), join(dist, pkg, name))
-                } else {
-                    await mkdir(join(dist, pkg, name))
-                    for (const child of readdirSync(resolve('.', join(folder, pkg, 'docs', name)))) {
-                        await rename(join(folder, pkg, 'docs', name, child), join(dist, pkg, name, child))
-                    }
-                }
-            }
-        }
-    }
 })

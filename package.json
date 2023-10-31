@@ -2,18 +2,14 @@
   "name": "@kismet.ts/config",
   "version": "0.1.0",
   "description": "Make kismet from code",
-  "main": "./src/dist/src/index.js",
-  "types": "./src/dist/src/index.d.ts",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@8.9.2",
   "scripts": {
-    "blender": "npm run prestart -w packages/parsers-node && npm run update -w packages/items",
-    "docs:dev": "vuepress dev docs",
-    "docs:ref": "npx tsc && npm run prestart && node ./dist/scripts/typedoc.js",
-    "docs:build": "npm run docs:ref && vuepress build docs",
+    "update:rl": "pnpm --filter ./packages/items update:rl && pnpm --filter ./packages/image upload",
+    "scripts:readme-packages": "pnpm exec tsc && node ./dist/readme.js packages",
     "test": "turbo run test",
-    "prestart": "turbo run prestart",
-    "start": "node --experimental-json-modules .",
+    "prestart": "turbo run prestart && pnpm exec tsc",
     "lint": "turbo run lint",
     "release": "turbo run release"
   },
@@ -31,22 +27,25 @@
     "url": "https://github.com/ghostrider-05/kismet.ts/issues"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "4.20230419.0",
     "@types/node": "^16.11.56",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
+    "commander": "^10.0.1",
     "dotenv": "^16.0.3",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
+    "octokit": "^2.0.14",
     "turbo": "^1.7.0",
     "typedoc": "^0.23.24",
     "typedoc-plugin-markdown": "^3.14.0",
     "typescript": "^4.9.4",
     "vitest": "^0.27.3",
-    "vuepress": "^2.0.0-beta.60"
+    "wrangler": "^2.20.0"
   },
-  "workspaces": [
-    "packages/*"
-  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "typedoc": {
     "name": "Kismet.ts"
   }

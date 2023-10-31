@@ -6,6 +6,7 @@ import type {
     SequenceCondition,
     SequenceEvent,
     SequenceVariable,
+    KismetVariableValue,
 } from '../structures/index.js'
 
 import type {
@@ -20,6 +21,26 @@ export class BaseItem {
 
     constructor (type?: SequenceItemTypeName) {
         this.type = type ?? null
+    }
+
+    public static get rawKeys () {
+        return {
+            archetype: 'ObjectArchetype',
+            breakpoint: 'bIsBreakpointSet',
+            category: 'ObjCategory',
+            comment: 'ObjComment',
+            supressComment: 'bSuppressAutoComment',
+            outputComment: 'bOutputObjCommentToScreen',
+            name: 'Name',
+            parentSequence: 'ParentSequence',
+            version: 'ObjInstanceVersion',
+            x: 'ObjPosX',
+            y: 'ObjPosY',
+        }
+    }
+
+    public static hasRawValue (json: Record<string, KismetVariableValue>, key: string, value?: KismetVariableValue): boolean {
+        return Object.hasOwn(json, key) && (value ? json[key] === value : true)
     }
 
     private _checkType (compareType: Constants.NodeType) {

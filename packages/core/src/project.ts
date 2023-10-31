@@ -1,4 +1,4 @@
-import { ClassConstructor, cast } from '@kismet.ts/shared'
+import { ClassConstructor, cast, indent } from '@kismet.ts/shared'
 
 import { BaseSequenceItem } from './item/index.js'
 import {
@@ -7,9 +7,11 @@ import {
     SequencePositionOptions,
     SchemaItemNames,
     SequenceItemTypeof,
+    KismetTreeOverview,
 } from './structures/index.js'
 
 import { ProcessManager, ProcessId } from './managers/index.js'
+import { KismetSceneObject } from './util/index.js'
 
 type IStoreInputValue<T extends IStoreValue<SequenceItemTypeof>> = T extends SequenceItemTypeof ? T : never
 export type IStoreValue<T extends SequenceItemTypeof> = T | { [x: string]: T }
@@ -18,6 +20,25 @@ export type IStore<
     T extends IStoreValue<SequenceItemTypeof> = SequenceItemTypeof
 > = Record<string, IStoreValue<IStoreInputValue<T>>>
 export type ISingleStore<T extends typeof BaseSequenceItem = SequenceItemTypeof> = Record<string, T>
+
+export enum ProjectSearchScope {
+    Items,
+    Sequence,
+    Level,
+    All,
+}
+
+export enum ProjectSearchType {
+    CommentsAndNames,
+    ObjectTypes,
+}
+
+export interface ProjectSearchOptions {
+    query: string
+    scope?: ProjectSearchScope
+    type?: ProjectSearchType
+    items?: ProcessId[]
+}
 
 export class KismetFile {
     public readonly id: ProcessId
@@ -42,6 +63,8 @@ export class KismetFile {
      * The sequences of streamed levels in this project that will be connected to this file.
      */
     public streamedLevels?: KismetFile[]
+
+    private sceneObjects: KismetSceneObject[] = []
 
     constructor (options: projectOptions<SchemaItemNames>) {
         const { projectName, layout } = options
@@ -119,8 +142,12 @@ export class KismetFile {
      * Log data in a project to the console
      * @returns if the input was logged
      */
-    public static debug (input: string, project: KismetFile): boolean {
-        return ProcessManager.debug(input, project.id)?.completed ?? false
+    public static debug (input: string, projectId: ProcessId): boolean;
+    /** @deprecated */
+    public static debug (input: string, project: KismetFile): boolean;
+    public static debug (input: string, project: KismetFile | ProcessId): boolean {
+        const projectId = project instanceof KismetFile ? project.id : project
+        return ProcessManager.debug(input, projectId)?.completed ?? false
     }
 
     /**
@@ -128,22 +155,42 @@ export class KismetFile {
      * @param input 
      */
     public debug (input: string): void {
-        KismetFile.debug(input, this)
+        KismetFile.debug(input, this.id)
     }
 
-    private debugSequences (): void {
-        /**
-         * Logs the levels + their subsequences
-         */
+    /**
+     * Logs an overview of this project with the subsequences
+     * 
+     * Can be found in UDK in the `Sequences` window
+     */
+    public debugSequences (): void {
+        const logLevel = (level: KismetTreeOverview, depth: number): void => {
+            console.log(indent(depth) + (level.mainSequence ? `${this.projectName} - ${Sequence.name}` : level.name) + ` [${level.items}]`)
+            if (level.subSequences) {
+                for (const sub of level.subSequences) {
+                    logLevel(sub, depth + 1)
+                }
+            }
+        }
+
+        const tree: KismetTreeOverview = {
+            name: 'Sequences',
+            items: 1,
+            subSequences: [this.mainSequence.util.createTree()]
+        }
+
+        logLevel(tree, 0)
     }
 
-    private search (input: string, type: string, scope: 'sequence' | 'level' | 'all') {
-        /**
-         * Search for an item in the selected scope
-         * Returns the matched items
-         */
+    /**
+     * Search for an item in the selected scope
+     * Returns the matched items
+     */
+    private search (options: ProjectSearchOptions) {
+        const scope = options.scope ?? ProjectSearchScope.Sequence
+        const type = options.type ?? ProjectSearchType.CommentsAndNames
 
-        this.debug(`Searching in ${scope} on ${type}: ${input}`)
+        this.debug(`Searching in ${scope} on ${type}: ${options.query}`)
     }
 
     public toString (): string {

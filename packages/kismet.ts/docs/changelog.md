@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -->
+
 # Changelog
 
 ## Packages
@@ -6,39 +8,24 @@
 For the unstable versions, v0.\*.\*, no changelog will be added to this file
 :::
 
-:::details @kismet.ts/core
-@[code md:no-line-numbers](../../core/CHANGELOG.md)
-:::
-
-:::details @kismet.ts/items
-@[code md:no-line-numbers](../../items/CHANGELOG.md)
-:::
-
-:::details kismet.ts
-@[code md:no-line-numbers](../../kismet.ts/CHANGELOG.md)
-:::
-
-:::details @kismet.ts/parsers
-@[code md:no-line-numbers](../../parsers/CHANGELOG.md)
-:::
-
-:::details @kismet.ts/parsers-node
-@[code md:no-line-numbers](../../parsers-node/CHANGELOG.md)
-
-:::
-:::details @kismet.ts/shared
-@[code md:no-line-numbers](../../shared/CHANGELOG.md)
-:::
-
-:::details @kismet.ts/util
-@[code md:no-line-numbers](../../util/CHANGELOG.md)
-:::
+<details
+   v-for="pkg in $page.packages.filter(p => p !== 'kismet.ts')"
+   :key="pkg"
+   class="custom-container details"
+>
+   <summary>@kismet.ts/{{ pkg }}</summary>
+   <Content :page-key="$router.resolve(`/${pkg}/CHANGELOG.html`).name" />
+</details>
 
 <!-- :::details Beta changelog
 @[code md:no-line-numbers](../../../docs/CHANGELOG_old.md)
 ::: -->
 
 ## Guide
+
+### 10-05-2023
+
+- add section about comparing local classes
 
 ### 23-01-2023
 

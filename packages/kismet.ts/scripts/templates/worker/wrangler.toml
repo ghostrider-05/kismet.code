@@ -1,0 +1,11 @@
+name="{{name}}"
+main="./src/index.ts"
+compatibility_date="{{date}}"
+
+kv_namespaces = [
+
+]
+
+r2_buckets  = [
+
+]

@@ -1,4 +1,4 @@
-import { INumber, NumberMap, NumberType, NumberVariable, _get } from "./INumber.js";
+import { NumberType, NumberVariable, _get } from "./INumber.js";
 
 export function absolute <N extends NumberType> (n: NumberVariable<N>, type: N) {
     const zeroVar = new (_get(type, 'variable'))()
@@ -17,9 +17,5 @@ export function absolute <N extends NumberType> (n: NumberVariable<N>, type: N) 
         zeroVar,
         multiplyNode,
         compareCond
-    ] as [
-        InstanceType<INumber<N, 'variable'>>,
-        InstanceType<INumber<N, 'multiply'>>,
-        InstanceType<INumber<N, 'compare'>>,
-    ]
+    ] as const
 }

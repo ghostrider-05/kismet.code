@@ -77,4 +77,12 @@ export class TextNodeParser<
     public parseNode (input: string) {
         return this.convert(this.parseRawItem(input))
     }
+
+    public parse (input: string) {
+        const name = !input.includes(' ') ? this.parseNodeName(input) : undefined
+        if (name != undefined) return name
+        else if (TextNodeParser.isNodeInput(input)) {
+            return this.parseRawNode(input)
+        }
+    }
 }

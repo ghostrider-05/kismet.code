@@ -9,6 +9,8 @@
   ],
   "type": "module",
   "scripts": {
+    "generate": "node ./dist/scripts/generate.js",
+    "upload": "pnpm prestart && node ./dist/scripts/upload.js",
     "prestart": "tsc --project ./tsconfig.json",
     "start": "node ."
   },

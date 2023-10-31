@@ -1,4 +1,5 @@
 import {
+    capitalize,
     cast,
     Constants,
     KismetError,
@@ -31,18 +32,25 @@ export class BaseKismetConnection {
     protected input: string
 
     public name: string
+    /** @deprecated */
     public connectionIndex = 0
+
+    public index = 0
 
     public links: string[] | null = null
     public linkedIds: string[] = []
-    public bHidden: boolean
+
+    private _hidden: boolean | null = null
+    public get bHidden (): boolean { return this._hidden ?? false }
+    public expanded: boolean
 
     constructor (options: {
         input: string
         type: KismetConnectionType
         index?: number
         kismetOptions?: BaseKismetConnectionOptions
-        extends?: boolean
+        extends?: boolean,
+        expanded?: boolean,
     }) {
         const { input, type, kismetOptions, index } = options
 
@@ -50,8 +58,8 @@ export class BaseKismetConnection {
 
         this.name = input
         this.connectionIndex = index ?? 0
-
-        this.bHidden = false
+        this.index = index ?? 0
+        this.expanded = options.expanded ?? false
 
         this.type = type
         this.baseConnection = !(options.extends ?? false)
@@ -61,11 +69,11 @@ export class BaseKismetConnection {
         }
     }
 
-    public static convertLink (
-        type: KismetConnectionType,
+    public static convertLink <T extends KismetConnectionType> (
+        type: T,
         input: string,
         index?: number
-    ): ItemConnection | VariableConnection | undefined {
+    ): KismetConnections[T][number] | undefined {
         switch (type) {
             case Constants.ConnectionType.INPUT:
             case Constants.ConnectionType.OUTPUT:
@@ -94,8 +102,8 @@ export class BaseKismetConnection {
         return output
     }
 
-    private get typeName (): string {
-        return this.type[0].toUpperCase() + this.type.slice(1) + 'Links'
+    public static getTypeName (type: KismetConnectionType): string {
+        return capitalize(type) + 'Links'
     }
 
     protected format (keys?: string[]): string {
@@ -103,9 +111,9 @@ export class BaseKismetConnection {
             ...(keys ?? []),
             `OverrideDelta=${this.kismet.OverrideDelta}`,
         ].concat(
-            this.bHidden && this.type === 'variable'
+            typeof this._hidden === 'boolean' && this.type === 'variable'
                 ? [`bHidden=${KismetBoolean.toKismet(this.bHidden)}`]
-                : []
+                : [],
         )
 
         const prefix = this.type === 'variable' ? 'LinkedVariables' : 'Links'
@@ -145,7 +153,7 @@ export class BaseKismetConnection {
         this.links ??= []
 
         if (hidden != undefined) {
-            this.bHidden = hidden
+            this.setHidden(hidden)
         }
 
         const linkIndex =
@@ -200,22 +208,22 @@ export class BaseKismetConnection {
     }
 
     public setHidden (hidden: boolean): this {
-        this.bHidden = hidden
+        this._hidden = hidden
 
         return this
     }
 
     public prefix (index?: number): string {
-        return `${this.typeName}(${index ?? this.connectionIndex})`
+        return `${BaseKismetConnection.getTypeName(this.type)}(${index ?? this.index ?? this.connectionIndex})`
     }
 
     public get value (): string {
         return this.format()
     }
 
-    public toString (index?: number): string {
+    public toString (index?: number, value?: string): string {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return KismetItemFormatter.variable(this.prefix(index), this.value)!
+        return KismetItemFormatter.variable(this.prefix(index), value ?? this.value)!
     }
 }
 
@@ -231,12 +239,13 @@ export class VariableConnection extends BaseKismetConnection {
     public bSequenceNeverReadsOnlyWritesToThisVar: boolean
     public bModifiesLinkedObject: boolean
 
-    constructor (input: string, type: KismetConnectionType, index?: number) {
+    constructor (input: string, type: KismetConnectionType, index?: number, expanded?: boolean) {
         super({
             input,
             index,
             type: Constants.ConnectionType.VARIABLE,
             extends: true,
+            expanded,
         })
 
         const properties = BaseKismetConnection.convertInput(input)
@@ -282,9 +291,9 @@ export class VariableConnection extends BaseKismetConnection {
             )
         }
 
-        const expectedClass = this.expectedType.split("'")[1].split('.')[1]
+        const expectedClass = this.expectedType?.split("'")[1].split('.')[1]
 
-        if (!this.bAllowAnyType && linkId.split("'")[0] !== expectedClass) {
+        if (!this.bAllowAnyType && linkId.split("'")[0] !== expectedClass && expectedClass != undefined) {
             console.warn(
                 `Incorrect input type. Received class ${
                     linkId.split("'")[0]
@@ -301,8 +310,16 @@ export class VariableConnection extends BaseKismetConnection {
         return this.bWriteable
     }
 
+    public override get value (): string {
+        return this.format(this.expanded ? [
+            `ExpectedType=${this.expectedType}`,
+            `LinkDesc="${this.name}"`,
+            // `PropertyName=${this.PropertyName}`
+        ] : [])
+    }
+
     public override toString (index?: number): string {
-        return super.toString(index)
+        return super.toString(index, this.value)
     }
 }
 
@@ -382,7 +399,7 @@ export class ItemConnection extends BaseKismetConnection {
     }
 
     public override toString (index?: number): string {
-        const kismet = super.toString(index)
+        const kismet = super.toString(index, this.value)
 
         return kismet
     }

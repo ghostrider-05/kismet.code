@@ -1,9 +1,21 @@
-import type { Sequence, KismetPosition } from '../structures/index.js'
+import type { Sequence, KismetPosition, SequenceGridOptions, SequenceItemType } from '../structures/index.js'
 
 export class SequenceGridManager {
     public grid: Partial<KismetPosition> = {}
     public gridWindow: Partial<Record<keyof KismetPosition, [number, number]>> =
         {}
+
+    private enabled = false
+
+    public constructor (options: SequenceGridOptions) {
+        this._applyOptions(options)
+    }
+
+    private _applyOptions ({ grid, window, enabled }: SequenceGridOptions) {
+        this.grid = typeof grid === 'number' ? { x: grid, y: grid } : grid
+        this.gridWindow = window ?? {}
+        this.enabled = enabled ?? false
+    }
 
     private isInWindow (position: KismetPosition): boolean {
         const { x, y } = this.gridWindow
@@ -30,29 +42,37 @@ export class SequenceGridManager {
             : position
     }
 
+    /** @deprecated */
     public setGrid (
-        grid: KismetPosition,
+        grid: number | KismetPosition,
         window?: Record<keyof KismetPosition, [number, number]>
     ) {
-        this.grid = grid
-        this.gridWindow = window ?? {}
+        this._applyOptions({ grid, window })
 
         return this
     }
 
-    public applyGridToSequence (sequence: Sequence): Sequence {
-        if (Object.keys(this.grid).length === 0) return sequence
+    public applyGridToItems (items: (SequenceItemType | Sequence)[], parent?: Sequence) {
+        const update = (item: SequenceItemType) => {
+            item.setPosition(this.applyGridPosition(item.position))
+            parent?.update(item)
+        }
 
-        sequence.items.forEach(item => {
+        for (const item of items) {
             item.isSequenceItem()
-                ? sequence.updateItem(
-                      item,
-                      item.setPosition(this.applyGridPosition(item.position))
-                  )
+                ? update(item)
                 : item.isSequence()
-                ? this.applyGridToSequence(item)
-                : undefined
-        })
+                    ? this.applyGridToSequence(item)
+                    : undefined
+        }
+
+        return items
+    }
+
+    public applyGridToSequence (sequence: Sequence): Sequence {
+        if (!this.enabled || Object.keys(this.grid).length === 0) return sequence
+
+        this.applyGridToItems(sequence.items, sequence)
 
         return sequence
     }

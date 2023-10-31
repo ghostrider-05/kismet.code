@@ -33,14 +33,14 @@ const itemsPerCopy = 20;
 const queue = new NodeUtil.LimitedClipboard(itemsPerCopy)
     .start(sequence)
 
-while (queue.next != undefined) {
-    // Copy current stack
-    await queue.copy()
+// Loop until all copying is finished
+//eslint-disable-next-line no-constant-condition
+while (true) {
+    // Copy current stack and check if it is not done
+    const copied = await queue.next()
+    if (copied.done) break;
 
     // ... await input until it is copied
     await new Promise<string>((resolve) => rl.question('copied?', (answer) => resolve(answer)))
-
-    // Move to the next stack
-    queue.next()
 }
 ```

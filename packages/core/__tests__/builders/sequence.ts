@@ -88,6 +88,10 @@ export default {
     baseBuilderArchetype,
     baseBuilderData,
     baseBuilderClassType,
+    util: {
+        rawKeys: Sequence.rawKeys,
+        hasRawValue: Sequence.hasRawValue,
+    },
     baseConnectionBuilder,
     itemConnectionBuilder,
     variableConnectionBuilder,

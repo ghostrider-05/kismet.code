@@ -24,14 +24,15 @@ git-*
 *.cs
 *.txt
 *.py
+extract.bat
 
 # Docs
-docs/core/
-docs/items/
-docs/kismet.ts/
-docs/parsers/
-docs/parsers-node/
-docs/shared/
-docs/util/
-docs/.vuepress/example.ts
-docs/.vuepress/packages/
+apps/docs/src/core/
+apps/docs/src/items/
+apps/docs/src/kismet.ts/
+apps/docs/src/parsers/
+apps/docs/src/parsers-node/
+apps/docs/src/shared/
+apps/docs/src/util/
+apps/docs/src/.vuepress/example.ts
+apps/docs/src/.vuepress/packages/

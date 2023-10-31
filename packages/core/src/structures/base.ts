@@ -1,8 +1,8 @@
-import { 
-    Constants, 
-    convertVariablesRecordToArray, 
-    filterEmptyLines, 
-    KismetItemFormatter 
+import {
+    Constants,
+    convertVariablesRecordToArray,
+    filterEmptyLines,
+    KismetItemFormatter
 } from '@kismet.ts/shared'
 
 import { BaseItem } from '../item/index.js'
@@ -12,6 +12,7 @@ import {
     ProcessManager,
     ProcessId,
     SequencePositionManager,
+    SequenceGridManager,
 } from '../managers/index.js'
 
 import type {
@@ -38,6 +39,9 @@ export const DefaultLayoutOptions: Required<layoutOptions> = {
 
 export type SequenceItemResolvable = string | ProcessId | SequenceItemType
 export type SequenceResolvable = Sequence | SequenceItemResolvable
+export type SequenceClearType =
+    | 'breakpoints'
+    | 'items'
 
 /**
  * Class for a kismet sequence
@@ -58,12 +62,18 @@ export class Sequence extends BaseItem {
     public readonly project?: ProcessId
 
     /**
+     * The id of the parent sequence to this sequence
+     */
+    public parentId: ProcessId | undefined
+
+    /**
      * Whether this sequence can be edited
      */
     public enabled = true
 
     /**
      * The parent sequence of this sequence.
+     * @deprecated
      */
     public parentSequence: string = Sequence.DefaultFormattedSequenceName
 
@@ -76,9 +86,7 @@ export class Sequence extends BaseItem {
      * The subsequences that are added in this sequence
      */
     public get subSequences (): Sequence[] {
-        return this.items.filter(item => {
-            return item.isSequence()
-        }) as Sequence[]
+        return this.items.filter((item): item is Sequence => item.isSequence())
     }
 
     private kismet: { x: number; y: number }
@@ -86,13 +94,16 @@ export class Sequence extends BaseItem {
     private readonly mainSequence: boolean
     public hasBreakpoint = false
 
-    constructor (options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
+    public readonly grid: SequenceGridManager;
+
+    constructor (private options?: SequenceBaseConstructorOptions<SchemaItemNames>) {
         super(NodeType.SEQUENCES)
 
         const { name, mainSequence, defaultView, layout, project, index } =
             options ?? {}
 
         this.id = ProcessManager.id('Sequence', { id: project, index })
+        this.parentId = options?.parent
 
         this.mainSequence = mainSequence ?? false
         this.name = name ?? (this.mainSequence ? DefaultMainSequenceName : 'Sub_Sequence')
@@ -114,6 +125,8 @@ export class Sequence extends BaseItem {
             schema: layout?.schema,
             projectId: project,
         })
+
+        this.grid = new SequenceGridManager(options?.grid ?? { grid: 8 });
     }
 
     private get rawData () {
@@ -143,6 +156,10 @@ export class Sequence extends BaseItem {
         return Sequence.formatSequenceReference(this.name)
     }
 
+    public isMainSequence (): boolean {
+        return this.mainSequence
+    }
+
     public addItem (item: SequenceItemType, overwriteSequence?: boolean): this {
         if (this.items.find(i => i.linkId === item.linkId)) return this
 
@@ -153,56 +170,93 @@ export class Sequence extends BaseItem {
         return this
     }
 
-    public addItems (items: SequenceItemType[]): this {
-        items.forEach(item => this.addItem(item))
+    public addItems (items: SequenceItemType[], overwriteSequence?: boolean): this {
+        items.forEach(item => this.addItem(item, overwriteSequence))
 
         return this
     }
 
-    public addSubSequence ({
-        name,
-        objects,
-        layout,
-        defaultView,
-    }: SequenceOptions<SequenceItemType, SchemaItemNames>): {
-        subSequence: Sequence
-        sequence: Sequence
-    } {
-        const subSequence = new Sequence({
-            layout: {
-                position: layout?.position ?? this.positionManager.options,
-                schema: layout?.schema,
-                style: layout?.style,
-            },
-            name,
-            defaultView,
-            project: this.project,
-        }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
+    public addSubSequence(sequence: Sequence): { subSequence: Sequence; sequence: Sequence };
+    public addSubSequence(options: SequenceOptions<SequenceItemType, SchemaItemNames>): { subSequence: Sequence; sequence: Sequence };
+    public addSubSequence (options: Sequence | SequenceOptions<SequenceItemType, SchemaItemNames>): { subSequence: Sequence; sequence: Sequence } {
+        if (options instanceof Sequence) {
+            options.parentId = this.id
+            options.parentSequence = this.linkId
 
-        subSequence.parentSequence = this.linkId
+            this.items.push(options)
 
-        this.items.push(subSequence)
+            return {
+                subSequence: options,
+                sequence: this,
+            }
+        } else {
+            const {
+                name,
+                objects,
+                layout,
+                defaultView,
+            } = options
 
-        return {
-            subSequence,
-            sequence: this,
+            const subSequence = new Sequence({
+                layout: {
+                    position: layout?.position ?? this.positionManager.options,
+                    schema: layout?.schema,
+                    style: layout?.style,
+                },
+                name,
+                defaultView,
+                project: this.project,
+                parent: this.id,
+            }).addItems(objects?.map(x => x.setSequence(name)) ?? [])
+
+            subSequence.parentSequence = this.linkId
+            this.items.push(subSequence)
+
+            return {
+                subSequence,
+                sequence: this,
+            }
         }
+    }
+
+    /**
+     * Clear all @type on items in this sequence
+     * @param type The type of clear to perform
+     * - breakpoints: remove all breakpoints on item nodes
+     * - items: remove all items, except for subsequences
+     * @param includeSubsequences Whether to clear breakpoints in subsequences (default false)
+     * 
+     */
+    public clear (type: SequenceClearType, includeSubsequences?: boolean): this {
+        if (type === 'items') {
+            this.items = this.items.filter(n => n.isSequence())
+        }
+
+        for (const item of this.items) {
+            if (item.isSequenceNode()) {
+                if (type === 'breakpoints') {
+                    this.update(item.setBreakpoint(false))
+                }
+
+            } else if (includeSubsequences && item.isSequence()) {
+                this.update(item.clear(type, includeSubsequences))
+            }
+        }
+
+        return this
     }
 
     /**
      * Clear all breakpoints on items in this sequence
      * @param includeSubsequences Whether to clear breakpoints in subsequences (default false)
+     * @deprecated
      */
     public clearAllBreakpoints (includeSubsequences?: boolean): this {
-        this.items.forEach(item => {
-            if (item.isSequenceNode()) {
-                this.updateItem(item, item.setBreakpoint(false))
-            } else if (includeSubsequences && item.isSequence()) {
-                this.updateItem(item, item.clearAllBreakpoints(true))
-            }
-        })
+        return this.clear('breakpoints', includeSubsequences)
+    }
 
-        return this
+    public debug (input: string): boolean {
+        return ProcessManager.debug(input, this.project)?.completed ?? false
     }
 
     /**
@@ -212,13 +266,11 @@ export class Sequence extends BaseItem {
     public resolveId (
         id: string | ProcessId
     ): SequenceItemType | Sequence | null {
-        return (
-            this.items.find(n => {
-                return typeof id === 'string'
-                    ? n.id.equals(id) || n.linkId === id
-                    : n.id.equalIds(id)
-            }, null) ?? null
-        ) // TODO: TS doesn't type thisArg
+        return this.items.find(n => {
+            return typeof id === 'string'
+                ? n.id.equals(id) || n.linkId === id
+                : n.id.equalIds(id)
+        }, null) ?? null
     }
 
     public resolve (item: SequenceResolvable) {
@@ -251,7 +303,7 @@ export class Sequence extends BaseItem {
      * @param name
      */
     public setName (name: string): this {
-        if (!this.mainSequence) this.name = name
+        if (!this.isMainSequence()) this.name = name
 
         return this
     }
@@ -270,10 +322,13 @@ export class Sequence extends BaseItem {
         return this
     }
 
-    public update (item: Sequence | SequenceItemType): void {
-        return this.updateItem(item.linkId, item)
+    public update (...items: (Sequence | SequenceItemType)[]): void {
+        for (const item of items) {
+            this.updateItem(item.linkId, item)
+        }
     }
 
+    /** @deprecated */
     public updateItem (
         item: SequenceResolvable,
         updatedItem: Sequence | SequenceItemType
@@ -291,6 +346,7 @@ export class Sequence extends BaseItem {
         this.items[this.items.indexOf(foundItem)] = updatedItem
     }
 
+    /** @deprecated */
     public updateItems (
         items: [SequenceResolvable, SequenceItemType | Sequence][]
     ): void {
@@ -299,6 +355,7 @@ export class Sequence extends BaseItem {
 
     public toJSON (): Record<string, KismetVariableValue> {
         this.items = this.positionManager.fillPositions(this)['items']
+        this.grid.applyGridToSequence(this)
 
         const variables = this.util['toRecord'](
             this.items,

@@ -1,0 +1,7 @@
+name="kismet-shield"
+main="./src/index.ts"
+compatibility_date="2023-05-14"
+
+kv_namespaces = [
+  { binding = "KISMET_KV", id = "89f9e0f8f12042469151882e25cb57c8" }
+]

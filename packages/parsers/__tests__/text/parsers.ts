@@ -1,7 +1,6 @@
 import { TextSequenceParser, TextNodeParser } from '../../src/index.js'
-import { Items, defaultItems } from '@kismet.ts/items'
+import { Items, listItems } from '@kismet.ts/items'
 import { Constants } from '@kismet.ts/shared'
-import { SequenceItemTypeof } from '@kismet.ts/core';
 
 const sequenceOptions = {
   layout: {
@@ -14,15 +13,17 @@ const sequenceOptions = {
   }
 }
 
-export const node = new TextNodeParser(defaultItems, {
+export const node = new TextNodeParser(listItems(), {
   convertToString: false,
   sequence: sequenceOptions
 })
 
-export const sequence = new TextSequenceParser(defaultItems, {
+export const sequence = new TextSequenceParser<false>(listItems(), {
   convertToString: false,
   sequence: sequenceOptions,
-  variables: { GetProperty: Items.Actions.GetProperty as SequenceItemTypeof, ...Items.Variables },
+
+  getPropertyAction: Items.Actions.GetProperty,
+  variables: Items.Variables,
 
   newLinesSeperation: 1,
   extractSequenceOrder: block => {

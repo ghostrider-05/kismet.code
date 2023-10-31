@@ -6,6 +6,7 @@ import { node } from './parsers.js';
 describe('raw kismet input', () => {
     it('single node input', () => {
         const text = 'Begin' + kismetSequence.split('\nBegin')[1];
+        console.log(text)
 
         const item = node.parseRawNode(text);
         expect(item).toBeDefined()
